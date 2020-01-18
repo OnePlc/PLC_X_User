@@ -38,12 +38,13 @@ class UserController extends CoreController {
      *
      * @param AdapterInterface $oDbAdapter
      * @param UserTable $oTableGateway
+     * @param $oServiceManager
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway) {
-        parent::__construct($oDbAdapter);
+    public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway,$oServiceManager) {
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'user-single';
+        parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
     }
 
     /**

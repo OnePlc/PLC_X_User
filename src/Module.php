@@ -199,7 +199,8 @@ class Module
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\UserController(
                         $oDbAdapter,
-                        $container->get(Model\UserTable::class)
+                        $container->get(Model\UserTable::class),
+                        $container
                     );
                 },
             ],
