@@ -108,9 +108,10 @@ class UserController extends CoreController {
                     # Try Login by Username
                     $oUser = $this->oTableGateway->getSingle($sUser,'username');
                 } catch(\Exception $e) {
-                    echo $e->getMessage();
                     # Show Login Form
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage'=>$e->getMessage(),
+                    ]);
                 }
             }
 
@@ -514,6 +515,39 @@ class UserController extends CoreController {
         echo json_encode($aReturn);
 
         # No View File
+        return false;
+    }
+
+    /**
+     * Token based login for Google and stuff
+     *
+     * @return bool no View File
+     * @since 1.0.1
+     */
+    public function tokenloginAction() {
+        $this->layout('layout/json');
+
+        $sToken = $_REQUEST['idtoken'];
+
+        $client = new \Google_Client(['client_id' => '865195135178-9riktlnk2jdknebbdj030j9nq7gdimvt.apps.googleusercontent.com']);  // Specify the CLIENT_ID of the app that accesses the backend
+        $payload = $client->verifyIdToken($sToken);
+        if ($payload) {
+            $sUserEmail = $payload['email'];
+            # Try Login by E-Mail
+            $oUser = $this->oTableGateway->getSingle($sUserEmail,'email');
+            # Login Successful - redirect to Dashboard
+            CoreController::$oSession->oUser = $oUser;
+            //var_dump($payload);
+            $userid = $payload['sub'];
+            // If request specified a G Suite domain:
+            //$domain = $payload['hd'];
+            echo 'is good for '.$userid;
+            return $this->redirect()->toRoute('home');
+        } else {
+            // Invalid ID token
+            echo 'not good';
+        }
+
         return false;
     }
 }

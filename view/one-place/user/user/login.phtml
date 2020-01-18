@@ -1,7 +1,32 @@
-<div class="container">
-    <form class="plc-login-form" action="" method="POST">
-        Login
-        <input type="text" name="plc_login_user" value="" />
-        <input type="submit" value="Login" />
-    </form>
-</div>
+<form class="plc-login-form" action="" method="POST">
+    <img src="https://schwitzers.1plc.ch/img/logo.png" style="max-height:80px; max-width:100%;"/>
+    <br/>
+    <hr/>
+    <?php if(isset($sErrorMessage)) { ?>
+        <div class="alert alert-danger">
+            <?=$sErrorMessage?>
+        </div>
+    <?php } ?>
+    <div class="md-form">
+        <input type="text" id="plc_login_user" name="plc_login_user" value="" class="form-control" />
+        <label for="plc_login_user">Username or E-Mail</label>
+    </div>
+
+    <div class="md-form">
+        <input type="password" name="plc_login_pass" value="" class="form-control" />
+        <label for="plc_login_user">Password</label>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-md-4">
+            <button type="submit" value="Login" class="btn-floating btn btn-dark">
+                <i class="fas fa-key ml-1"></i> Sign In
+            </button>
+        </div>
+        <div class="col-md-4 py-2">
+            <div id="g-signin2" class="g-signin2" data-onsuccess="onSignIn"></div>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+</form>

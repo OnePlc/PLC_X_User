@@ -152,7 +152,7 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (!$bLoggedIn && $sRouteName != 'login') {
+                if (!$bLoggedIn && $sRouteName != 'login' && $sRouteName != 'tokenlogin') {
                     $response = $e->getResponse();
                     $response->getHeaders()->addHeaderLine(
                         'Location',
