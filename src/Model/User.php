@@ -15,6 +15,7 @@
 
 namespace OnePlace\User\Model;
 
+use Application\Controller\CoreController;
 use Application\Model\CoreEntityModel;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
@@ -179,11 +180,17 @@ class User extends CoreEntityModel {
     /**
      * Gets User's permissions
      *
-     * @return array
+     * @param string $sPermissionFilter filter permissons return only selected
+     * @param bool $bInfo load permission info
+     * @return array list with permissions
      * @since 1.0.0
      */
-    public function getMyPermissions() {
-        $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->select(['user_idfs'=>$this->getID()]);
+    public function getMyPermissions($sPermissionFilter = '',$bInfo = false) {
+        $aWhere = ['user_idfs'=>$this->getID()];
+        if($sPermissionFilter != '') {
+            $aWhere['permission'] = $sPermissionFilter;
+        }
+        $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->select($aWhere);
         $aMyPermsByModule = [];
         foreach($aMyPermsDB as $oPerm) {
             $sModule = str_replace(['\\'],['-'],$oPerm->module);
@@ -191,7 +198,17 @@ class User extends CoreEntityModel {
             if(!array_key_exists($sModule,$aMyPermsByModule)) {
                 $aMyPermsByModule[$sModule] = [];
             }
-            $aMyPermsByModule[$sModule][$oPerm->permission] = true;
+            if($bInfo) {
+                $oPermData = CoreController::$aCoreTables['permission']->select(['module'=>$oPerm->module,'permission_key'=>$oPerm->permission]);
+                if(count($oPermData) > 0) {
+                    $oPermData = $oPermData->current();
+                    $aMyPermsByModule[$sModule][$oPerm->permission] = $oPermData;
+                }
+            } else {
+                //
+                $aMyPermsByModule[$sModule][$oPerm->permission] = true;
+            }
+
 
         }
         return $aMyPermsByModule;

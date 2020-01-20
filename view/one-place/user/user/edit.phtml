@@ -1,3 +1,14 @@
 <h2>Edit User</h2>
 
 <?= $this->partial('partial/basicform', ['sFormName'=>$sFormName,'oItem'=>$oUser]); ?>
+
+<script>
+    $(function() {
+        $('.plc-user-permissions-selectall').on('click',function() {
+            $(this).parent('div').find('ul').find('input').each(function() {
+                $(this).attr('checked','checked');
+            });
+            return false;
+        });
+    });
+</script>
