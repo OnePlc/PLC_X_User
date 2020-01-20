@@ -476,17 +476,17 @@ class UserController extends CoreController {
                 $sColumn = substr($sColInfo,strlen($sTable.'_'));
 
                 # Check if table exists
-                $oTable = $this->aCoreTables['table-index']->select(['table_name'=>$sTable]);
+                $oTable = CoreController::$aCoreTables['table-index']->select(['table_name'=>$sTable]);
                 if(count($oTable) > 0) {
 
                     # check if field exists
                     $oTable = $oTable->current();
-                    $oField = $this->aCoreTables['core-form-field']->select(['form'=>$oTable->form,'fieldkey'=>$sColumn]);
+                    $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$oTable->form,'fieldkey'=>$sColumn]);
                     if(count($oField) > 0) {
                         $oField = $oField->current();
 
                         # check if column exists for used
-                        $oColFound = $this->aCoreTables['table-col']->select([
+                        $oColFound = CoreController::$aCoreTables['table-col']->select([
                             'field_idfs'=>$oField->Field_ID,
                             'user_idfs'=>CoreController::$oSession->oUser->getID(),
                             'tbl_name'=>$sTable
@@ -495,7 +495,7 @@ class UserController extends CoreController {
                         # update column sortid
                         if(count($oColFound) > 0) {
                             $oColFound = $oColFound->current();
-                            $this->aCoreTables['table-col']->update([
+                            CoreController::$aCoreTables['table-col']->update([
                                 'sortID'=>$iSortID,
                             ],[
                                 'field_idfs'=>$oField->Field_ID,
