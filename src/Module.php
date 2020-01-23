@@ -158,7 +158,7 @@ class Module
                     /**
                      * Setup before First Login
                      */
-                    if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
+                    if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
                         echo 'no config yet';
 

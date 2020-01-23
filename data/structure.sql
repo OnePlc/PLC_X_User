@@ -5,8 +5,8 @@ CREATE TABLE `permission` (
   `permission_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `module` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nav_label` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nav_href` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nav_label` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `nav_href` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `show_in_menu` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

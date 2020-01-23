@@ -234,7 +234,7 @@ class User extends CoreEntityModel {
     public function updatePermissions(array $aPermissions) {
         $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->delete(['user_idfs'=>$this->getID()]);
 
-        $aBasePermissions = ['index-Application-Controller-IndexController'];
+        $aBasePermissions = [];
         $aPermissions = array_merge($aBasePermissions,$aPermissions);
 
         foreach($aPermissions as $sPermWithModule) {
