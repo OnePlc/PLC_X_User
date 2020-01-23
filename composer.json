@@ -16,7 +16,6 @@
     },
     "require": {
         "php": "^7.1",
-        "oneplace/oneplace-core": "^1.0.0"
     },
     "autoload": {
         "psr-4": {

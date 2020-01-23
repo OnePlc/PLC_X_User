@@ -559,6 +559,6 @@ class UserController extends CoreController {
         $oThemeTbl->update(['theme'=>$sTheme],['User_ID'=>CoreController::$oSession->oUser->getID()]);
         $this->flashMessenger()->addSuccessMessage('Please login again to see your new theme');
 
-        return $this->redirect()->toRoute('home');
+        return $this->redirect()->toRoute('logout');
     }
 }

@@ -2,14 +2,9 @@ docs_dir: docs/book
 site_dir: docs/html
 nav:
   - Home: index.md
-  - Introduction: intro.md
-  - 'Quick Start': quick-start.md
-  - Reference:
-      - 'Dynamic Fields': dynamic-fields.md
-      - Examples: examples.md
-site_name: oneplace-skeleton
-site_description: "onePlace Application User Module"
+site_name: oneplace-user
+site_description: "onePlace User Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_User'
-theme: readthedocs
+theme: bootstrap4
 extra:
   project: onePlc
