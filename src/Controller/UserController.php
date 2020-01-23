@@ -88,6 +88,12 @@ class UserController extends CoreController {
     public function loginAction() {
         $this->layout('layout/login');
 
+        # Check if initial setup is already done
+        if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
+            // Setup
+            return $this->redirect()->toRoute('setup');
+        }
+
         # Check if user is already logged in
         if(isset(CoreController::$oSession->oUser)) {
             // already logged in
