@@ -110,12 +110,13 @@ class Module
                 ]);
                 $manager = new SessionManager($config);
 **/
-                # get session
-                $container = new Container('plcauth');
-                $bLoggedIn = false;
 
                 $sRouteName = $routeMatch->getMatchedRouteName();
                 $aRouteInfo = $routeMatch->getParams();
+
+                # get session
+                $container = new Container('plcauth');
+                $bLoggedIn = false;
 
                 # check if user is logged in
                 if(isset($container->oUser)) {
@@ -152,13 +153,48 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (!$bLoggedIn && $sRouteName != 'login' && $sRouteName != 'tokenlogin') {
+                if (!$bLoggedIn && $sRouteName != 'login' && $sRouteName != 'tokenlogin' && $sRouteName != 'setup') {
+
+                    /**
+                     * Setup before First Login
+                     */
+                    if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
+                        echo $sRouteName;
+                        echo 'no config yet';
+
+                        $response = $e->getResponse();
+                        $response->getHeaders()->addHeaderLine(
+                            'Location',
+                            $e->getRouter()->assemble(
+                                [],
+                                ['name' => 'setup']));
+                        $response->setStatusCode(302);
+                        return $response;
+                    } else {
+                        $response = $e->getResponse();
+                        $response->getHeaders()->addHeaderLine(
+                            'Location',
+                            $e->getRouter()->assemble(
+                                [],
+                                ['name' => 'login']));
+                        $response->setStatusCode(302);
+                        return $response;
+                    }
+                }
+
+                /**
+                 * Enforce Setup
+                 */
+                if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php') && $sRouteName != 'setup') {
+                    echo $sRouteName;
+                    echo 'no config yet';
+
                     $response = $e->getResponse();
                     $response->getHeaders()->addHeaderLine(
                         'Location',
                         $e->getRouter()->assemble(
                             [],
-                            ['name' => 'login']));
+                            ['name' => 'setup']));
                     $response->setStatusCode(302);
                     return $response;
                 }

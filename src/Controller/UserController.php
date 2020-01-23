@@ -22,6 +22,7 @@ use OnePlace\User\Model\UserTable;
 use Application\Controller\CoreController;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Session\Container;
 
 class UserController extends CoreController {
@@ -87,12 +88,6 @@ class UserController extends CoreController {
      */
     public function loginAction() {
         $this->layout('layout/login');
-
-        # Check if initial setup is already done
-        if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
-            // Setup
-            return $this->redirect()->toRoute('setup');
-        }
 
         # Check if user is already logged in
         if(isset(CoreController::$oSession->oUser)) {
@@ -555,5 +550,15 @@ class UserController extends CoreController {
         }
 
         return false;
+    }
+
+    public function setthemeAction() {
+        $sTheme = $this->params()->fromRoute('id','default');
+
+        $oThemeTbl = new TableGateway('user',$this->oDbAdapter);
+        $oThemeTbl->update(['theme'=>$sTheme],['User_ID'=>CoreController::$oSession->oUser->getID()]);
+        $this->flashMessenger()->addSuccessMessage('Please login again to see your new theme');
+
+        return $this->redirect()->toRoute('home');
     }
 }
