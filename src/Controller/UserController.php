@@ -116,6 +116,15 @@ class UserController extends CoreController {
                 }
             }
 
+            # Check Password
+            $sPasswordForm = $oRequest->getPost('plc_login_pass');
+            if(!password_verify($sPasswordForm,$oUser->password)) {
+                # Show Login Form
+                return new ViewModel([
+                    'sErrorMessage'=>'Wrong password',
+                ]);
+            }
+
             # Login Successful - redirect to Dashboard
             CoreController::$oSession->oUser = $oUser;
             return $this->redirect()->toRoute('home');
