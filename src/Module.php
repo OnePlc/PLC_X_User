@@ -31,9 +31,9 @@ class Module
     /**
      * Module Version
      *
-     * @since 1.0.2
+     * @since 1.0.3
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.0.3';
 
     /**
      * Load module config file
@@ -150,10 +150,19 @@ class Module
                     }
                 }
 
+                # Whitelisted routes that need no authentication
+                $aWhiteListedRoutes = [
+                    'tokenlogin' => [],
+                    'setup' => [],
+                    'login' => [],
+                    'reset-pw' => [],
+                    'forgot-pw' => [],
+                ];
+
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (!$bLoggedIn && $sRouteName != 'login' && $sRouteName != 'tokenlogin' && $sRouteName != 'setup') {
+                if (!$bLoggedIn && !array_key_exists($sRouteName,$aWhiteListedRoutes)) {
 
                     /**
                      * Setup before First Login
@@ -241,6 +250,14 @@ class Module
                 Controller\UserController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\UserController(
+                        $oDbAdapter,
+                        $container->get(Model\UserTable::class),
+                        $container
+                    );
+                },
+                Controller\AuthController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\AuthController(
                         $oDbAdapter,
                         $container->get(Model\UserTable::class),
                         $container

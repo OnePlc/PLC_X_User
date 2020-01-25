@@ -27,7 +27,7 @@ return [
                 'options' => [
                     'route'    => '/login',
                     'defaults' => [
-                        'controller' => Controller\UserController::class,
+                        'controller' => Controller\AuthController::class,
                         'action'     => 'login',
                     ],
                 ],
@@ -37,7 +37,7 @@ return [
                 'options' => [
                     'route'    => '/tokenlogin',
                     'defaults' => [
-                        'controller' => Controller\UserController::class,
+                        'controller' => Controller\AuthController::class,
                         'action'     => 'tokenlogin',
                     ],
                 ],
@@ -47,7 +47,7 @@ return [
                 'options' => [
                     'route'    => '/logout',
                     'defaults' => [
-                        'controller' => Controller\UserController::class,
+                        'controller' => Controller\AuthController::class,
                         'action'     => 'logout',
                     ],
                 ],
@@ -57,8 +57,32 @@ return [
                 'options' => [
                     'route'    => '/denied',
                     'defaults' => [
-                        'controller' => Controller\UserController::class,
+                        'controller' => Controller\AuthController::class,
                         'action'     => 'denied',
+                    ],
+                ],
+            ],
+            'forgot-pw' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/forgot-password',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'forgot',
+                    ],
+                ],
+            ],
+            'reset-pw' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/reset-password[/:username[/:token]]',
+                    'constraints' => [
+                        'username' => '[a-zA-Z0-9]*',
+                        'token' => '[a-zA-Z0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'reset',
                     ],
                 ],
             ],

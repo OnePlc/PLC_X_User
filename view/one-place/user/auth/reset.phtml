@@ -1,0 +1,34 @@
+<?php
+?>
+<form action="" method="POST">
+    <h2>Reset Password</h2>
+    <?php if(isset($sErrorMessage)) { ?>
+        <div class="alert alert-danger">
+            <?=$sErrorMessage?>
+        </div>
+    <?php } ?>
+    <?php if(isset($sSuccessMessage)) { ?>
+        <div class="alert alert-success">
+            <?=$sSuccessMessage?>
+        </div>
+    <?php } else { ?>
+    <div class="md-form">
+        <p><?=$this->translate('Set your new password here.')?></p>
+    </div>
+        <div class="md-form">
+            <input type="password" id="plc_login_pass" name="plc_login_pass" value="" class="form-control" />
+            <label for="plc_login_pass"><?=$this->translate('New Password')?></label>
+        </div>
+        <div class="md-form">
+            <input type="password" id="plc_login_pass_repeat" name="plc_login_pass_repeat" value="" class="form-control" />
+            <label for="plc_login_pass_repeat"><?=$this->translate('Repeat Password')?></label>
+        </div>
+    <div class="md-form">
+        <input type="hidden" name="plc_login_user" value="<?=$iUserID?>" />
+        <input type="hidden" name="plc_login_token" value="<?=$sToken?>" />
+        <button type="submit" value="Save Password" class="btn-floating btn btn-dark">
+            <?=$this->translate('Save Password')?>
+        </button>
+    </div>
+    <?php } ?>
+</form>

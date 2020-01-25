@@ -81,91 +81,6 @@ class UserController extends CoreController {
     }
 
     /**
-     * User Login
-     *
-     * @return ViewModel|Request - View Object with Data from Controller|Redirect to Login
-     * @since 1.0.0
-     */
-    public function loginAction() {
-        $this->layout('layout/login');
-
-        # Check if user is already logged in
-        if(isset(CoreController::$oSession->oUser)) {
-            // already logged in
-            return $this->redirect()->toRoute('home');
-        }
-
-        # Get current Request - if post - perform login - otherwise show for,m
-        $oRequest = $this->getRequest();
-        if($oRequest->isPost()) {
-            # Get User from Login Form
-            $sUser = $oRequest->getPost('plc_login_user');
-
-            try {
-                # Try Login by E-Mail
-                $oUser = $this->oTableGateway->getSingle($sUser,'email');
-            } catch(\Exception $e) {
-                try {
-                    # Try Login by Username
-                    $oUser = $this->oTableGateway->getSingle($sUser,'username');
-                } catch(\Exception $e) {
-                    # Show Login Form
-                    return new ViewModel([
-                        'sErrorMessage'=>$e->getMessage(),
-                    ]);
-                }
-            }
-
-            # Check Password
-            $sPasswordForm = $oRequest->getPost('plc_login_pass');
-            if(!password_verify($sPasswordForm,$oUser->password)) {
-                # Show Login Form
-                return new ViewModel([
-                    'sErrorMessage'=>'Wrong password',
-                ]);
-            }
-
-            # Login Successful - redirect to Dashboard
-            CoreController::$oSession->oUser = $oUser;
-            return $this->redirect()->toRoute('home');
-        } else {
-            # Show Login Form
-            return new ViewModel();
-        }
-    }
-
-    /**
-     * User Logout
-     *
-     * @return Request - Redirect to Login
-     * @since 1.0.0
-     */
-    public function logoutAction() {
-        # Remove User from Session
-        unset(CoreController::$oSession->oUser);
-
-        # Back to Login
-        return $this->redirect()->toRoute('login');
-    }
-
-    /**
-     * Denied - No Permission Page
-     *
-     * @return ViewModel - View Object with Data from Controller
-     * @since 1.0.0
-     */
-    public function deniedAction() {
-        # Set Layout based on users theme
-        $this->setThemeBasedLayout('user');
-
-        $sPermission = $this->params()->fromRoute('id', 'Def');
-
-        return new ViewModel([
-            'sPermission'=>$sPermission,
-        ]);
-    }
-
-    /**
      * User Add Form
      *
      * @return ViewModel - View Object with Data from Controller
@@ -525,39 +440,6 @@ class UserController extends CoreController {
         echo json_encode($aReturn);
 
         # No View File
-        return false;
-    }
-
-    /**
-     * Token based login for Google and stuff
-     *
-     * @return bool no View File
-     * @since 1.0.1
-     */
-    public function tokenloginAction() {
-        $this->layout('layout/json');
-
-        $sToken = $_REQUEST['idtoken'];
-
-        $client = new \Google_Client(['client_id' => '865195135178-9riktlnk2jdknebbdj030j9nq7gdimvt.apps.googleusercontent.com']);  // Specify the CLIENT_ID of the app that accesses the backend
-        $payload = $client->verifyIdToken($sToken);
-        if ($payload) {
-            $sUserEmail = $payload['email'];
-            # Try Login by E-Mail
-            $oUser = $this->oTableGateway->getSingle($sUserEmail,'email');
-            # Login Successful - redirect to Dashboard
-            CoreController::$oSession->oUser = $oUser;
-            //var_dump($payload);
-            $userid = $payload['sub'];
-            // If request specified a G Suite domain:
-            //$domain = $payload['hd'];
-            echo 'is good for '.$userid;
-            return $this->redirect()->toRoute('home');
-        } else {
-            // Invalid ID token
-            echo 'not good';
-        }
-
         return false;
     }
 

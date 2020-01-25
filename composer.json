@@ -15,7 +15,8 @@
         "laminas/laminas-test": "^3.3.0"
     },
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "laminas/laminas-math": "^3.2"
     },
     "autoload": {
         "psr-4": {

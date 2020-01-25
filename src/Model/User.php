@@ -55,6 +55,22 @@ class User extends CoreEntityModel {
     public $password;
 
     /**
+     * User Password reset token
+     *
+     * @var string hashed token
+     * @since 1.0.3
+     */
+    public $password_reset_token;
+
+    /**
+     * Date when token was generated
+     *
+     * @var datetime timer for password reset
+     * @since 1.0.3
+     */
+    public $password_reset_date;
+
+    /**
      * User Selected Theme
      *
      * @var string selected theme name
@@ -89,6 +105,10 @@ class User extends CoreEntityModel {
         # User Form Tabs
         if(!isset(CoreEntityModel::$aEntityTables['user-form-tabs'])) {
             CoreEntityModel::$aEntityTables['user-form-tabs'] = new TableGateway('user_form_tab', CoreEntityModel::$oDbAdapter);
+        }
+        # User
+        if(!isset(CoreEntityModel::$aEntityTables['user'])) {
+            CoreEntityModel::$aEntityTables['user'] = new TableGateway('user', CoreEntityModel::$oDbAdapter);
         }
         # User Form Fields
         if(!isset(CoreEntityModel::$aEntityTables['user-form-fields'])) {
@@ -134,6 +154,8 @@ class User extends CoreEntityModel {
         $this->username = !empty($data['username']) ? $data['username'] : '';
         $this->full_name = !empty($data['full_name']) ? $data['full_name'] : '';
         $this->password = !empty($data['password']) ? $data['password'] : '';
+        $this->password_reset_token = !empty($data['password_reset_token']) ? $data['password_reset_token'] : '';
+        $this->password_reset_date = !empty($data['password_reset_date']) ? $data['password_reset_date'] : '0000-00-00 00:00:00';
         $this->theme = !empty($data['theme']) ? $data['theme'] : 'default';
     }
 
@@ -456,5 +478,18 @@ class User extends CoreEntityModel {
 
             $iSortID++;
         }
+    }
+
+    /**
+     * Set Password Reset Token and Timer
+     *
+     * @param string $sTokenHash BCRYPT hashed token
+     * @since 1.0.3
+     */
+    public function setPasswordResetToken($sTokenHash) {
+        CoreEntityModel::$aEntityTables['user']->update([
+            'password_reset_token'=>$sTokenHash,
+            'password_reset_date'=>date('Y-m-d H:i:s',time()),
+        ],['User_ID'=>$this->getID()]);
     }
 }

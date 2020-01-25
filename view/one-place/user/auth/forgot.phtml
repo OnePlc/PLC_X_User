@@ -1,0 +1,28 @@
+<?php
+?>
+<form action="" method="POST">
+    <h2>Forgot Password</h2>
+    <?php if(isset($sErrorMessage)) { ?>
+        <div class="alert alert-danger">
+            <?=$sErrorMessage?>
+        </div>
+    <?php } ?>
+    <?php if(isset($sSuccessMessage)) { ?>
+        <div class="alert alert-success">
+            <?=$sSuccessMessage?>
+        </div>
+    <?php } else { ?>
+    <div class="md-form">
+        <p><?=$this->translate('In case you forgot your password, you can request a link to set a new one. Please enter your username or e-mail address below to get started.')?></p>
+    </div>
+    <div class="md-form">
+        <input type="text" id="plc_login_user" name="plc_login_user" value="" class="form-control" />
+        <label for="plc_login_user"><?=$this->translate('Username or E-Mail')?></label>
+    </div>
+    <div class="md-form">
+        <button type="submit" value="Login" class="btn-floating btn btn-dark">
+            <?=$this->translate('Get Password Reset Link')?>
+        </button>
+    </div>
+    <?php } ?>
+</form>
