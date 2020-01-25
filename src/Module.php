@@ -169,9 +169,9 @@ class Module
                     /**
                      * Setup before First Login
                      */
-                    if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php') && $sRouteName != 'setup') {
+                    if(!file_exists(__DIR__.'/../config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
-                        echo 'no config yet';
+                        echo 'no config yet1';
 
                         $response = $e->getResponse();
                         $response->getHeaders()->addHeaderLine(
@@ -196,9 +196,9 @@ class Module
                 /**
                  * Enforce Setup
                  */
-                if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php') && $sRouteName != 'setup') {
+                if(!file_exists(__DIR__.'/../config/autoload/local.php') && $sRouteName != 'setup') {
                     echo $sRouteName;
-                    echo 'no config yet';
+                    echo 'no config yet2';
 
                     $response = $e->getResponse();
                     $response->getHeaders()->addHeaderLine(
