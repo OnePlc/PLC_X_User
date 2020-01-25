@@ -116,3 +116,10 @@ INSERT INTO `user_xp_level` (`Level_ID`, `xp_total`) VALUES
 (58, 230990),
 (59, 238460),
 (60, 245790);
+
+--
+-- Default User XP Activities
+INSERT INTO `user_xp_activity` (`Activity_ID`, `xp_key`, `label`, `xp_base`) VALUES
+(1, 'login', 'Login', 10),
+(2, 'user-add', 'Add New User', 50),
+(3, 'user-edit', 'Edit User', 5);

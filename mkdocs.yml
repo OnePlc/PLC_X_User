@@ -6,6 +6,8 @@ nav:
   - 'Form Tabs': formtabs.md
   - 'Form Fields': formfields.md
   - 'Index Columns': indexcols.md
+  - Gameification:
+      - 'Experience': experience.md
 site_name: oneplace-user
 site_description: "onePlace User Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_User'

@@ -177,6 +177,9 @@ class UserController extends CoreController {
         $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
         $oUser->updateFormFields($aDataFields);
 
+        # Add XP for creating a new user
+        CoreController::$oSession->oUser->addXP('user-add');
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance('user-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -362,6 +365,9 @@ class UserController extends CoreController {
         # Update Form Fields
         $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
         $oUser->updateFormFields($aDataFields);
+
+        # Add XP for managing a user
+        CoreController::$oSession->oUser->addXP('user-edit');
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();

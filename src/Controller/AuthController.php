@@ -95,6 +95,10 @@ class AuthController extends CoreController {
 
             # Login Successful - redirect to Dashboard
             CoreController::$oSession->oUser = $oUser;
+
+            # Add XP for successful login
+            $oUser->addXP('login');
+
             return $this->redirect()->toRoute('home');
         } else {
             # Show Login Form

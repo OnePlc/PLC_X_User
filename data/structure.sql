@@ -120,6 +120,23 @@ ALTER TABLE `user_xp_level`
   MODIFY `Level_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
+-- User XP Activity
+--
+CREATE TABLE `user_xp_activity` (
+  `Activity_ID` int(11) NOT NULL,
+  `xp_key` varchar(100) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `xp_base` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `user_xp_activity`
+  ADD PRIMARY KEY (`Activity_ID`),
+  ADD UNIQUE KEY `xp_key` (`xp_key`);
+
+ALTER TABLE `user_xp_activity`
+  MODIFY `Activity_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
 -- Save
 --
 COMMIT;

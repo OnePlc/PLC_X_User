@@ -71,6 +71,30 @@ class User extends CoreEntityModel {
     public $password_reset_date;
 
     /**
+     * User Gameification - XP Level
+     *
+     * @var int $xp_level current level
+     * @since 1.0.4
+     */
+    public $xp_level;
+
+    /**
+     * User Gameification - Total XP
+     *
+     * @var int $xp_total total experience
+     * @since 1.0.4
+     */
+    public $xp_total;
+
+    /**
+     * User Gameification - Current XP
+     *
+     * @var int $xp_current current level experience
+     * @since 1.0.4
+     */
+    public $xp_current;
+
+    /**
      * User Selected Theme
      *
      * @var string selected theme name
@@ -157,6 +181,11 @@ class User extends CoreEntityModel {
         $this->password_reset_token = !empty($data['password_reset_token']) ? $data['password_reset_token'] : '';
         $this->password_reset_date = !empty($data['password_reset_date']) ? $data['password_reset_date'] : '0000-00-00 00:00:00';
         $this->theme = !empty($data['theme']) ? $data['theme'] : 'default';
+
+        # User XP Plugin
+        $this->xp_level = !empty($data['xp_level']) ? $data['xp_level'] : 1;
+        $this->xp_current = !empty($data['xp_current']) ? $data['xp_current'] : 0;
+        $this->xp_total = !empty($data['xp_total']) ? $data['xp_total'] : 0;
     }
 
     /**
@@ -491,5 +520,71 @@ class User extends CoreEntityModel {
             'password_reset_token'=>$sTokenHash,
             'password_reset_date'=>date('Y-m-d H:i:s',time()),
         ],['User_ID'=>$this->getID()]);
+    }
+
+    /**
+     * Get User Experience info
+     *
+     * @return array Experience info
+     * @since 1.0.4
+     */
+    public function getExperience() {
+        $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID'=>($this->xp_level+1)])->current();
+        $dPercent = 0;
+        if($this->xp_current != 0) {
+            $dPercent = round((100/($oNextLvl->xp_total/$this->xp_current)),2);
+        }
+
+        $aExp = [
+            'level'=>$this->xp_level,
+            'total'=>$this->xp_total,
+            'current'=>$this->xp_current,
+            'percent'=>$dPercent,
+        ];
+
+        return $aExp;
+    }
+
+    /**
+     * Grant user experience based on activity
+     *
+     * @param string $sXPKey name of activity
+     * @return bool true if successfull otherwise false
+     * @since 1.0.4
+     */
+    public function addXP($sXPKey) {
+        # Load XP Activity
+        $oActivity = CoreController::$aCoreTables['user-xp-activity']->select(['xp_key'=>$sXPKey]);
+        if(count($oActivity) > 0) {
+            # get activity
+            $oActivity = $oActivity->current();
+            # get base xp
+            $iXP = $oActivity->xp_base;
+            # get next level
+            $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID'=>($this->xp_level+1)])->current();
+
+            # calculate new level and experience
+            $iNewLvl = $this->xp_level;
+            $iCurrentXP = $this->xp_current;
+            if($oNextLvl->xp_total <= ($iCurrentXP+$iXP)) {
+                $iNewLvl++;
+                $iCurrentXP = ($this->xp_current+$iXP)-$oNextLvl->xp_total;
+            } else {
+                $iCurrentXP = $iCurrentXP+$iXP;
+            }
+            # Set new information to entity
+            $this->xp_level = $iNewLvl;
+            $this->xp_current = $iCurrentXP;
+            $this->xp_total = $this->xp_total+$iXP;
+
+            # save to database
+            CoreController::$aCoreTables['user']->update([
+                'xp_level'=>$this->xp_level,
+                'xp_total'=>$this->xp_total,
+                'xp_current'=>$this->xp_current,
+            ],['User_ID'=>$this->getID()]);
+        }
+
+        return false;
     }
 }

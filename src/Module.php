@@ -31,9 +31,9 @@ class Module
     /**
      * Module Version
      *
-     * @since 1.0.3
+     * @since 1.0.4
      */
-    const VERSION = '1.0.3';
+    const VERSION = '1.0.4';
 
     /**
      * Load module config file
@@ -113,6 +113,8 @@ class Module
 
                 $sRouteName = $routeMatch->getMatchedRouteName();
                 $aRouteInfo = $routeMatch->getParams();
+
+                $app->getMvcEvent()->getViewModel()->setVariables(['sRouteName'=>$sRouteName]);
 
                 # get session
                 $container = new Container('plcauth');
