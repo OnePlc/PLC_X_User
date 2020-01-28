@@ -15,6 +15,7 @@
 
 namespace OnePlace\User\Model;
 
+use Application\Controller\CoreController;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Select;
@@ -44,13 +45,26 @@ class UserTable {
     /**
      * Fetch All Users
      *
+     * @param bool $bPaginated paginate results
+     * @param array $aWhere filter results
      * @return mixed
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false)
+    public function fetchAll($bPaginated = false,$aWhere = [])
     {
         $oSel = new Select($this->tableGateway->getTable());
+        # Build where
+        $oWh = new Where();
+        foreach(array_keys($aWhere) as $sWh) {
+            $bIsLike = stripos($sWh,'-like');
+            if($bIsLike === false) {
 
+            } else {
+                # its a like
+                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
+            }
+        }
+        $oSel->where($oWh);
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {
             # Create result set for user entity
@@ -134,5 +148,24 @@ class UserTable {
         $this->tableGateway->update($data, ['User_ID' => $id]);
 
         return $id;
+    }
+
+    /**
+     * Generate daily stats for skeleton
+     *
+     * @since 1.0.5
+     */
+    public function generateDailyStats() {
+        # get all skeletons
+        $iTotal = count($this->fetchAll(false));
+        # get newly created skeletons
+        $iNew = count($this->fetchAll(false,['created_date-like'=>date('Y-m-d',time())]));
+
+        # add statistics
+        CoreController::$aCoreTables['core-statistic']->insert([
+            'stats_key'=>'user-daily',
+            'data'=>json_encode(['new'=>$iNew,'total'=>$iTotal]),
+            'date'=>date('Y-m-d H:i:s',time()),
+        ]);
     }
 }

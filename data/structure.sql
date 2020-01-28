@@ -33,7 +33,11 @@ CREATE TABLE `user` (
   `items_per_page` int(4) NOT NULL DEFAULT 25,
   `button_icon_position` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'left',
   `form_label_spacing` int(3) NOT NULL DEFAULT 8,
-  `theme` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'default'
+  `theme` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'default',
+  `created_by` int(11) NOT NULL,
+  `created_date` datetime NOT NULL,
+  `modified_by` int(11) NOT NULL,
+  `modified_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `user`
@@ -54,6 +58,18 @@ CREATE TABLE `user_form_field` (
 
 ALTER TABLE `user_form_field`
   ADD PRIMARY KEY (`user_idfs`,`field_idfs`);
+
+--
+-- User Widgets
+--
+CREATE TABLE `core_widget_user` (
+  `user_idfs` int(11) NOT NULL,
+  `widget_idfs` int(11) NOT NULL,
+  `sort_id` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_widget_user`
+  ADD PRIMARY KEY (`user_idfs`,`widget_idfs`);
 
 --
 -- User Form Tab Mapping

@@ -1,8 +1,8 @@
 --
 -- Core Form
 --
-INSERT INTO `core_form` (`form_key`, `label`) VALUES
-('user-single', 'User');
+INSERT INTO `core_form` (`form_key`, `label`, `entity_class`, `entity_tbl_class`) VALUES
+('user-single', 'User', 'OnePlace\\User\\Model\\User', 'OnePlace\\User\\Model\\UserTable');
 
 --
 -- Core Form Button
@@ -121,7 +121,14 @@ INSERT INTO `user_xp_level` (`Level_ID`, `xp_total`) VALUES
 
 --
 -- Default User XP Activities
+--
 INSERT INTO `user_xp_activity` (`Activity_ID`, `xp_key`, `label`, `xp_base`) VALUES
 (1, 'login', 'Login', 10),
 (2, 'user-add', 'Add New User', 50),
 (3, 'user-edit', 'Edit User', 5);
+
+--
+-- Default Widgets
+--
+INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VALUES
+(NULL, 'user_dailystats', 'User- Daily Stats', 'index-User\\Controller\\UserController');
