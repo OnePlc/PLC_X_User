@@ -24,7 +24,8 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 (NULL, 'partial', 'Columns', 'indexcolumns', 'user-columns', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Tabs', 'tabs', 'user-tabs', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Fields', 'formfields', 'user-fields', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
-(NULL, 'partial', 'Widgets', 'widgets', 'user-widgets', 'user-single', 'col-md-12', '', '', '0', '1', '0', '', '', '');
+(NULL, 'partial', 'Widgets', 'widgets', 'user-widgets', 'user-single', 'col-md-12', '', '', '0', '1', '0', '', '', ''),
+(NULL, 'featuredimage', 'Featured Image', 'featured_image', 'user-base', 'user-single', 'col-md-3', '', '', '0', '1', '0', '', '', '');
 
 --
 -- Core Form Tab

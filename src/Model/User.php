@@ -181,6 +181,7 @@ class User extends CoreEntityModel {
         $this->password_reset_token = !empty($data['password_reset_token']) ? $data['password_reset_token'] : '';
         $this->password_reset_date = !empty($data['password_reset_date']) ? $data['password_reset_date'] : '0000-00-00 00:00:00';
         $this->theme = !empty($data['theme']) ? $data['theme'] : 'default';
+        $this->featured_image = !empty($data['featured_image']) ? $data['featured_image'] : '';
 
         # User XP Plugin
         $this->xp_level = !empty($data['xp_level']) ? $data['xp_level'] : 1;
