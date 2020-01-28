@@ -1,0 +1,25 @@
+<div class="row">
+    <?php
+    # Get Partial Data
+    $aWidgetsByForm = $this->aPartialData['aWidgets'];
+    $aUserWidgets = $this->aPartialData['aUserWidgets'];
+
+    # Print List with all Modules and Widgets
+    foreach($aWidgetsByForm as $oWidget) {
+        if(array_key_exists($oWidget->Widget_ID,$aUserWidgets)) {
+            $bHasPerm = true;
+        } ?>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-widgets[]" value="<?=$oWidget->Widget_ID?>" />
+                         <?=$oWidget->label?>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    ?>
+</div>

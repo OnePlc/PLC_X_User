@@ -1,0 +1,39 @@
+<?php
+# Get Partial Data
+$aWidgetsByForm = $this->aPartialData['aWidgets'];
+$aUserWidgets = $this->aPartialData['aUserWidgets'];
+
+# Print List with all Modules and Widgets
+foreach(array_keys($aWidgetsByForm) as $sWidgetle) {
+    $oForm = $aWidgetsByForm[$sWidgetle]['oForm'];
+    $aWidgets = $aWidgetsByForm[$sWidgetle]['aWidgets']; ?>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><?=$oForm->label?></h3>
+            </div>
+
+            <div class="card-body">
+                <ul class="list-group" style="display: inline-block; width:100%;">
+                    <?php foreach($aWidgets as $oWidget) {
+                        //var_dump($oField);
+                        $bHasPerm = false;
+
+                        if(array_key_exists($oForm->form_key,$aUserWidgets)) {
+                            if(array_key_exists($oWidget->Widget_ID,$aUserWidgets[$oForm->form_key])) {
+                                $bHasPerm = true;
+                            }
+                        }
+                        ?>
+                        <li class="list-group-item col-md-6" style="position: relative; float:left;">
+                            <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-widgets[]" value="<?=$oWidget->Widget_ID?>_<?=$oForm->form_key?>" />
+                            <?=$oWidget->title?>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+

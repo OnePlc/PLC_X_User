@@ -23,7 +23,8 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 (NULL, 'partial', 'Permissions', 'permissions', 'user-permissions', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Columns', 'indexcolumns', 'user-columns', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Tabs', 'tabs', 'user-tabs', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
-(NULL, 'partial', 'Fields', 'formfields', 'user-fields', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', '');
+(NULL, 'partial', 'Fields', 'formfields', 'user-fields', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
+(NULL, 'partial', 'Widgets', 'widgets', 'user-widgets', 'user-single', 'col-md-12', '', '', '0', '1', '0', '', '', '');
 
 --
 -- Core Form Tab
@@ -33,7 +34,8 @@ INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `cou
 ('user-columns', 'user-single', 'Columns', 'Index Info', 'fas fa-columns', '', 0, '', ''),
 ('user-fields', 'user-single', 'Fields', 'Form fields', 'fas fa-edit', '', 0, '', ''),
 ('user-permissions', 'user-single', 'Permissions', 'What is allowed', 'fas fa-key', '', 0, '', ''),
-('user-tabs', 'user-single', 'Tabs', 'Form tabs', 'fas fa-bars', '', 0, '', '');
+('user-tabs', 'user-single', 'Tabs', 'Form tabs', 'fas fa-bars', '', 0, '', ''),
+('user-widgets', 'user-single', 'Widgets', 'Dashboard Widgets', 'fas fa-window-restore', '', 0, '', '');
 
 --
 -- Core Index Table

@@ -177,6 +177,10 @@ class UserController extends CoreController {
         $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
         $oUser->updateFormFields($aDataFields);
 
+        # Update Widgets
+        $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-widgets'])) ? $_REQUEST[$this->sSingleForm.'-widgets'] : [];
+        $oUser->updateWidgets($aDataFields);
+
         # Add XP for creating a new user
         CoreController::$oSession->oUser->addXP('user-add');
 
@@ -236,6 +240,13 @@ class UserController extends CoreController {
             'aUserTabs'=>$oUser->getMyTabs(),
         ];
         $this->setPartialData('tabs',$aPartialData);
+
+        # Get User Widgets
+        $aPartialData = [
+            'aWidgets'=>$this->getWidgets(),
+            'aUserWidgets'=>$oUser->getMyWidgets(),
+        ];
+        $this->setPartialData('widgets',$aPartialData);
 
         # Get User Fields
         $aPartialData = [
@@ -308,6 +319,13 @@ class UserController extends CoreController {
             ];
             $this->setPartialData('tabs',$aPartialData);
 
+            # Get User Widgets
+            $aPartialData = [
+                'aWidgets'=>$this->getWidgets(),
+                'aUserWidgets'=>$oUser->getMyWidgets(),
+            ];
+            $this->setPartialData('widgets',$aPartialData);
+
             # Get User Fields
             $aPartialData = [
                 'aFields'=>$this->getFormFields(),
@@ -365,6 +383,10 @@ class UserController extends CoreController {
         # Update Form Fields
         $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
         $oUser->updateFormFields($aDataFields);
+
+        # Update Widgets
+        $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-widgets'])) ? $_REQUEST[$this->sSingleForm.'-widgets'] : [];
+        $oUser->updateWidgets($aDataFields);
 
         # Add XP for managing a user
         CoreController::$oSession->oUser->addXP('user-edit');
@@ -452,7 +474,7 @@ class UserController extends CoreController {
     public function setthemeAction() {
         $sTheme = $this->params()->fromRoute('id','default');
 
-        $oThemeTbl = new TableGateway('user',$this->oDbAdapter);
+        $oThemeTbl = new TableGateway('user',CoreController::$oDbAdapter);
         $oThemeTbl->update(['theme'=>$sTheme],['User_ID'=>CoreController::$oSession->oUser->getID()]);
         $this->flashMessenger()->addSuccessMessage('Please login again to see your new theme');
 

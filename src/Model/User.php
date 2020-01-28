@@ -587,4 +587,56 @@ class User extends CoreEntityModel {
 
         return false;
     }
+
+    public function getMyWidgets() {
+        $aMyWidgets = [];
+
+        # Get Current Widgets Settings for user - so we don't loose them
+        $oMyWidgetsSel = new Select(CoreController::$aCoreTables['user-widget']->getTable());
+        $oMyWidgetsSel->join(['core_widget'=>'core_widget'],'core_widget.Widget_ID = core_widget_user.widget_idfs');
+        $oMyWidgetsSel->where(['core_widget_user.user_idfs'=>$this->getID()]);
+        $oMyWidgetsSel->order('core_widget_user.sort_id ASC');
+        $aCurrentWidgetsDB = CoreController::$aCoreTables['user-widget']->selectWith($oMyWidgetsSel);
+        foreach($aCurrentWidgetsDB as $oWidCur) {
+            $aMyWidgets[$oWidCur->widget_idfs] = $oWidCur;
+        }
+
+        return $aMyWidgets;
+    }
+
+    /**
+     * Update Users Widgets
+     *
+     * @param array $aWidgetData
+     * @since 1.0.5
+     */
+    public function updateWidgets(array $aWidgetData) {
+        # Get Current Widgets Settings for user - so we don't loose them
+        $aCurrentWidgetsDB = CoreController::$aCoreTables['user-widget']->select(['user_idfs'=>$this->getID()]);
+        $aCurrentWidgets = [];
+        foreach($aCurrentWidgetsDB as $oWidCur) {
+            $aCurrentWidgets[$oWidCur->widget_idfs] = $oWidCur;
+        }
+        # Delete all widgets
+        $aMyWidgetsDB = CoreController::$aCoreTables['user-widget']->delete(['user_idfs'=>$this->getID()]);
+
+        # merge new settings with default settings
+        $aBaseWidgets = [];
+        $aIndexColumns = array_merge($aBaseWidgets,$aWidgetData);
+        $iSortID = 0;
+
+        # Add new settings
+        foreach($aWidgetData as $iWidgetID) {
+            if(is_numeric($iWidgetID) && !empty($iWidgetID)) {
+                # insert new setting
+                CoreController::$aCoreTables['user-widget']->insert([
+                    'widget_idfs' => $iWidgetID,
+                    'user_idfs' => $this->getID(),
+                    'sort_id' => $iSortID,
+                ]);
+
+                $iSortID++;
+            }
+        }
+    }
 }
