@@ -168,4 +168,8 @@ class UserTable {
             'date'=>date('Y-m-d H:i:s',time()),
         ]);
     }
+
+    public function updateAttribute($sAttribute,$sVal,$sIDKey,$iEntityID) {
+        CoreController::$aCoreTables['user']->update([$sAttribute=>$sVal],['User_ID'=>$iEntityID]);
+    }
 }

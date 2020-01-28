@@ -34,6 +34,7 @@ CREATE TABLE `user` (
   `button_icon_position` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'left',
   `form_label_spacing` int(3) NOT NULL DEFAULT 8,
   `theme` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'default',
+  `featured_image` VARCHAR(255) NOT NULL DEFAULT '',
   `created_by` int(11) NOT NULL,
   `created_date` datetime NOT NULL,
   `modified_by` int(11) NOT NULL,
