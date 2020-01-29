@@ -3,12 +3,13 @@ site_dir: docs/html
 nav:
   - Home: index.md
   - Permissions: permissions.md
-  - 'Forms':
+  - 'User based settings':
     - 'Form Tabs': formtabs.md
     - 'Form Fields': formfields.md
+    - 'Indexes': indexcols.md
+    - 'Widgets': widgets.md
   - 'Api': api.md
-  - 'Indexes': indexcols.md
-  - 'Widgets': widgets.md
+  - 'Seats': seats.md
   - Gameification:
       - 'Experience': experience.md
 site_name: oneplace-user
