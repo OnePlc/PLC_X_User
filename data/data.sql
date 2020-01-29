@@ -53,7 +53,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('index', 'OnePlace\\User\\Controller\\UserController', 'Index', 'Users', '/user', 1),
 ('updateindexcolumnsort', 'OnePlace\\User\\Controller\\UserController', 'Update Column Index', '', '', 0),
 ('settheme', 'OnePlace\\User\\Controller\\UserController', 'Set own Theme', '', '', 0),
-('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0);
+('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0),
+('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1);
 
 --
 -- Default Leveling Settings

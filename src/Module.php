@@ -265,6 +265,14 @@ class Module
                         $container
                     );
                 },
+                Controller\ApiController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\ApiController(
+                        $oDbAdapter,
+                        $container->get(Model\UserTable::class),
+                        $container
+                    );
+                },
             ],
         ];
     }
