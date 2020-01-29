@@ -132,6 +132,12 @@ class UserTable {
         $id = (int) $user->id;
 
         if ($id === 0) {
+            # add dates
+            $data['created_by'] = CoreController::$oSession->oUser->getID();
+            $data['created_date'] = date('Y-m-d H:i:s',time());
+            $data['modified_by'] = CoreController::$oSession->oUser->getID();
+            $data['modified_date'] = date('Y-m-d H:i:s',time());
+
             $this->tableGateway->insert($data);
             return $this->tableGateway->lastInsertValue;
         }
@@ -144,6 +150,10 @@ class UserTable {
                 $id
             ));
         }
+
+        # add modified date
+        $data['modified_by'] = CoreController::$oSession->oUser->getID();
+        $data['modified_date'] = date('Y-m-d H:i:s',time());
 
         $this->tableGateway->update($data, ['User_ID' => $id]);
 

@@ -71,12 +71,22 @@ class UserController extends CoreController {
         $oPaginator->setCurrentPageNumber($iPage);
         $oPaginator->setItemCountPerPage(3);
 
+        # set to -1 to disable
+        $iSeatsLeft = -1;
+        if(isset(CoreController::$aGlobalSettings['user-limit'])) {
+            $iLimit = CoreController::$aGlobalSettings['user-limit'];
+            $iSeatsUsed = count($this->oTableGateway->fetchAll(false));
+            $iSeatsLeft = $iLimit-$iSeatsUsed;
+        }
+
+
         $aMeasureEnd = getrusage();
         $this->logPerfomance('user-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         return new ViewModel([
             'sTableName'=>'user-index',
             'aItems'=>$oPaginator,
+            'iSeatsLeft'=>$iSeatsLeft,
         ]);
     }
 
@@ -92,6 +102,20 @@ class UserController extends CoreController {
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
+
+        # check if a licence is set
+        $iSeatsLeft = -1;
+        if(isset(CoreController::$aGlobalSettings['user-limit'])) {
+            $iLimit = CoreController::$aGlobalSettings['user-limit'];
+            $iSeatsUsed = count($this->oTableGateway->fetchAll(false));
+            # there must be at least 1 seat left
+            $iSeatsLeft = $iLimit-$iSeatsUsed;
+            if($iSeatsLeft == 0) {
+                # Display Success Message and View New User
+                $this->flashMessenger()->addErrorMessage('no seats left');
+                return $this->redirect()->toRoute('user');
+            }
+        }
 
         # Display Add Form
         if(!$oRequest->isPost()) {
