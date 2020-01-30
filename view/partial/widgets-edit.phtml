@@ -6,6 +6,7 @@
 
     # Print List with all Modules and Widgets
     foreach($aWidgetsByForm as $oWidget) {
+        $bHasPerm = false;
         if(array_key_exists($oWidget->Widget_ID,$aUserWidgets)) {
             $bHasPerm = true;
         } ?>
