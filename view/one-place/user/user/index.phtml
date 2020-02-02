@@ -1,17 +1,27 @@
-<?php if($iSeatsLeft != -1) { ?>
-    <?php if($iSeatsLeft == 0) { ?>
-    <div class="alert alert-danger">You have no seats left. <a href="/store/list/seats">add more seats</a> to your licence</div>
-    <!-- Remove User Add Button if no seats left -->
-        <script>
-            $('.plc-button-panel a').each(function() {
-                if($(this).attr('href') == '/user/add') {
-                    $(this).remove();
-                }
-            })
-        </script>
-        <!-- Remove User Add Button if no seats left -->
-    <?php } else { ?>
-    <div class="alert alert-info">You have <?=$iSeatsLeft?> seats left.</div>
-    <?php } ?>
-<?php } ?>
-<?= $this->partial('partial/indextable', ['sTableName'=>$sTableName,'aItems'=>$aItems,'sRoute'=>(isset($sRoute)) ? $sRoute : explode('-',$sTableName)[0]]); ?>
+<div class="card">
+    <div class="card-header">
+        <?= $this->partial('partial/indexheader',['sTitle'=>'Users']) ?>
+    </div>
+    <div class="card-body py-0">
+        <?php if($iSeatsLeft != -1) { ?>
+            <?php if($iSeatsLeft == 0) { ?>
+                <div class="alert alert-danger">You have no seats left. <a href="/store/list/seats">add more seats</a> to your licence</div>
+                <!-- Remove User Add Button if no seats left -->
+                <script>
+                    $('.plc-button-panel a').each(function() {
+                        if($(this).attr('href') == '/user/add') {
+                            $(this).remove();
+                        }
+                    })
+                </script>
+                <!-- Remove User Add Button if no seats left -->
+            <?php } else { ?>
+                <div class="alert alert-info">You have <?=$iSeatsLeft?> seats left.</div>
+            <?php } ?>
+        <?php } ?>
+        <?= $this->partial('partial/indextable', ['sTableName'=>$sTableName,'aItems'=>$aItems]); ?>
+    </div>
+    <div class="card-footer">
+        <?= $this->partial('partial/indexpager', ['aItems'=>$aItems,'sRoute'=>(isset($sRoute)) ? $sRoute : explode('-',$sTableName)[0]]); ?>
+    </div>
+</div>
