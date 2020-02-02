@@ -58,6 +58,11 @@ class UserController extends CoreController {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
+        # Set Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Users'],
+        ];
+
         # Add Buttons for breadcrumb
         $this->setViewButtons('user-index');
 
@@ -99,6 +104,12 @@ class UserController extends CoreController {
     public function addAction() {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
+
+        # Set Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Users','href'=>'/user'],
+            (object)['label'=>'Add User'],
+        ];
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
@@ -279,6 +290,12 @@ class UserController extends CoreController {
         ];
         $this->setPartialData('formfields',$aPartialData);
 
+        # Set Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Users','href'=>'/user'],
+            (object)['label'=>$oUser->getLabel()],
+        ];
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance('user-view',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -356,6 +373,12 @@ class UserController extends CoreController {
                 'aUserFields'=>$oUser->getMyFormFields(),
             ];
             $this->setPartialData('formfields',$aPartialData);
+
+            # Set Links for Breadcrumb
+            $this->layout()->aNavLinks = [
+                (object)['label'=>'Users','href'=>'/user'],
+                (object)['label'=>'Edit User'],
+            ];
 
             # Log Performance in DB
             $aMeasureEnd = getrusage();
@@ -503,5 +526,19 @@ class UserController extends CoreController {
         $this->flashMessenger()->addSuccessMessage('Please login again to see your new theme');
 
         return $this->redirect()->toRoute('logout');
+    }
+
+    public function profileAction() {
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout('user');
+
+        return new ViewModel([]);
+    }
+
+    public function settingsAction() {
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout('user');
+
+        return new ViewModel([]);
     }
 }

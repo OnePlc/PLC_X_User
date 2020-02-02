@@ -1,0 +1,30 @@
+<?php
+use Application\Controller\CoreController;
+?>
+<div class="row">
+    <div class="col-md-4 py-4 px-4">
+        <?=$this->partial('partial/usernav',[])?>
+    </div>
+    <div class="col-md-8 py-4 px-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><?=$this->translate('Settings')?></h3>
+            </div>
+            <div class="card-body">
+                <form action="" method="POST">
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Theme')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <?=CoreController::$oSession->oUser->getTheme()?> -
+                            <a href="<?=$this->url('application',['action'=>'themes'])?>">
+                                <?=$this->translate('Change theme')?>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
