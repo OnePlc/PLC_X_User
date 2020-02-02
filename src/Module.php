@@ -31,9 +31,9 @@ class Module
     /**
      * Module Version
      *
-     * @since 1.0.6
+     * @since 1.0.7
      */
-    const VERSION = '1.0.6';
+    const VERSION = '1.0.7';
 
     /**
      * Load module config file
@@ -44,35 +44,6 @@ class Module
     public function getConfig() : array
     {
         return include __DIR__ . '/../config/module.config.php';
-    }
-
-    /**
-     * Init module, add hooks
-     *
-     * @param ModuleManager $moduleManager
-     * @since 1.0.0
-     */
-    public function init(ModuleManager $moduleManager)
-    {
-        // Remember to keep the init() method as lightweight as possible
-        $events = $moduleManager->getEventManager();
-        $events->attach('loadModules.post', [$this, 'modulesLoaded']);
-    }
-
-    /**
-     * Final configuration after all modules are loaded
-     *
-     * @param Event $e
-     * @since 1.0.0
-     */
-    public function modulesLoaded(Event $e)
-    {
-        // This method is called once all modules are loaded.
-        $moduleManager = $e->getTarget();
-        $loadedModules = $moduleManager->getLoadedModules();
-
-        // To get the configuration from another module named 'FooModule'
-        $config = $moduleManager->getModule('OnePlace\User')->getConfig();
     }
 
     /**
@@ -146,9 +117,18 @@ class Module
                  */
                 $bIsApiController = stripos($aRouteInfo['controller'],'ApiController');
                 if(isset($_REQUEST['authkey']) && $bIsApiController !== false) {
-                    # todo: replace with database based authkey list so keys can be revoked
-                    if($_REQUEST['authkey'] == 'DEVRANDOMKEY') {
-                        $bLoggedIn = true;
+                    try {
+                        # Do Authtoken login
+                        $oKeysTbl = new TableGateway('core_api_key',$oDbAdapter);
+                        $oKeyActive = $oKeysTbl->select(['token'=>$_REQUEST['authkey']]);
+                        if(count($oKeyActive) > 0) {
+                            $oKey = $oKeyActive->current();
+                            if(password_verify($_REQUEST['authtoken'],$oKey->token_key)) {
+                                $bLoggedIn = true;
+                            }
+                        }
+                    } catch(\RuntimeException $e) {
+
                     }
                 }
 

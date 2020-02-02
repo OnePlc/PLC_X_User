@@ -8,11 +8,15 @@
         $sModule = str_replace(['\\'],['-'],$sModule); ?>
         <li class="list-group-item">
             <div class="row">
-                <div class="col-md-4">
-                    <?=$sModule?>
+                <div class="col-md-3">
+                    <?=str_replace(['OnePlace-','Controller-'],['',''],$sModule)?>
                 </div>
-                <div class="col-md-8">
-                    <div class="row">
+                <div class="col-md-2">
+                    <a href="#" class="btn btn-light plc-user-permissions-selectall">Select all</a>
+                    <a href="#" class="btn btn-light plc-user-permissions-unselectall">Unselect all</a>
+                </div>
+                <div class="col-md-7">
+                    <div class="row plc-user-permission-list">
                         <?php
                         foreach($aPermissonsByModules[$sModule] as $oPerm) {
                             $sModule = str_replace(['\\'],['-'],$sModule);

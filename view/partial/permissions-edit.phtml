@@ -1,37 +1,41 @@
 <ul class="list-group">
     <?php
-# Get Partial Data
-$aPermissonsByModules = $this->aPartialData['aPermissions'];
-$aUserPermissions = $this->aPartialData['aUserPermissions'];
+    # Get Partial Data
+    $aPermissonsByModules = $this->aPartialData['aPermissions'];
+    $aUserPermissions = $this->aPartialData['aUserPermissions'];
 
-# Print List with all Modules and Permissions
-foreach(array_keys($aPermissonsByModules) as $sModule) {
-    $sModule = str_replace(['\\'],['-'],$sModule); ?>
-    <li class="list-group-item">
-        <div class="row">
-            <div class="col-md-4">
-                <?=$sModule?>
-            </div>
-            <div class="col-md-8">
-                <div class="row">
-                <?php
-                foreach($aPermissonsByModules[$sModule] as $oPerm) {
-                    $sModule = str_replace(['\\'],['-'],$sModule);
-                    $bHasPerm = false;
-                    if(array_key_exists($sModule,$aUserPermissions)) {
-                        if(array_key_exists($oPerm->permission_key,$aUserPermissions[$sModule])) {
-                            $bHasPerm = true;
-                        }
-                    } ?>
-                    <div class="col-md-4">
-                        <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-permissions[]" value="<?=$oPerm->permission_key?>-<?=$sModule?>" />
-                        <?=$oPerm->label?>
+    # Print List with all Modules and Permissions
+    foreach(array_keys($aPermissonsByModules) as $sModule) {
+        $sModule = str_replace(['\\'],['-'],$sModule); ?>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-3">
+                    <?=str_replace(['OnePlace-','Controller-'],['',''],$sModule)?>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" class="btn btn-light plc-user-permissions-selectall">Select all</a>
+                    <a href="#" class="btn btn-light plc-user-permissions-unselectall">Unselect all</a>
+                </div>
+                <div class="col-md-7">
+                    <div class="row plc-user-permission-list">
+                        <?php
+                        foreach($aPermissonsByModules[$sModule] as $oPerm) {
+                            $sModule = str_replace(['\\'],['-'],$sModule);
+                            $bHasPerm = false;
+                            if(array_key_exists($sModule,$aUserPermissions)) {
+                                if(array_key_exists($oPerm->permission_key,$aUserPermissions[$sModule])) {
+                                    $bHasPerm = true;
+                                }
+                            } ?>
+                            <div class="col-md-4">
+                                <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-permissions[]" value="<?=$oPerm->permission_key?>-<?=$sModule?>" />
+                                <?=$oPerm->label?>
+                            </div>
+                        <?php } ?>
                     </div>
-                <?php } ?>
                 </div>
             </div>
-        </div>
-    </li>
-<?php
-} ?>
+        </li>
+        <?php
+    } ?>
 </ul>
