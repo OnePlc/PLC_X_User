@@ -1,3 +1,4 @@
+<ul class="list-group">
 <?php
 # Get Partial Data
 $aColumnsByTable = $this->aPartialData['aColumns'];
@@ -9,16 +10,17 @@ $aUserColumns = $this->aPartialData['aUserColumns'];
 foreach(array_keys($aColumnsByTable) as $sTable) {
     $oTbl = $aColumnsByTable[$sTable]['oTable'];
     $aFields = $aColumnsByTable[$sTable]['aFields']; ?>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><?=$oTbl->label?></h3>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-2">
+                <?=$oTbl->label?>
             </div>
-
-            <div class="card-body">
+            <div class="col-md-2">
                 <a href="#" class="btn btn-light plc-user-permissions-selectall">Select all</a>
                 <a href="#" class="btn btn-light plc-user-permissions-unselectall">Unselect all</a>
-                <ul class="list-group" style="display: inline-block; width:100%;">
+            </div>
+            <div class="col-md-8">
+                <div class="row plc-user-permission-list">
                     <?php foreach($aFields as $oField) {
                         //var_dump($oField);
                         $bHasPerm = false;
@@ -29,15 +31,17 @@ foreach(array_keys($aColumnsByTable) as $sTable) {
                             }
                         }
                         ?>
-                        <li class="list-group-item col-md-6" style="position: relative; float:left;">
+                        <div class="col-md-4">
                             <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-indexcolumns[]" value="<?=$oField->Field_ID?>-<?=$oTbl->table_name?>" />
                             <?=$oField->label?>
-                        </li>
+                        </div>
                     <?php } ?>
-                </ul>
+                </div>
             </div>
         </div>
-    </div>
+    </li>
 <?php
 }
+?>
+</ul>
 
