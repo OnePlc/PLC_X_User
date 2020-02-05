@@ -60,8 +60,12 @@ class UserTable {
             if($bIsLike === false) {
 
             } else {
+                $sFieldKey = substr($sWh,0,strlen($sWh)-strlen('-like'));
+                if($sFieldKey == 'label') {
+                    $sFieldKey = 'username';
+                }
                 # its a like
-                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
+                $oWh->like($sFieldKey,$aWhere[$sWh].'%');
             }
         }
         $oSel->where($oWh);
