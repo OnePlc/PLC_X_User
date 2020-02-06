@@ -454,6 +454,7 @@ class User extends CoreEntityModel {
         $oFieldsSel = new Select(CoreEntityModel::$aEntityTables['user-form-fields']->getTable());
         $oFieldsSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
         $oFieldsSel->where(['user_idfs'=>$this->getID()]);
+        $oFieldsSel->order('sort_id ASC');
 
         # Get My Fields from Database
         $oMyFieldsDB = CoreEntityModel::$aEntityTables['user-form-fields']->selectWith($oFieldsSel);
