@@ -30,38 +30,6 @@
         <!-- MDB core JavaScript -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
 
-        <meta name="google-signin-client_id" content="865195135178-9riktlnk2jdknebbdj030j9nq7gdimvt.apps.googleusercontent.com">
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <script>
-            function onSignIn(googleUser) {
-                var profile = googleUser.getBasicProfile();
-                var id_token = googleUser.getAuthResponse().id_token;
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/tokenlogin');
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    console.log('Signed in as: ' + xhr.responseText);
-                };
-                xhr.send('idtoken=' + id_token);
-                //window.location = '/';
-            }
-
-            function onFailure(error) {
-                console.log(error);
-            }
-
-            function renderButton() {
-                gapi.signin2.render('g-signin2', {
-                    'scope': 'profile email',
-                    'width': 240,
-                    'height': 50,
-                    'longtitle': true,
-                    'theme': 'dark',
-                    'onsuccess': onSignIn,
-                    'onfailure': onFailure
-                });
-            }
-        </script>
     </head>
     <body style="padding:0; overflow:hidden;">
         <div class="container-fluid px-0 py-0">
