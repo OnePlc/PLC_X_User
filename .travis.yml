@@ -46,6 +46,7 @@ before_script:
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
+  - if [[ $TEST_COVERAGE == 'true' ]]; then phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
 after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
