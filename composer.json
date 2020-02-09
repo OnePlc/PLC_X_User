@@ -14,7 +14,7 @@
     "require-dev": {
         "phpunit/phpunit": "^8",
         "laminas/laminas-test": "^3.3.0",
-        "oneplace/oneplace-core": "^1.0.16"
+        "oneplace/oneplace-core": "master-dev"
     },
     "require": {
         "php": "^7.1",
