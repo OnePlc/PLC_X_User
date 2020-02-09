@@ -30,7 +30,8 @@ use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 use Laminas\Math\Rand;
 
-class ApiController extends CoreController {
+class ApiController extends CoreController
+{
     /**
      * Skeleton Table Object
      *
@@ -60,7 +61,7 @@ class ApiController extends CoreController {
     public function indexAction() {
         $this->layout('layout/json');
 
-        $aReturn = ['state'=>'success','message'=>'Welcome to onePlace User API'];
+        $aReturn = ['state' => 'success','message' => 'Welcome to onePlace User API'];
         echo json_encode($aReturn);
 
         return false;
@@ -72,8 +73,8 @@ class ApiController extends CoreController {
 
         # Set Links for Breadcrumb
         $this->layout()->aNavLinks = [
-            (object)['label'=>'Users','href'=>'/user'],
-            (object)['label'=>'Add Api Key'],
+            (object)['label' => 'Users','href' => '/user'],
+            (object)['label' => 'Add Api Key'],
         ];
 
         # Get Request to decide wether to save or display form
@@ -96,7 +97,7 @@ class ApiController extends CoreController {
 
             # Pass Data to View
             return new ViewModel([
-                'sFormName'=>$this->sSingleForm,
+                'sFormName' => $this->sSingleForm,
             ]);
         }
 
@@ -133,7 +134,7 @@ class ApiController extends CoreController {
 
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('Api Key successfully created');
-        return $this->redirect()->toRoute('user-api',['action'=>'manage']);
+        return $this->redirect()->toRoute('user-api',['action' => 'manage']);
     }
 
     public function manageAction() {
@@ -149,8 +150,8 @@ class ApiController extends CoreController {
         $this->setIndexColumns('apikey-index');
 
         return new ViewModel([
-            'sTableName'=>'apikey-index',
-            'aItems'=>$oApiTbl->fetchAll(true),
+            'sTableName' => 'apikey-index',
+            'aItems' => $oApiTbl->fetchAll(true),
         ]);
     }
 
@@ -179,16 +180,6 @@ class ApiController extends CoreController {
             $sListLabel = $_REQUEST['listlabel'];
         }
 
-        /**
-         * todo: enforce to use /api/contact instead of /contact/api so we can do security checks in main api controller
-        if(!\Application\Controller\ApiController::$bSecurityCheckPassed) {
-        # Print List with all Entities
-        $aReturn = ['state'=>'error','message'=>'no direct access allowed','aItems'=>[]];
-        echo json_encode($aReturn);
-        return false;
-        }
-         **/
-
         # Init Item List for Response
         $aItems = [];
 
@@ -202,7 +193,7 @@ class ApiController extends CoreController {
         # only allow form fields as list labels
         if(!array_key_exists($sListLabel,$aFieldsByKey)) {
             $aReturn = [
-                'state'=>'error',
+                'state' => 'error',
                 'results' => [],
                 'message' => 'invalid list label',
             ];
@@ -238,7 +229,7 @@ class ApiController extends CoreController {
                         default:
                             break;
                     }
-                    $aItems[] = ['id'=>$oItem->getID(),'text'=>$sVal];
+                    $aItems[] = ['id' => $oItem->getID(),'text' => $sVal];
                 } else {
                     # Init public item
                     $aPublicItem = [];
@@ -251,14 +242,14 @@ class ApiController extends CoreController {
                                 $oTags = $oItem->getMultiSelectField($oField->fieldkey);
                                 $aTags = [];
                                 foreach($oTags as $oTag) {
-                                    $aTags[] = ['id'=>$oTag->id,'label'=>$oTag->text];
+                                    $aTags[] = ['id' => $oTag->id,'label' => $oTag->text];
                                 }
                                 $aPublicItem[$oField->fieldkey] = $aTags;
                                 break;
                             case 'select':
                                 # get selected
                                 $oTag = $oItem->getSelectField($oField->fieldkey);
-                                $aPublicItem[$oField->fieldkey] = ['id'=>$oTag->id,'label'=>$oTag->tag_value];
+                                $aPublicItem[$oField->fieldkey] = ['id' => $oTag->id,'label' => $oTag->tag_value];
                                 break;
                             case 'text':
                             case 'date':
@@ -281,7 +272,7 @@ class ApiController extends CoreController {
          * Build Select2 JSON Response
          */
         $aReturn = [
-            'state'=>'success',
+            'state' => 'success',
             'results' => $aItems,
             'pagination' => (object)['more'=>false],
         ];
@@ -309,13 +300,13 @@ class ApiController extends CoreController {
             $oItem = $this->oTableGateway->getSingle($iItemID);
         } catch (\RuntimeException $e) {
             # Display error message
-            $aReturn = ['state'=>'error','message'=>'User not found','oItem'=>[]];
+            $aReturn = ['state' => 'error','message' => 'User not found','oItem' => []];
             echo json_encode($aReturn);
             return false;
         }
 
         # Print Entity
-        $aReturn = ['state'=>'success','message'=>'User found','oItem'=>$oItem];
+        $aReturn = ['state' => 'success','message' => 'User found','oItem' => $oItem];
         echo json_encode($aReturn);
 
         return false;

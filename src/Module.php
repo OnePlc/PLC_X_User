@@ -64,7 +64,7 @@ class Module
         $sm = $app->getServiceManager();
         $app->getEventManager()->attach(
             'route',
-            function($e) {
+            function ($e) {
                 # get basic info from application
                 $app = $e->getApplication();
                 $routeMatch = $e->getRouteMatch();
@@ -80,19 +80,19 @@ class Module
                     'name'                => 'plcauth',
                 ]);
                 $manager = new SessionManager($config);
-**/
+                **/
 
                 $sRouteName = $routeMatch->getMatchedRouteName();
                 $aRouteInfo = $routeMatch->getParams();
 
-                $app->getMvcEvent()->getViewModel()->setVariables(['sRouteName'=>$sRouteName]);
+                $app->getMvcEvent()->getViewModel()->setVariables(['sRouteName' => $sRouteName]);
 
                 # get session
                 $container = new Container('plcauth');
                 $bLoggedIn = false;
 
                 # check if user is logged in
-                if(isset($container->oUser)) {
+                if (isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
 
@@ -100,7 +100,8 @@ class Module
 
                     $container->oUser->setAdapter($oDbAdapter);
 
-                    if(!$container->oUser->hasPermission($aRouteInfo['action'],$aRouteInfo['controller']) && $sRouteName != 'denied') {
+                    if(! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
+                        && $sRouteName != 'denied') {
                         $response = $e->getResponse();
                         $response->getHeaders()->addHeaderLine(
                             'Location',
@@ -116,11 +117,11 @@ class Module
                  * Api Login
                  */
                 $bIsApiController = stripos($aRouteInfo['controller'],'ApiController');
-                if(isset($_REQUEST['authkey']) && $bIsApiController !== false) {
+                if (isset($_REQUEST['authkey']) && $bIsApiController !== false) {
                     try {
                         # Do Authtoken login
                         $oKeysTbl = new TableGateway('core_api_key',$oDbAdapter);
-                        $oKeyActive = $oKeysTbl->select(['api_key'=>$_REQUEST['authkey']]);
+                        $oKeyActive = $oKeysTbl->select(['api_key' => $_REQUEST['authkey']]);
                         if(count($oKeyActive) > 0) {
                             $oKey = $oKeyActive->current();
                             if(password_verify($_REQUEST['authtoken'],$oKey->api_token)) {
@@ -144,12 +145,12 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (!$bLoggedIn && !array_key_exists($sRouteName,$aWhiteListedRoutes)) {
+                if (!$bLoggedIn && !array_key_exists($sRouteName, $aWhiteListedRoutes)) {
 
                     /**
                      * Setup before First Login
                      */
-                    if(!file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
+                    if(! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
                         echo 'no config yet3';
 

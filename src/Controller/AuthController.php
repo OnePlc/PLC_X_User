@@ -25,7 +25,8 @@ use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Session\Container;
 use Laminas\Math\Rand;
 
-class AuthController extends CoreController {
+class AuthController extends CoreController
+{
     /**
      * User Table Object
      *
@@ -79,7 +80,7 @@ class AuthController extends CoreController {
                 } catch(\Exception $e) {
                     # Show Login Form
                     return new ViewModel([
-                        'sErrorMessage'=>$e->getMessage(),
+                        'sErrorMessage' => $e->getMessage(),
                     ]);
                 }
             }
@@ -89,7 +90,7 @@ class AuthController extends CoreController {
             if(!password_verify($sPasswordForm,$oUser->password)) {
                 # Show Login Form
                 return new ViewModel([
-                    'sErrorMessage'=>'Wrong password',
+                    'sErrorMessage' => 'Wrong password',
                 ]);
             }
 
@@ -134,7 +135,7 @@ class AuthController extends CoreController {
         $sPermission = $this->params()->fromRoute('id', 'Def');
 
         return new ViewModel([
-            'sPermission'=>$sPermission,
+            'sPermission' => $sPermission,
         ]);
     }
 
@@ -202,7 +203,7 @@ class AuthController extends CoreController {
                     # user not found
                     # Show forgot form
                     return new ViewModel([
-                        'sErrorMessage'=>'User not found',
+                        'sErrorMessage' => 'User not found',
                     ]);
                 }
             } else {
@@ -213,7 +214,7 @@ class AuthController extends CoreController {
                     # user not found
                     # Show forgot form
                     return new ViewModel([
-                        'sErrorMessage'=>'User not found',
+                        'sErrorMessage' => 'User not found',
                     ]);
                 }
             }
@@ -229,14 +230,14 @@ class AuthController extends CoreController {
 
             # Send E-Mail
             $this->sendEmail('one-place/user/email/reset-password',[
-                'sResetUrl'=>$this->getSetting('app-url').'/reset-password/'.$sToken,
-                'sUserName'=>$oUser->getLabel(),
-                'sInstallInfo'=>'onePlace'
+                'sResetUrl' => $this->getSetting('app-url').'/reset-password/'.$sToken,
+                'sUserName' => $oUser->getLabel(),
+                'sInstallInfo' => 'onePlace'
             ],$oUser->getTextField('email'),$oUser->getTextField('full_name'),'Password Reset');
 
             # Display Success Messages
             return new ViewModel([
-                'sSuccessMessage'=>'E-Mail sent. Please check your inbox',
+                'sSuccessMessage' => 'E-Mail sent. Please check your inbox',
             ]);
         }
     }
@@ -262,7 +263,7 @@ class AuthController extends CoreController {
             } catch(\RuntimeException $e) {
                 # Display Success Messages
                 return new ViewModel([
-                    'sErrorMessage'=>'user '.$sUser.' not found',
+                    'sErrorMessage' => 'user '.$sUser.' not found',
                 ]);
             }
 
@@ -272,8 +273,8 @@ class AuthController extends CoreController {
                 if(strtotime($oUser->password_reset_date)+(3600*48) >= time()) {
                     # Display password reset form
                     return new ViewModel([
-                        'iUserID'=>$oUser->getID(),
-                        'sToken'=>$sToken,
+                        'iUserID' => $oUser->getID(),
+                        'sToken' => $sToken,
                     ]);
                 } else {
                     # Display Error Message
@@ -298,7 +299,7 @@ class AuthController extends CoreController {
             if($sPass != $sPassCheck) {
                 # Display Error Message
                 return new ViewModel([
-                    'sErrorMessage'=>'password do not match',
+                    'sErrorMessage' => 'password do not match',
                 ]);
             }
 
@@ -308,7 +309,7 @@ class AuthController extends CoreController {
             } catch(\RuntimeException $e) {
                 # Display Error Message
                 return new ViewModel([
-                    'sErrorMessage'=>'user not found',
+                    'sErrorMessage' => 'user not found',
                 ]);
             }
 
@@ -320,12 +321,12 @@ class AuthController extends CoreController {
 
                 # Display Success Messages
                 return new ViewModel([
-                    'sSuccessMessage'=>'New password set. You can now <a href="/login">login</a> with your new password.',
+                    'sSuccessMessage' => 'New password set. You can now <a href="/login">login</a> with your new password.',
                 ]);
             } else {
                 # Display Success Messages
                 return new ViewModel([
-                    'sErrorMessage'=>'invalid token',
+                    'sErrorMessage' => 'invalid token',
                 ]);
             }
         }
