@@ -39,7 +39,8 @@ class ApikeyTable
      * @param TableGateway $tableGateway
      * @since 1.0.0
      */
-    public function __construct(TableGateway $tableGateway) {
+    public function __construct(TableGateway $tableGateway)
+    {
         $this->tableGateway = $tableGateway;
     }
 
@@ -51,22 +52,21 @@ class ApikeyTable
      * @return mixed
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false,$aWhere = [])
+    public function fetchAll($bPaginated = false, $aWhere = [])
     {
         $oSel = new Select($this->tableGateway->getTable());
         # Build where
         $oWh = new Where();
-        foreach(array_keys($aWhere) as $sWh) {
-            $bIsLike = stripos($sWh,'-like');
+        foreach (array_keys($aWhere) as $sWh) {
+            $bIsLike = stripos($sWh, '-like');
             if ($bIsLike === false) {
-
             } else {
-                $sFieldKey = substr($sWh,0,strlen($sWh)-strlen('-like'));
+                $sFieldKey = substr($sWh, 0, strlen($sWh) - strlen('-like'));
                 if ($sFieldKey == 'label') {
                     $sFieldKey = 'username';
                 }
                 # its a like
-                $oWh->like($sFieldKey,$aWhere[$sWh].'%');
+                $oWh->like($sFieldKey, $aWhere[$sWh].'%');
             }
         }
         $oSel->where($oWh);
@@ -102,10 +102,11 @@ class ApikeyTable
      * @return mixed
      * @since 1.0.0
      */
-    public function getSingle($id,$key = 'Apikey_ID') {
+    public function getSingle($id, $key = 'Apikey_ID')
+    {
         $select = new Select($this->tableGateway->getTable());
         $where = new Where();
-        $where->like($key,$id);
+        $where->like($key, $id);
         $select->where($where);
         $rowset = $this->tableGateway->selectWith($select);
         $row = $rowset->current();
@@ -126,7 +127,8 @@ class ApikeyTable
      * @return int id
      * @since 1.0.0
      */
-    public function saveSingle(Apikey $user) {
+    public function saveSingle(Apikey $user)
+    {
         $data = [
             'api_key' => $user->api_key,
             'api_token' => $user->api_token,
@@ -137,9 +139,9 @@ class ApikeyTable
         if ($id === 0) {
             # add dates
             $data['created_by'] = CoreController::$oSession->oUser->getID();
-            $data['created_date'] = date('Y-m-d H:i:s',time());
+            $data['created_date'] = date('Y-m-d H:i:s', time());
             $data['modified_by'] = CoreController::$oSession->oUser->getID();
-            $data['modified_date'] = date('Y-m-d H:i:s',time());
+            $data['modified_date'] = date('Y-m-d H:i:s', time());
 
             $this->tableGateway->insert($data);
             return $this->tableGateway->lastInsertValue;
@@ -156,7 +158,7 @@ class ApikeyTable
 
         # add modified date
         $data['modified_by'] = CoreController::$oSession->oUser->getID();
-        $data['modified_date'] = date('Y-m-d H:i:s',time());
+        $data['modified_date'] = date('Y-m-d H:i:s', time());
 
         $this->tableGateway->update($data, ['Apikey_ID' => $id]);
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * UserControllerTest.php - Main Controller Test Class
  *
@@ -29,7 +30,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = true;
 
-    private function initFakeTestSession() {
+    private function initFakeTestSession()
+    {
         /**
          * Init Test Session to Fake Login
 
@@ -50,8 +52,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $configOverrides = [];
 
         $sAppFile = __DIR__.'/../../../../../config/application.config.php';
-        if (file_exists('/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php')) {
-            $sAppFile = '/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php';
+        $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
+        if (file_exists($sTravisBase.'/vendor/oneplace/oneplace-core/config/application.config.php')) {
+            $sAppFile = $sTravisBase.'/vendor/oneplace/oneplace-core/config/application.config.php';
         }
 
         $this->setApplicationConfig(ArrayUtils::merge(
@@ -69,17 +72,18 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertRedirectTo('/setup');
     }
 
-    public function testSetupSucceedsWithDefaultData() {
+    public function testSetupSucceedsWithDefaultData()
+    {
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
-                'setup_dbname'=>'travis',
-                'setup_dbhost'=>'localhost',
-                'setup_dbuser'=>'travis',
-                'setup_dbpass'=>'travis',
-                'setup_adminname'=>'plc_travis',
-                'setup_adminemail'=>'travis@1plc.ch',
-                'setup_adminpass'=>'1234',
-                'setup_adminpassrep'=>'1234',
+                'setup_dbname' => 'travis',
+                'setup_dbhost' => 'localhost',
+                'setup_dbuser' => 'travis',
+                'setup_dbpass' => 'travis',
+                'setup_adminname' => 'plc_travis',
+                'setup_adminemail' => 'travis@1plc.ch',
+                'setup_adminpass' => '1234',
+                'setup_adminpassrep' => '1234',
             ]));
         $this->dispatch('/setup');
         $this->assertRedirectTo('/login');

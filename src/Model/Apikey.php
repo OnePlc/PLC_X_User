@@ -45,7 +45,8 @@ class Apikey extends CoreEntityModel
      * @param AdapterInterface $oDbAdapter Database Connection
      * @since 1.0.0
      */
-    public function __construct($oDbAdapter) {
+    public function __construct($oDbAdapter)
+    {
         parent::__construct($oDbAdapter);
     }
 
@@ -55,10 +56,11 @@ class Apikey extends CoreEntityModel
      * @param array $data
      * @since 1.0.0
      */
-    public function exchangeArray(array $data) {
-        $this->id = !empty($data['Apikey_ID']) ? $data['Apikey_ID'] : 0;
-        $this->api_key = !empty($data['api_key']) ? $data['api_key'] : '';
-        $this->api_token = !empty($data['api_token']) ? $data['api_token'] : '';
+    public function exchangeArray(array $data)
+    {
+        $this->id = ! empty($data['Apikey_ID']) ? $data['Apikey_ID'] : 0;
+        $this->api_key = ! empty($data['api_key']) ? $data['api_key'] : '';
+        $this->api_token = ! empty($data['api_token']) ? $data['api_token'] : '';
     }
 
     /**
@@ -67,7 +69,8 @@ class Apikey extends CoreEntityModel
      * @return string
      * @since 1.0.0
      */
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->api_key;
     }
 }

@@ -39,7 +39,8 @@ class UserTable
      * @param TableGateway $tableGateway
      * @since 1.0.0
      */
-    public function __construct(TableGateway $tableGateway) {
+    public function __construct(TableGateway $tableGateway)
+    {
         $this->tableGateway = $tableGateway;
     }
 
@@ -51,21 +52,21 @@ class UserTable
      * @return mixed
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false,$aWhere = []) {
+    public function fetchAll($bPaginated = false, $aWhere = [])
+    {
         $oSel = new Select($this->tableGateway->getTable());
         # Build where
         $oWh = new Where();
-        foreach(array_keys($aWhere) as $sWh) {
-            $bIsLike = stripos($sWh,'-like');
+        foreach (array_keys($aWhere) as $sWh) {
+            $bIsLike = stripos($sWh, '-like');
             if ($bIsLike === false) {
-
             } else {
-                $sFieldKey = substr($sWh,0,strlen($sWh)-strlen('-like'));
+                $sFieldKey = substr($sWh, 0, strlen($sWh) - strlen('-like'));
                 if ($sFieldKey == 'label') {
                     $sFieldKey = 'username';
                 }
                 # its a like
-                $oWh->like($sFieldKey,$aWhere[$sWh].'%');
+                $oWh->like($sFieldKey, $aWhere[$sWh].'%');
             }
         }
         $oSel->where($oWh);
@@ -101,10 +102,11 @@ class UserTable
      * @return mixed
      * @since 1.0.0
      */
-    public function getSingle($id,$key = 'User_ID') {
+    public function getSingle($id, $key = 'User_ID')
+    {
         $select = new Select($this->tableGateway->getTable());
         $where = new Where();
-        $where->like($key,$id);
+        $where->like($key, $id);
         $select->where($where);
         $rowset = $this->tableGateway->selectWith($select);
         $row = $rowset->current();
@@ -125,7 +127,8 @@ class UserTable
      * @return int id
      * @since 1.0.0
      */
-    public function saveSingle(User $user) {
+    public function saveSingle(User $user)
+    {
         $data = [
             'username' => $user->username,
             'full_name' => $user->full_name,
@@ -138,9 +141,9 @@ class UserTable
         if ($id === 0) {
             # add dates
             $data['created_by'] = CoreController::$oSession->oUser->getID();
-            $data['created_date'] = date('Y-m-d H:i:s',time());
+            $data['created_date'] = date('Y-m-d H:i:s', time());
             $data['modified_by'] = CoreController::$oSession->oUser->getID();
-            $data['modified_date'] = date('Y-m-d H:i:s',time());
+            $data['modified_date'] = date('Y-m-d H:i:s', time());
 
             $this->tableGateway->insert($data);
             return $this->tableGateway->lastInsertValue;
@@ -157,7 +160,7 @@ class UserTable
 
         # add modified date
         $data['modified_by'] = CoreController::$oSession->oUser->getID();
-        $data['modified_date'] = date('Y-m-d H:i:s',time());
+        $data['modified_date'] = date('Y-m-d H:i:s', time());
 
         $this->tableGateway->update($data, ['User_ID' => $id]);
 
@@ -169,21 +172,23 @@ class UserTable
      *
      * @since 1.0.5
      */
-    public function generateDailyStats() {
+    public function generateDailyStats()
+    {
         # get all skeletons
         $iTotal = count($this->fetchAll(false));
         # get newly created skeletons
-        $iNew = count($this->fetchAll(false,['created_date-like' => date('Y-m-d',time())]));
+        $iNew = count($this->fetchAll(false, ['created_date-like' => date('Y-m-d', time())]));
 
         # add statistics
         CoreController::$aCoreTables['core-statistic']->insert([
             'stats_key' => 'user-daily',
             'data' => json_encode(['new' => $iNew,'total' => $iTotal]),
-            'date' => date('Y-m-d H:i:s',time()),
+            'date' => date('Y-m-d H:i:s', time()),
         ]);
     }
 
-    public function updateAttribute($sAttribute,$sVal,$sIDKey,$iEntityID) {
-        CoreController::$aCoreTables['user']->update([$sAttribute => $sVal],['User_ID' => $iEntityID]);
+    public function updateAttribute($sAttribute, $sVal, $sIDKey, $iEntityID)
+    {
+        CoreController::$aCoreTables['user']->update([$sAttribute => $sVal], ['User_ID' => $iEntityID]);
     }
 }

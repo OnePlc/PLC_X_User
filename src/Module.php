@@ -147,7 +147,7 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (! $bLoggedIn && !array_key_exists($sRouteName, $aWhiteListedRoutes)) {
+                if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
 
                     /**
                      * Setup before First Login
@@ -157,24 +157,14 @@ class Module
                         echo 'no config yet3';
 
                         $response = $e->getResponse();
-                        $response->getHeaders()->addHeaderLine(
-                            'Location',
-                            $e->getRouter()->assemble(
-                                [],
-                                ['name' => 'setup']
-                            )
-                        );
+                        $response->getHeaders()
+                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
                         $response->setStatusCode(302);
                         return $response;
                     } else {
                         $response = $e->getResponse();
-                        $response->getHeaders()->addHeaderLine(
-                            'Location',
-                            $e->getRouter()->assemble(
-                                [],
-                                ['name' => 'login']
-                            )
-                        );
+                        $response->getHeaders()
+                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
                         $response->setStatusCode(302);
                         return $response;
                     }
@@ -188,13 +178,8 @@ class Module
                     echo 'no config yet4';
 
                     $response = $e->getResponse();
-                    $response->getHeaders()->addHeaderLine(
-                        'Location',
-                        $e->getRouter()->assemble(
-                            [],
-                            ['name' => 'setup']
-                        )
-                    );
+                    $response->getHeaders()
+                        ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
                     $response->setStatusCode(302);
                     return $response;
                 }

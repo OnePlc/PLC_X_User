@@ -1,4 +1,5 @@
 <?php
+
 /**
  * UserController.php - Main Controller
  *
@@ -43,7 +44,8 @@ class AuthController extends CoreController
      * @param $oServiceManager
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager) {
+    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager)
+    {
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'user-single';
         parent::__construct($oDbAdapter, $oTableGateway, $oServiceManager);
@@ -55,7 +57,8 @@ class AuthController extends CoreController
      * @return ViewModel|Request - View Object with Data from Controller|Redirect to Login
      * @since 1.0.0
      */
-    public function loginAction() {
+    public function loginAction()
+    {
         $this->layout('layout/login');
 
         # Check if user is already logged in
@@ -72,12 +75,12 @@ class AuthController extends CoreController
 
             try {
                 # Try Login by E-Mail
-                $oUser = $this->oTableGateway->getSingle($sUser,'email');
-            } catch(\Exception $e) {
+                $oUser = $this->oTableGateway->getSingle($sUser, 'email');
+            } catch (\Exception $e) {
                 try {
                     # Try Login by Username
-                    $oUser = $this->oTableGateway->getSingle($sUser,'username');
-                } catch(\Exception $e) {
+                    $oUser = $this->oTableGateway->getSingle($sUser, 'username');
+                } catch (\Exception $e) {
                     # Show Login Form
                     return new ViewModel([
                         'sErrorMessage' => $e->getMessage(),
@@ -87,7 +90,7 @@ class AuthController extends CoreController
 
             # Check Password
             $sPasswordForm = $oRequest->getPost('plc_login_pass');
-            if (!password_verify($sPasswordForm, $oUser->password)) {
+            if (! password_verify($sPasswordForm, $oUser->password)) {
                 # Show Login Form
                 return new ViewModel([
                     'sErrorMessage' => 'Wrong password',
@@ -113,7 +116,8 @@ class AuthController extends CoreController
      * @return Request - Redirect to Login
      * @since 1.0.0
      */
-    public function logoutAction() {
+    public function logoutAction()
+    {
         # Remove User from Session
         unset(CoreController::$oSession->oUser);
         unset(CoreController::$oSession->aLicences);
@@ -128,7 +132,8 @@ class AuthController extends CoreController
      * @return ViewModel - View Object with Data from Controller
      * @since 1.0.0
      */
-    public function deniedAction() {
+    public function deniedAction()
+    {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
@@ -145,7 +150,8 @@ class AuthController extends CoreController
      * @return bool no View File
      * @since 1.0.1
      */
-    public function tokenloginAction() {
+    public function tokenloginAction()
+    {
         $this->layout('layout/json');
 
         $sToken = $_REQUEST['idtoken'];
@@ -155,7 +161,7 @@ class AuthController extends CoreController
         if ($payload) {
             $sUserEmail = $payload['email'];
             # Try Login by E-Mail
-            $oUser = $this->oTableGateway->getSingle($sUserEmail,'email');
+            $oUser = $this->oTableGateway->getSingle($sUserEmail, 'email');
             # Login Successful - redirect to Dashboard
             CoreController::$oSession->oUser = $oUser;
             //var_dump($payload);
@@ -178,28 +184,29 @@ class AuthController extends CoreController
      * @return ViewModel ViewModel with data
      * @since 1.0.2
      */
-    public function forgotAction() {
+    public function forgotAction()
+    {
         $this->layout('layout/login');
 
         # Get Request
         $oRequest = $this->getRequest();
 
         # Show forgot form if GET, parse form if POST
-        if (!$oRequest->isPost()) {
+        if (! $oRequest->isPost()) {
             # Show forgot form
             return new ViewModel([]);
         } else {
             # Get User / E-Mail from Form
             $sUser = $oRequest->getPost('plc_login_user');
 
-            $bIsEmailAddress = stripos($sUser,'@');
+            $bIsEmailAddress = stripos($sUser, '@');
             $oUser = false;
             if ($bIsEmailAddress === false) {
                 # its a username
                 # Check if we find user by username
                 try {
-                    $oUser = $this->oTableGateway->getSingle($sUser,'username');
-                } catch(\RuntimeException $e) {
+                    $oUser = $this->oTableGateway->getSingle($sUser, 'username');
+                } catch (\RuntimeException $e) {
                     # user not found
                     # Show forgot form
                     return new ViewModel([
@@ -209,8 +216,8 @@ class AuthController extends CoreController
             } else {
                 # Check if we find user by email
                 try {
-                    $oUser = $this->oTableGateway->getSingle($sUser,'email');
-                } catch(\RuntimeException $e) {
+                    $oUser = $this->oTableGateway->getSingle($sUser, 'email');
+                } catch (\RuntimeException $e) {
                     # user not found
                     # Show forgot form
                     return new ViewModel([
@@ -229,11 +236,11 @@ class AuthController extends CoreController
             $oUser->setPasswordResetToken($sTokenHash);
 
             # Send E-Mail
-            $this->sendEmail('one-place/user/email/reset-password',[
+            $this->sendEmail('one-place/user/email/reset-password', [
                 'sResetUrl' => $this->getSetting('app-url').'/reset-password/'.$sToken,
                 'sUserName' => $oUser->getLabel(),
                 'sInstallInfo' => 'onePlace'
-            ],$oUser->getTextField('email'),$oUser->getTextField('full_name'),'Password Reset');
+            ], $oUser->getTextField('email'), $oUser->getTextField('full_name'), 'Password Reset');
 
             # Display Success Messages
             return new ViewModel([
@@ -248,19 +255,20 @@ class AuthController extends CoreController
      * @return ViewModel
      * @since 1.0.3
      */
-    public function resetAction() {
+    public function resetAction()
+    {
         $this->layout('layout/login');
 
         $oRequest = $this->getRequest();
 
-        if (!$oRequest->isPost()) {
-            $sToken = $this->params()->fromRoute('token','none');
-            $sUser = $this->params()->fromRoute('username','none');
+        if (! $oRequest->isPost()) {
+            $sToken = $this->params()->fromRoute('token', 'none');
+            $sUser = $this->params()->fromRoute('username', 'none');
 
             # Try to get user with token
             try {
-                $oUser = $this->oTableGateway->getSingle($sUser,'username');
-            } catch(\RuntimeException $e) {
+                $oUser = $this->oTableGateway->getSingle($sUser, 'username');
+            } catch (\RuntimeException $e) {
                 # Display Success Messages
                 return new ViewModel([
                     'sErrorMessage' => 'user '.$sUser.' not found',
@@ -268,9 +276,9 @@ class AuthController extends CoreController
             }
 
             # Verify token
-            if (password_verify($sToken,$oUser->password_reset_token)) {
+            if (password_verify($sToken, $oUser->password_reset_token)) {
                 # Token shall be valid for only 48 hours
-                if (strtotime($oUser->password_reset_date)+(3600*48) >= time()) {
+                if (strtotime($oUser->password_reset_date) + (3600 * 48) >= time()) {
                     # Display password reset form
                     return new ViewModel([
                         'iUserID' => $oUser->getID(),
@@ -305,8 +313,8 @@ class AuthController extends CoreController
 
             # Try to get user with token
             try {
-                $oUser = $this->oTableGateway->getSingle($iUserID,'User_ID');
-            } catch(\RuntimeException $e) {
+                $oUser = $this->oTableGateway->getSingle($iUserID, 'User_ID');
+            } catch (\RuntimeException $e) {
                 # Display Error Message
                 return new ViewModel([
                     'sErrorMessage' => 'user not found',
@@ -314,14 +322,15 @@ class AuthController extends CoreController
             }
 
             # Verify token
-            if (password_verify($sToken,$oUser->password_reset_token)) {
+            if (password_verify($sToken, $oUser->password_reset_token)) {
                 # Set new password
-                $oUser->setTextField('password',password_hash($sPass,PASSWORD_BCRYPT));
+                $oUser->setTextField('password', password_hash($sPass, PASSWORD_BCRYPT));
                 $this->oTableGateway->saveSingle($oUser);
 
+                $sSuccess = 'New password set. You can now <a href="/login">login</a> with your new password.';
                 # Display Success Messages
                 return new ViewModel([
-                    'sSuccessMessage' => 'New password set. You can now <a href="/login">login</a> with your new password.',
+                    'sSuccessMessage' => $sSuccess,
                 ]);
             } else {
                 # Display Success Messages

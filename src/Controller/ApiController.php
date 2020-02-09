@@ -46,7 +46,8 @@ class ApiController extends CoreController
      * @param UserTable $oTableGateway
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager) {
+    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager)
+    {
         parent::__construct($oDbAdapter, $oTableGateway, $oServiceManager);
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'apikey-single';
@@ -58,7 +59,8 @@ class ApiController extends CoreController
      * @return bool - no View File
      * @since 1.0.0
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $this->layout('layout/json');
 
         $aReturn = ['state' => 'success','message' => 'Welcome to onePlace User API'];
@@ -67,7 +69,8 @@ class ApiController extends CoreController
         return false;
     }
 
-    public function addAction() {
+    public function addAction()
+    {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
@@ -81,7 +84,7 @@ class ApiController extends CoreController
         $oRequest = $this->getRequest();
 
         # Display Add Form
-        if (!$oRequest->isPost()) {
+        if (! $oRequest->isPost()) {
             # Add Buttons for breadcrumb
             $this->setViewButtons('apikey-single');
 
@@ -93,7 +96,9 @@ class ApiController extends CoreController
 
             # Log Performance in DB
             $aMeasureEnd = getrusage();
-            $this->logPerfomance('apikey-add',$this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime"), $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "stime"));
+            $sTimeOne = $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime");
+            $sTimeTwo = $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "stime");
+            $this->logPerfomance('apikey-add', $sTimeOne, $sTimeTwo);
 
             # Pass Data to View
             return new ViewModel([
@@ -103,11 +108,11 @@ class ApiController extends CoreController
 
         # Get and validate Form Data
         $aFormData = [];
-        foreach(array_keys($_REQUEST) as $sKey) {
-            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            switch($sFieldName) {
+        foreach (array_keys($_REQUEST) as $sKey) {
+            $sFieldName = substr($sKey, strlen($this->sSingleForm.'_'));
+            switch ($sFieldName) {
                 case 'api_token':
-                    $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
+                    $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey], PASSWORD_DEFAULT);
                     break;
                 case 'api_key':
                     $aFormData[$sFieldName] = $this->generateKey();
@@ -130,14 +135,16 @@ class ApiController extends CoreController
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();
-        $this->logPerfomance('apikey-save', $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime"), $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart,"stime"));
-
+        $sTimeOne = $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime");
+        $sTimeTwo = $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "stime");
+        $this->logPerfomance('apikey-save', $sTimeOne, $sTimeTwo);
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('Api Key successfully created');
         return $this->redirect()->toRoute('user-api', ['action' => 'manage']);
     }
 
-    public function manageAction() {
+    public function manageAction()
+    {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
@@ -161,7 +168,8 @@ class ApiController extends CoreController
      * @return bool - no View File
      * @since 1.0.0
      */
-    public function listAction() {
+    public function listAction()
+    {
         $this->layout('layout/json');
 
         # Set default values
@@ -186,12 +194,12 @@ class ApiController extends CoreController
         $aFields = $this->getFormFields('user-single');
         $aFieldsByKey = [];
         # fields are sorted by tab , we need an index with all fields
-        foreach($aFields as $oField) {
+        foreach ($aFields as $oField) {
             $aFieldsByKey[$oField->fieldkey] = $oField;
         }
 
         # only allow form fields as list labels
-        if (!array_key_exists($sListLabel,$aFieldsByKey)) {
+        if (! array_key_exists($sListLabel, $aFieldsByKey)) {
             $aReturn = [
                 'state' => 'error',
                 'results' => [],
@@ -207,13 +215,12 @@ class ApiController extends CoreController
         $oItemsDB = $this->oTableGateway->fetchAll(false);
         if (count($oItemsDB) > 0) {
             # Loop all items
-            foreach($oItemsDB as $oItem) {
-
+            foreach ($oItemsDB as $oItem) {
                 # Output depending on list mode
                 if ($bSelect2) {
                     $sVal = null;
                     # get value for list label field
-                    switch($aFieldsByKey[$sListLabel]->type) {
+                    switch ($aFieldsByKey[$sListLabel]->type) {
                         case 'select':
                             $oTag = $oItem->getSelectField($aFieldsByKey[$sListLabel]->fieldkey);
                             if ($oTag) {
@@ -235,13 +242,13 @@ class ApiController extends CoreController
                     $aPublicItem = [];
 
                     # add all fields to item
-                    foreach($aFields as $oField) {
-                        switch($oField->type) {
+                    foreach ($aFields as $oField) {
+                        switch ($oField->type) {
                             case 'multiselect':
                                 # get selected
                                 $oTags = $oItem->getMultiSelectField($oField->fieldkey);
                                 $aTags = [];
-                                foreach($oTags as $oTag) {
+                                foreach ($oTags as $oTag) {
                                     $aTags[] = ['id' => $oTag->id,'label' => $oTag->text];
                                 }
                                 $aPublicItem[$oField->fieldkey] = $aTags;
@@ -264,7 +271,6 @@ class ApiController extends CoreController
                     # add item to list
                     $aItems[] = $aPublicItem;
                 }
-
             }
         }
 
@@ -274,7 +280,7 @@ class ApiController extends CoreController
         $aReturn = [
             'state' => 'success',
             'results' => $aItems,
-            'pagination' => (object)['more'=>false],
+            'pagination' => (object)['more' => false],
         ];
 
         # Print List with all Entities
@@ -289,7 +295,8 @@ class ApiController extends CoreController
      * @return bool - no View File
      * @since 1.0.0
      */
-    public function getAction() {
+    public function getAction()
+    {
         $this->layout('layout/json');
 
         # Get Skeleton ID from route
@@ -312,7 +319,8 @@ class ApiController extends CoreController
         return false;
     }
 
-    private function generateKey() {
+    private function generateKey()
+    {
         $string = Rand::getString(32, 'abcdefghijklmnopqrstuvwxyz1234567890');
 
         $sKey = strtoupper(substr($string, 0, 4)) . '-' . strtoupper(substr($string, 4, 4));
