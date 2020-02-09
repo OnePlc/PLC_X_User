@@ -9,6 +9,9 @@ env:
     - COMPOSER_ARGS="--no-interaction"
     - COVERAGE_DEPS="php-coveralls/php-coveralls"
 
+services:
+  - mysql
+
 matrix:
   fast_finish: true
   include:
