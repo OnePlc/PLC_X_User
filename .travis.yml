@@ -21,6 +21,9 @@ matrix:
     - php: 7.2
       env:
         - DEPS=latest
+    - php: 7.2
+      env:
+        - DEPS=latest
         - CS_CHECK=true
 
 before_install:
