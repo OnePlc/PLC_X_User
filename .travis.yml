@@ -44,7 +44,6 @@ before_script:
   - chmod -R 777 /home/travis/build/OnePlc/PLC_X_User
 
 script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
 
 after_script:
