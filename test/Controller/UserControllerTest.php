@@ -74,7 +74,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             ->setPost(new Parameters([
                 'setup_dbname'=>'travis',
                 'setup_dbhost'=>'localhost',
-                'setup_dbuser'=>'travis',
+                'setup_dbuser'=>'root',
                 'setup_dbpass'=>'',
                 'setup_adminname'=>'plc_travis',
                 'setup_adminemail'=>'travis@1plc.ch',
