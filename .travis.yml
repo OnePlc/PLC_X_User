@@ -9,8 +9,8 @@ env:
     - COMPOSER_ARGS="--no-interaction"
     - COVERAGE_DEPS="php-coveralls/php-coveralls"
 
-services:
-  - mysql
+addons:
+  mariadb: '10.4'
 
 matrix:
   fast_finish: true
