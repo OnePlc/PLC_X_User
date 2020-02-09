@@ -57,7 +57,7 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1),
 ('profile', 'OnePlace\\User\\Controller\\UserController', 'Profile', '', '', 0),
 ('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0),
-('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0)
+('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0),
 ('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0);
 
 --
