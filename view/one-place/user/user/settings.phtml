@@ -23,6 +23,16 @@ use Application\Controller\CoreController;
                             </a>
                         </div>
                     </div>
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('API')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <a href="<?=$this->url('user-api',['action'=>'manage'])?>">
+                                <?=$this->translate('Manage API Keys')?>
+                            </a>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

@@ -31,9 +31,9 @@ class Module
     /**
      * Module Version
      *
-     * @since 1.0.9
+     * @since 1.0.0
      */
-    const VERSION = '1.0.9';
+    const VERSION = '1.0.10';
 
     /**
      * Load module config file
@@ -120,10 +120,10 @@ class Module
                     try {
                         # Do Authtoken login
                         $oKeysTbl = new TableGateway('core_api_key',$oDbAdapter);
-                        $oKeyActive = $oKeysTbl->select(['token'=>$_REQUEST['authkey']]);
+                        $oKeyActive = $oKeysTbl->select(['api_key'=>$_REQUEST['authkey']]);
                         if(count($oKeyActive) > 0) {
                             $oKey = $oKeyActive->current();
-                            if(password_verify($_REQUEST['authtoken'],$oKey->token_key)) {
+                            if(password_verify($_REQUEST['authtoken'],$oKey->api_token)) {
                                 $bLoggedIn = true;
                             }
                         }
@@ -213,6 +213,17 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\User($dbAdapter));
                     return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
+                },
+                # User Module - Base Model
+                Model\ApikeyTable::class => function($container) {
+                    $tableGateway = $container->get(Model\ApikeyTableGateway::class);
+                    return new Model\ApikeyTable($tableGateway);
+                },
+                Model\ApikeyTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Apikey($dbAdapter));
+                    return new TableGateway('core_api_key', $dbAdapter, null, $resultSetPrototype);
                 },
                 Model\UserPermissionGateway::class => function($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);

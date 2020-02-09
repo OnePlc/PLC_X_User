@@ -56,7 +56,9 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0),
 ('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1),
 ('profile', 'OnePlace\\User\\Controller\\UserController', 'Profile', '', '', 0),
-('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0);
+('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0),
+('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0)
+('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0);
 
 --
 -- Default Leveling Settings
@@ -136,3 +138,35 @@ INSERT INTO `user_xp_activity` (`Activity_ID`, `xp_key`, `label`, `xp_base`) VAL
 --
 INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VALUES
 (NULL, 'user_dailystats', 'User- Daily Stats', 'index-User\\Controller\\UserController');
+
+--
+-- Index for API Keys
+--
+INSERT INTO `core_index_table` (`table_name`, `form`, `label`) VALUES
+('apikey-index', 'apikey-single', 'API Key Index');
+
+--
+-- add button for index
+--
+INSERT INTO `core_form_button` (`Button_ID`, `label`, `icon`, `title`, `href`, `class`, `append`, `form`, `mode`, `filter_check`, `filter_value`) VALUES
+(NULL, 'Create API Key', 'fas fa-key', 'Create API Key', '/user/api/add', 'primary', '', 'apikey-index', 'link', '', ''),
+(NULL, 'Save Api Key', 'fas fa-save', 'Save Api Key', '#', 'primary saveForm', '', 'apikey-single', 'link', '', '');
+
+--
+-- form for api keys
+--
+INSERT INTO `core_form` (`form_key`, `label`, `entity_class`, `entity_tbl_class`) VALUES
+('apikey-single', 'API Key', 'OnePlace\\User\\Model\\Apikey', 'OnePlace\\User\\Model\\ApikeyTable');
+
+--
+-- tab for apikey form
+--
+INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `counter`, `sort_id`, `filter_check`, `filter_value`) VALUES
+('apikey-base', 'apikey-single', 'Api Key', 'Base', 'fas fa-cogs', '', '0', '', '');
+
+--
+-- form fields for api keys
+--
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
+(NULL, 'text', 'API Key', 'api_key', 'apikey-base', 'apikey-single', 'col-md-6', '', '', '0', '1', '0', '', '', ''),
+(NULL, 'text', 'API Token', 'api_token', 'apikey-base', 'apikey-single', 'col-md-6', '', '', '0', '1', '0', '', '', '');

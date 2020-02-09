@@ -154,6 +154,25 @@ ALTER TABLE `user_xp_activity`
   MODIFY `Activity_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
+-- Api Key Table
+--
+CREATE TABLE `core_api_key` (
+  `Apikey_ID` int(11) NOT NULL,
+  `api_token` varchar(255) NOT NULL,
+  `api_key` varchar(255) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_date` datetime NOT NULL,
+  `modified_by` int(11) NOT NULL,
+  `modified_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_api_key`
+  ADD PRIMARY KEY (`Apikey_ID`);
+
+ALTER TABLE `core_api_key`
+  MODIFY `Apikey_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Save
 --
 COMMIT;

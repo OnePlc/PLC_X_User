@@ -18,9 +18,17 @@ declare(strict_types=1);
 namespace OnePlace\User\Controller;
 
 use Application\Controller\CoreController;
+use OnePlace\User\Model\Apikey;
+use OnePlace\User\Model\ApikeyTable;
 use OnePlace\User\Model\UserTable;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\DbSelect;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Where;
+use Laminas\Math\Rand;
 
 class ApiController extends CoreController {
     /**
@@ -40,7 +48,7 @@ class ApiController extends CoreController {
     public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway,$oServiceManager) {
         parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
         $this->oTableGateway = $oTableGateway;
-        $this->sSingleForm = 'skeleton-single';
+        $this->sSingleForm = 'apikey-single';
     }
 
     /**
@@ -56,6 +64,94 @@ class ApiController extends CoreController {
         echo json_encode($aReturn);
 
         return false;
+    }
+
+    public function addAction() {
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout('user');
+
+        # Set Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Users','href'=>'/user'],
+            (object)['label'=>'Add Api Key'],
+        ];
+
+        # Get Request to decide wether to save or display form
+        $oRequest = $this->getRequest();
+
+        # Display Add Form
+        if(!$oRequest->isPost()) {
+            # Add Buttons for breadcrumb
+            $this->setViewButtons('apikey-single');
+
+            # Load Tabs for Add Form
+            $this->setViewTabs($this->sSingleForm);
+
+            # Load Fields for Add Form
+            $this->setFormFields($this->sSingleForm);
+
+            # Log Performance in DB
+            $aMeasureEnd = getrusage();
+            $this->logPerfomance('apikey-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
+            # Pass Data to View
+            return new ViewModel([
+                'sFormName'=>$this->sSingleForm,
+            ]);
+        }
+
+        # Get and validate Form Data
+        $aFormData = [];
+        foreach(array_keys($_REQUEST) as $sKey) {
+            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
+            switch($sFieldName) {
+                case 'api_token':
+                    $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
+                    break;
+                case 'api_key':
+                    $aFormData[$sFieldName] = $this->generateKey();
+                    break;
+                default:
+                    $aFormData[$sFieldName] = $_REQUEST[$sKey];
+                    break;
+            }
+        }
+
+        # Save Add Form
+        $oApiTbl = CoreController::$oServiceManager->get(ApikeyTable::class);
+        $oNewKey = new Apikey($this->oDbAdapter);
+        $oNewKey->exchangeArray($aFormData);
+        $iNewKeyID = $oApiTbl->saveSingle($oNewKey);
+        $oKey = $oApiTbl->getSingle($iNewKeyID);
+
+        # Add XP for creating a new api key
+        CoreController::$oSession->oUser->addXP('user-add');
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('apikey-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
+        # Display Success Message and View New User
+        $this->flashMessenger()->addSuccessMessage('Api Key successfully created');
+        return $this->redirect()->toRoute('user-api',['action'=>'manage']);
+    }
+
+    public function manageAction() {
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout('user');
+
+        $oApiTbl = CoreController::$oServiceManager->get(ApikeyTable::class);
+
+        # Add Buttons for breadcrumb
+        $this->setViewButtons('apikey-index');
+
+        # Set Table Rows for Index
+        $this->setIndexColumns('apikey-index');
+
+        return new ViewModel([
+            'sTableName'=>'apikey-index',
+            'aItems'=>$oApiTbl->fetchAll(true),
+        ]);
     }
 
     /**
@@ -223,5 +319,16 @@ class ApiController extends CoreController {
         echo json_encode($aReturn);
 
         return false;
+    }
+
+    private function generateKey() {
+        $string = Rand::getString(32, 'abcdefghijklmnopqrstuvwxyz1234567890');
+
+        $sKey = strtoupper(substr($string, 0, 4)) . '-' . strtoupper(substr($string, 4, 4));
+        $sKey .= '-' . strtoupper(substr($string, 8, 4)) . '-' . strtoupper(substr($string, 12, 4));
+        $sKey .= '-' . strtoupper(substr($string, 16, 4)) . '-' . strtoupper(substr($string, 20, 4));
+        $sKey .= '-' . strtoupper(substr($string, 24, 4)) . '-' . strtoupper(substr($string, 28, 4));
+
+        return $sKey;
     }
 }
