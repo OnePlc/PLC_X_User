@@ -45,11 +45,10 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         // such as sample view templates, path stacks, module_listener_options,
         // etc.
         $configOverrides = [];
-/**
+
         $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../../config/application.config.php',
             $configOverrides
-        ));**/
+        ));
 
         parent::setUp();
     }
