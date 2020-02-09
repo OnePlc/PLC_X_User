@@ -29,13 +29,13 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     private function initFakeTestSession() {
         /**
          * Init Test Session to Fake Login
-         */
+
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oSession = new Container('plcauth');
         $oTestUser = new TestUser($oDbAdapter);
         $oTestUser->exchangeArray(['full_name'=>'Test','email'=>'admin@1plc.ch','User_ID'=>1]);
-        $oSession->oUser = $oTestUser;
+        $oSession->oUser = $oTestUser; */
     }
 
     public function setUp() : void
@@ -45,11 +45,11 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         // such as sample view templates, path stacks, module_listener_options,
         // etc.
         $configOverrides = [];
-
+/**
         $this->setApplicationConfig(ArrayUtils::merge(
             include __DIR__ . '/../../../../config/application.config.php',
             $configOverrides
-        ));
+        ));**/
 
         parent::setUp();
     }
