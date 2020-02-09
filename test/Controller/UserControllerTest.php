@@ -46,56 +46,33 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         // etc.
         $configOverrides = [];
 
-        $this->setApplicationConfig($configOverrides);
-
-        # lets do initial setup here
+        $this->setApplicationConfig(ArrayUtils::merge(
+            include __DIR__ . '/../../../../../config/application.config.php',
+            $configOverrides
+        ));
 
         parent::setUp();
     }
 
-    public function testIndexActionCanBeAccessed()
+    public function testSetupIsLoadedOnFirstLoad()
     {
-        $this->initFakeTestSession();
-
-        $this->dispatch('/user', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('user');
-        $this->assertControllerName(UserController::class); // as specified in router's controller name alias
-        $this->assertControllerClass('UserController');
-        $this->assertMatchedRouteName('user');
-    }
-
-    public function testIndexActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->initFakeTestSession();
-
-        $this->dispatch('/user', 'GET');
-        $this->assertQuery('.container h1');
-    }
-
-    public function testLoginActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->dispatch('/login', 'GET');
-        $this->assertQuery('.container .plc-login-form');
-    }
-
-    public function testLoginSuccessActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->dispatch('/login', 'POST');
+        $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(302);
-        $oSession = new Container('plcauth');
-        if(!isset($oSession->oUser)) {
-            throw new \Exception(
-                'Session not found'
-            );
-        }
+        $this->assertRedirectTo('/setup');
     }
 
-    public function testLogoutActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->initFakeTestSession();
-
-        $this->dispatch('/logout', 'GET');
+    public function testSetupSucceedsWithDefaultData() {
+        $this->dispatch('/setup', 'POST', [
+            'setup_dbname'=>'plc_demo',
+            'setup_dbhost'=>'localhost',
+            'setup_dbuser'=>'travis',
+            'setup_dbpass'=>'',
+            'setup_adminname'=>'plc_travis',
+            'setup_adminemail'=>'travis@1plc.ch',
+            'setup_adminpass'=>'1234',
+            'setup_adminpassrep'=>'1234',
+        ]);
         $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('/login');
     }
 }
