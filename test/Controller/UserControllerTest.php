@@ -72,7 +72,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     public function testSetupSucceedsWithDefaultData() {
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
-                'setup_dbname'=>'plc_demo',
+                'setup_dbname'=>'travis',
                 'setup_dbhost'=>'localhost',
                 'setup_dbuser'=>'travis',
                 'setup_dbpass'=>'',

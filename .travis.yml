@@ -24,6 +24,7 @@ matrix:
         - CS_CHECK=true
 
 before_install:
+  - mysql -u travis --password="" < module/Application/data/travis.sql
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
 
 install:
