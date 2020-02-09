@@ -6,7 +6,6 @@ public/themes/vuze
 public/themes/ablepro
 data/cache/*
 !data/cache/.gitkeep
-phpunit.xml
 composer.lock
 .phpunit.result.cache
 docs/html/
