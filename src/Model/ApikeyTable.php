@@ -23,7 +23,8 @@ use Laminas\Db\Sql\Where;
 use Laminas\Paginator\Paginator;
 use Laminas\Paginator\Adapter\DbSelect;
 
-class ApikeyTable {
+class ApikeyTable
+{
     /**
      * User Table Object
      *

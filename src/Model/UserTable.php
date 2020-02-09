@@ -23,7 +23,8 @@ use Laminas\Db\Sql\Where;
 use Laminas\Paginator\Paginator;
 use Laminas\Paginator\Adapter\DbSelect;
 
-class UserTable {
+class UserTable
+{
     /**
      * User Table Object
      *
@@ -50,8 +51,7 @@ class UserTable {
      * @return mixed
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false,$aWhere = [])
-    {
+    public function fetchAll($bPaginated = false,$aWhere = []) {
         $oSel = new Select($this->tableGateway->getTable());
         # Build where
         $oWh = new Where();
@@ -173,17 +173,17 @@ class UserTable {
         # get all skeletons
         $iTotal = count($this->fetchAll(false));
         # get newly created skeletons
-        $iNew = count($this->fetchAll(false,['created_date-like'=>date('Y-m-d',time())]));
+        $iNew = count($this->fetchAll(false,['created_date-like' => date('Y-m-d',time())]));
 
         # add statistics
         CoreController::$aCoreTables['core-statistic']->insert([
-            'stats_key'=>'user-daily',
-            'data'=>json_encode(['new'=>$iNew,'total'=>$iTotal]),
-            'date'=>date('Y-m-d H:i:s',time()),
+            'stats_key' => 'user-daily',
+            'data' => json_encode(['new' => $iNew,'total' => $iTotal]),
+            'date' => date('Y-m-d H:i:s',time()),
         ]);
     }
 
     public function updateAttribute($sAttribute,$sVal,$sIDKey,$iEntityID) {
-        CoreController::$aCoreTables['user']->update([$sAttribute=>$sVal],['User_ID'=>$iEntityID]);
+        CoreController::$aCoreTables['user']->update([$sAttribute => $sVal],['User_ID' => $iEntityID]);
     }
 }

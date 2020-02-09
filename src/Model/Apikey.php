@@ -21,7 +21,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;
 
-class Apikey extends CoreEntityModel {
+class Apikey extends CoreEntityModel
+{
     /**
      * User E-Mail Address
      *

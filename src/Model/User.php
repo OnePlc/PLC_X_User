@@ -21,7 +21,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;
 
-class User extends CoreEntityModel {
+class User extends CoreEntityModel
+{
     /**
      * User E-Mail Address
      *
@@ -238,7 +239,7 @@ class User extends CoreEntityModel {
      * @since 1.0.0
      */
     public function getMyPermissions($sPermissionFilter = '',$bInfo = false) {
-        $aWhere = ['user_idfs'=>$this->getID()];
+        $aWhere = ['user_idfs' => $this->getID()];
         if($sPermissionFilter != '') {
             $aWhere['permission'] = $sPermissionFilter;
         }
@@ -251,7 +252,7 @@ class User extends CoreEntityModel {
                 $aMyPermsByModule[$sModule] = [];
             }
             if($bInfo) {
-                $oPermData = CoreController::$aCoreTables['permission']->select(['module'=>$oPerm->module,'permission_key'=>$oPerm->permission]);
+                $oPermData = CoreController::$aCoreTables['permission']->select(['module' => $oPerm->module,'permission_key' => $oPerm->permission]);
                 if(count($oPermData) > 0) {
                     $oPermData = $oPermData->current();
                     $aMyPermsByModule[$sModule][$oPerm->permission] = $oPermData;
@@ -284,7 +285,7 @@ class User extends CoreEntityModel {
      * @since 1.0.0
      */
     public function updatePermissions(array $aPermissions) {
-        $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->delete(['user_idfs'=>$this->getID()]);
+        $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->delete(['user_idfs' => $this->getID()]);
 
         $aBasePermissions = [];
         $aPermissions = array_merge($aBasePermissions,$aPermissions);
@@ -295,9 +296,9 @@ class User extends CoreEntityModel {
             $sModule = str_replace(['-'],['\\'],substr($sPermWithModule,strlen($sPermission.'-')));
 
             CoreEntityModel::$aEntityTables['user-permission']->insert([
-                'user_idfs'=>$this->getID(),
-                'permission'=>$sPermission,
-                'module'=>$sModule
+                'user_idfs' => $this->getID(),
+                'permission' => $sPermission,
+                'module' => $sModule
             ]);
             //echo 'save '.$sPermission.' mod '.$sModule;
         }
@@ -315,8 +316,8 @@ class User extends CoreEntityModel {
 
         # Build Query to get User Based Columns
         $oColumnSel = new Select(CoreEntityModel::$aEntityTables['user-table-cols']->getTable());
-        $oColumnSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_table_column.field_idfs');
-        $oColumnSel->where(['user_idfs'=>$this->getID()]);
+        $oColumnSel->join(['core_field' => 'core_form_field'],'core_field.Field_ID = user_table_column.field_idfs');
+        $oColumnSel->where(['user_idfs' => $this->getID()]);
 
         # Get Users Index Table Columns from DB
         $aMyColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->selectWith($oColumnSel);
@@ -337,13 +338,13 @@ class User extends CoreEntityModel {
      */
     public function updateIndexColumns(array $aIndexColumns) {
         # Get Current Columns Settings for user - so we don't loose them
-        $aCurrentColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->select(['user_idfs'=>$this->getID()]);
+        $aCurrentColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->select(['user_idfs' => $this->getID()]);
         $aCurrentColumns = [];
         foreach($aCurrentColumnsDB as $oColCur) {
             $aCurrentColumns[$oColCur->field_idfs] = $oColCur;
         }
         # Delete all settings
-        $aMyColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->delete(['user_idfs'=>$this->getID()]);
+        $aMyColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->delete(['user_idfs' => $this->getID()]);
 
         # merge new settings with default settings
         $aBaseColumns = [];
@@ -361,11 +362,11 @@ class User extends CoreEntityModel {
 
             # insert new setting
             CoreEntityModel::$aEntityTables['user-table-cols']->insert([
-                'tbl_name'=>$sTable,
-                'user_idfs'=>$this->getID(),
-                'field_idfs'=>$iFieldID,
-                'sortID'=>$iSortID,
-                'width'=>'20%',
+                'tbl_name' => $sTable,
+                'user_idfs' => $this->getID(),
+                'field_idfs' => $iFieldID,
+                'sortID' => $iSortID,
+                'width' => '20%',
             ]);
 
             $iSortID++;
@@ -383,8 +384,8 @@ class User extends CoreEntityModel {
 
         # Build Query to get User Based Columns
         $oTabsSel = new Select(CoreEntityModel::$aEntityTables['user-form-tabs']->getTable());
-        $oTabsSel->join(['core_tab'=>'core_form_tab'],'core_tab.Tab_ID = user_form_tab.tab_idfs');
-        $oTabsSel->where(['user_idfs'=>$this->getID()]);
+        $oTabsSel->join(['core_tab' => 'core_form_tab'],'core_tab.Tab_ID = user_form_tab.tab_idfs');
+        $oTabsSel->where(['user_idfs' => $this->getID()]);
 
         # Get My Tabs from Database
         $oMyTabsDB = CoreEntityModel::$aEntityTables['user-form-tabs']->selectWith($oTabsSel);
@@ -408,13 +409,13 @@ class User extends CoreEntityModel {
      */
     public function updateFormTabs(array $aTabData) {
         # Get Current Tab Settings for user - so we don't loose them
-        $aCurrentTabsDB = CoreEntityModel::$aEntityTables['user-form-tabs']->select(['user_idfs'=>$this->getID()]);
+        $aCurrentTabsDB = CoreEntityModel::$aEntityTables['user-form-tabs']->select(['user_idfs' => $this->getID()]);
         $aCurrentTabs = [];
         foreach($aCurrentTabsDB as $oTabCur) {
             $aCurrentTabs[$oTabCur->tab_idfs] = $oTabCur;
         }
         # Delete all tabs
-        $aMyTabsDB = CoreEntityModel::$aEntityTables['user-form-tabs']->delete(['user_idfs'=>$this->getID()]);
+        $aMyTabsDB = CoreEntityModel::$aEntityTables['user-form-tabs']->delete(['user_idfs' => $this->getID()]);
 
         # merge new settings with default settings
         $aBaseTabs = [];
@@ -432,9 +433,9 @@ class User extends CoreEntityModel {
 
             # insert new setting
             CoreEntityModel::$aEntityTables['user-form-tabs']->insert([
-                'tab_idfs'=>$sTabID,
-                'user_idfs'=>$this->getID(),
-                'sort_id'=>$iSortID,
+                'tab_idfs' => $sTabID,
+                'user_idfs' => $this->getID(),
+                'sort_id' => $iSortID,
             ]);
 
             $iSortID++;
@@ -452,8 +453,8 @@ class User extends CoreEntityModel {
 
         # Build Query to get User Based Columns
         $oFieldsSel = new Select(CoreEntityModel::$aEntityTables['user-form-fields']->getTable());
-        $oFieldsSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
-        $oFieldsSel->where(['user_idfs'=>$this->getID()]);
+        $oFieldsSel->join(['core_field' => 'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
+        $oFieldsSel->where(['user_idfs' => $this->getID()]);
         $oFieldsSel->order('sort_id ASC');
 
         # Get My Fields from Database
@@ -478,13 +479,13 @@ class User extends CoreEntityModel {
      */
     public function updateFormFields(array $aFieldData) {
         # Get Current Tab Settings for user - so we don't loose them
-        $aCurrentFieldsDB = CoreEntityModel::$aEntityTables['user-form-fields']->select(['user_idfs'=>$this->getID()]);
+        $aCurrentFieldsDB = CoreEntityModel::$aEntityTables['user-form-fields']->select(['user_idfs' => $this->getID()]);
         $aCurrentFields = [];
         foreach($aCurrentFieldsDB as $oFieldCur) {
             $aCurrentFields[$oFieldCur->field_idfs] = $oFieldCur;
         }
         # Delete all fields
-        $aMyFieldsDB = CoreEntityModel::$aEntityTables['user-form-fields']->delete(['user_idfs'=>$this->getID()]);
+        $aMyFieldsDB = CoreEntityModel::$aEntityTables['user-form-fields']->delete(['user_idfs' => $this->getID()]);
 
         # merge new settings with default settings
         $aBaseFields = [];
@@ -502,9 +503,9 @@ class User extends CoreEntityModel {
 
             # insert new setting
             CoreEntityModel::$aEntityTables['user-form-fields']->insert([
-                'field_idfs'=>$iFieldID,
-                'user_idfs'=>$this->getID(),
-                'sort_id'=>$iSortID,
+                'field_idfs' => $iFieldID,
+                'user_idfs' => $this->getID(),
+                'sort_id' => $iSortID,
             ]);
 
             $iSortID++;
@@ -519,9 +520,9 @@ class User extends CoreEntityModel {
      */
     public function setPasswordResetToken($sTokenHash) {
         CoreEntityModel::$aEntityTables['user']->update([
-            'password_reset_token'=>$sTokenHash,
-            'password_reset_date'=>date('Y-m-d H:i:s',time()),
-        ],['User_ID'=>$this->getID()]);
+            'password_reset_token' => $sTokenHash,
+            'password_reset_date' => date('Y-m-d H:i:s',time()),
+        ],['User_ID' => $this->getID()]);
     }
 
     /**
@@ -531,17 +532,17 @@ class User extends CoreEntityModel {
      * @since 1.0.4
      */
     public function getExperience() {
-        $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID'=>($this->xp_level+1)])->current();
+        $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID' => ($this->xp_level+1)])->current();
         $dPercent = 0;
         if($this->xp_current != 0) {
             $dPercent = round((100/($oNextLvl->xp_total/$this->xp_current)),2);
         }
 
         $aExp = [
-            'level'=>$this->xp_level,
-            'total'=>$this->xp_total,
-            'current'=>$this->xp_current,
-            'percent'=>$dPercent,
+            'level' => $this->xp_level,
+            'total' => $this->xp_total,
+            'current' => $this->xp_current,
+            'percent' => $dPercent,
         ];
 
         return $aExp;
@@ -556,14 +557,14 @@ class User extends CoreEntityModel {
      */
     public function addXP($sXPKey) {
         # Load XP Activity
-        $oActivity = CoreController::$aCoreTables['user-xp-activity']->select(['xp_key'=>$sXPKey]);
+        $oActivity = CoreController::$aCoreTables['user-xp-activity']->select(['xp_key' => $sXPKey]);
         if(count($oActivity) > 0) {
             # get activity
             $oActivity = $oActivity->current();
             # get base xp
             $iXP = $oActivity->xp_base;
             # get next level
-            $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID'=>($this->xp_level+1)])->current();
+            $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID' => ($this->xp_level+1)])->current();
 
             # calculate new level and experience
             $iNewLvl = $this->xp_level;
@@ -581,10 +582,10 @@ class User extends CoreEntityModel {
 
             # save to database
             CoreController::$aCoreTables['user']->update([
-                'xp_level'=>$this->xp_level,
-                'xp_total'=>$this->xp_total,
-                'xp_current'=>$this->xp_current,
-            ],['User_ID'=>$this->getID()]);
+                'xp_level' => $this->xp_level,
+                'xp_total' => $this->xp_total,
+                'xp_current' => $this->xp_current,
+            ],['User_ID' => $this->getID()]);
         }
 
         return false;
@@ -595,8 +596,8 @@ class User extends CoreEntityModel {
 
         # Get Current Widgets Settings for user - so we don't loose them
         $oMyWidgetsSel = new Select(CoreController::$aCoreTables['user-widget']->getTable());
-        $oMyWidgetsSel->join(['core_widget'=>'core_widget'],'core_widget.Widget_ID = core_widget_user.widget_idfs');
-        $oMyWidgetsSel->where(['core_widget_user.user_idfs'=>$this->getID()]);
+        $oMyWidgetsSel->join(['core_widget' => 'core_widget'],'core_widget.Widget_ID = core_widget_user.widget_idfs');
+        $oMyWidgetsSel->where(['core_widget_user.user_idfs' => $this->getID()]);
         $oMyWidgetsSel->order('core_widget_user.sort_id ASC');
         $aCurrentWidgetsDB = CoreController::$aCoreTables['user-widget']->selectWith($oMyWidgetsSel);
         foreach($aCurrentWidgetsDB as $oWidCur) {
@@ -614,13 +615,13 @@ class User extends CoreEntityModel {
      */
     public function updateWidgets(array $aWidgetData) {
         # Get Current Widgets Settings for user - so we don't loose them
-        $aCurrentWidgetsDB = CoreController::$aCoreTables['user-widget']->select(['user_idfs'=>$this->getID()]);
+        $aCurrentWidgetsDB = CoreController::$aCoreTables['user-widget']->select(['user_idfs' => $this->getID()]);
         $aCurrentWidgets = [];
         foreach($aCurrentWidgetsDB as $oWidCur) {
             $aCurrentWidgets[$oWidCur->widget_idfs] = $oWidCur;
         }
         # Delete all widgets
-        $aMyWidgetsDB = CoreController::$aCoreTables['user-widget']->delete(['user_idfs'=>$this->getID()]);
+        $aMyWidgetsDB = CoreController::$aCoreTables['user-widget']->delete(['user_idfs' => $this->getID()]);
 
         # merge new settings with default settings
         $aBaseWidgets = [];
