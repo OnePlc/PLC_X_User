@@ -93,7 +93,7 @@ class ApiController extends CoreController
 
             # Log Performance in DB
             $aMeasureEnd = getrusage();
-            $this->logPerfomance('apikey-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+            $this->logPerfomance('apikey-add',$this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime"), $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "stime"));
 
             # Pass Data to View
             return new ViewModel([
@@ -130,11 +130,11 @@ class ApiController extends CoreController
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();
-        $this->logPerfomance('apikey-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+        $this->logPerfomance('apikey-save', $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime"), $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('Api Key successfully created');
-        return $this->redirect()->toRoute('user-api',['action' => 'manage']);
+        return $this->redirect()->toRoute('user-api', ['action' => 'manage']);
     }
 
     public function manageAction() {

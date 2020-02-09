@@ -33,7 +33,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.10';
+    const VERSION = '1.0.11';
 
     /**
      * Load module config file
@@ -118,7 +118,7 @@ class Module
                 /**
                  * Api Login
                  */
-                $bIsApiController = stripos($aRouteInfo['controller'],'ApiController');
+                $bIsApiController = stripos($aRouteInfo['controller'], 'ApiController');
                 if (isset($_REQUEST['authkey']) && $bIsApiController !== false) {
                     try {
                         # Do Authtoken login
@@ -131,7 +131,7 @@ class Module
                             }
                         }
                     } catch (\RuntimeException $e) {
-
+                        # could not load auth key
                     }
                 }
 
@@ -147,7 +147,7 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (!$bLoggedIn && !array_key_exists($sRouteName, $aWhiteListedRoutes)) {
+                if (! $bLoggedIn && !array_key_exists($sRouteName, $aWhiteListedRoutes)) {
 
                     /**
                      * Setup before First Login
@@ -161,7 +161,9 @@ class Module
                             'Location',
                             $e->getRouter()->assemble(
                                 [],
-                                ['name' => 'setup']));
+                                ['name' => 'setup']
+                            )
+                        );
                         $response->setStatusCode(302);
                         return $response;
                     } else {
@@ -170,7 +172,9 @@ class Module
                             'Location',
                             $e->getRouter()->assemble(
                                 [],
-                                ['name' => 'login']));
+                                ['name' => 'login']
+                            )
+                        );
                         $response->setStatusCode(302);
                         return $response;
                     }
