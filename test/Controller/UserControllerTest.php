@@ -47,7 +47,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $configOverrides = [];
 
         $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../../PLC_X_Core/config/application.config.php',
+            include __DIR__ . '/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php',
             $configOverrides
         ));
 
