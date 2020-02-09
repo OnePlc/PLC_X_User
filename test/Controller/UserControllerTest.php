@@ -46,9 +46,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         // etc.
         $configOverrides = [];
 
-        $this->setApplicationConfig(ArrayUtils::merge(
-            $configOverrides
-        ));
+        $this->setApplicationConfig($configOverrides);
+
+        # lets do initial setup here
 
         parent::setUp();
     }
