@@ -43,10 +43,10 @@ class AuthController extends CoreController
      * @param $oServiceManager
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway,$oServiceManager) {
+    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager) {
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'user-single';
-        parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
+        parent::__construct($oDbAdapter, $oTableGateway, $oServiceManager);
     }
 
     /**
@@ -59,14 +59,14 @@ class AuthController extends CoreController
         $this->layout('layout/login');
 
         # Check if user is already logged in
-        if(isset(CoreController::$oSession->oUser)) {
+        if (isset(CoreController::$oSession->oUser)) {
             // already logged in
             return $this->redirect()->toRoute('home');
         }
 
         # Get current Request - if post - perform login - otherwise show for,m
         $oRequest = $this->getRequest();
-        if($oRequest->isPost()) {
+        if ($oRequest->isPost()) {
             # Get User from Login Form
             $sUser = $oRequest->getPost('plc_login_user');
 
@@ -87,7 +87,7 @@ class AuthController extends CoreController
 
             # Check Password
             $sPasswordForm = $oRequest->getPost('plc_login_pass');
-            if(!password_verify($sPasswordForm,$oUser->password)) {
+            if (!password_verify($sPasswordForm, $oUser->password)) {
                 # Show Login Form
                 return new ViewModel([
                     'sErrorMessage' => 'Wrong password',
@@ -185,7 +185,7 @@ class AuthController extends CoreController
         $oRequest = $this->getRequest();
 
         # Show forgot form if GET, parse form if POST
-        if(!$oRequest->isPost()) {
+        if (!$oRequest->isPost()) {
             # Show forgot form
             return new ViewModel([]);
         } else {
@@ -194,7 +194,7 @@ class AuthController extends CoreController
 
             $bIsEmailAddress = stripos($sUser,'@');
             $oUser = false;
-            if($bIsEmailAddress === false) {
+            if ($bIsEmailAddress === false) {
                 # its a username
                 # Check if we find user by username
                 try {
@@ -253,7 +253,7 @@ class AuthController extends CoreController
 
         $oRequest = $this->getRequest();
 
-        if(!$oRequest->isPost()) {
+        if (!$oRequest->isPost()) {
             $sToken = $this->params()->fromRoute('token','none');
             $sUser = $this->params()->fromRoute('username','none');
 
@@ -268,9 +268,9 @@ class AuthController extends CoreController
             }
 
             # Verify token
-            if(password_verify($sToken,$oUser->password_reset_token)) {
+            if (password_verify($sToken,$oUser->password_reset_token)) {
                 # Token shall be valid for only 48 hours
-                if(strtotime($oUser->password_reset_date)+(3600*48) >= time()) {
+                if (strtotime($oUser->password_reset_date)+(3600*48) >= time()) {
                     # Display password reset form
                     return new ViewModel([
                         'iUserID' => $oUser->getID(),
@@ -296,7 +296,7 @@ class AuthController extends CoreController
             $iUserID = $oRequest->getPost('plc_login_user');
 
             # Compare passwords
-            if($sPass != $sPassCheck) {
+            if ($sPass != $sPassCheck) {
                 # Display Error Message
                 return new ViewModel([
                     'sErrorMessage' => 'password do not match',
@@ -314,7 +314,7 @@ class AuthController extends CoreController
             }
 
             # Verify token
-            if(password_verify($sToken,$oUser->password_reset_token)) {
+            if (password_verify($sToken,$oUser->password_reset_token)) {
                 # Set new password
                 $oUser->setTextField('password',password_hash($sPass,PASSWORD_BCRYPT));
                 $this->oTableGateway->saveSingle($oUser);

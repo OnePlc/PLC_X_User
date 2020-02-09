@@ -100,14 +100,16 @@ class Module
 
                     $container->oUser->setAdapter($oDbAdapter);
 
-                    if(! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
+                    if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
                         && $sRouteName != 'denied') {
                         $response = $e->getResponse();
                         $response->getHeaders()->addHeaderLine(
                             'Location',
                             $e->getRouter()->assemble(
-                                ['id'=>$aRouteInfo['action']],
-                                ['name' => 'denied']));
+                                ['id' => $aRouteInfo['action']],
+                                ['name' => 'denied']
+                            )
+                        );
                         $response->setStatusCode(302);
                         return $response;
                     }
@@ -120,15 +122,15 @@ class Module
                 if (isset($_REQUEST['authkey']) && $bIsApiController !== false) {
                     try {
                         # Do Authtoken login
-                        $oKeysTbl = new TableGateway('core_api_key',$oDbAdapter);
+                        $oKeysTbl = new TableGateway('core_api_key', $oDbAdapter);
                         $oKeyActive = $oKeysTbl->select(['api_key' => $_REQUEST['authkey']]);
-                        if(count($oKeyActive) > 0) {
+                        if (count($oKeyActive) > 0) {
                             $oKey = $oKeyActive->current();
-                            if(password_verify($_REQUEST['authtoken'],$oKey->api_token)) {
+                            if (password_verify($_REQUEST['authtoken'], $oKey->api_token)) {
                                 $bLoggedIn = true;
                             }
                         }
-                    } catch(\RuntimeException $e) {
+                    } catch (\RuntimeException $e) {
 
                     }
                 }
@@ -150,7 +152,7 @@ class Module
                     /**
                      * Setup before First Login
                      */
-                    if(! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
+                    if (! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
                         echo 'no config yet3';
 
@@ -177,7 +179,7 @@ class Module
                 /**
                  * Enforce Setup
                  */
-                if(!file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
+                if (! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
                     echo $sRouteName;
                     echo 'no config yet4';
 
@@ -186,7 +188,9 @@ class Module
                         'Location',
                         $e->getRouter()->assemble(
                             [],
-                            ['name' => 'setup']));
+                            ['name' => 'setup']
+                        )
+                    );
                     $response->setStatusCode(302);
                     return $response;
                 }
@@ -205,7 +209,7 @@ class Module
         return [
             'factories' => [
                 # User Module - Base Model
-                Model\UserTable::class => function($container) {
+                Model\UserTable::class => function ($container) {
                     $tableGateway = $container->get(Model\UserTableGateway::class);
                     return new Model\UserTable($tableGateway);
                 },
@@ -216,7 +220,7 @@ class Module
                     return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
                 },
                 # User Module - Base Model
-                Model\ApikeyTable::class => function($container) {
+                Model\ApikeyTable::class => function ($container) {
                     $tableGateway = $container->get(Model\ApikeyTableGateway::class);
                     return new Model\ApikeyTable($tableGateway);
                 },
@@ -226,7 +230,7 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Apikey($dbAdapter));
                     return new TableGateway('core_api_key', $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\UserPermissionGateway::class => function($container) {
+                Model\UserPermissionGateway::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
                     return new TableGateway('user_permission', $dbAdapter);
                 },
@@ -241,7 +245,7 @@ class Module
     {
         return [
             'factories' => [
-                Controller\UserController::class => function($container) {
+                Controller\UserController::class => function ($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\UserController(
                         $oDbAdapter,
@@ -249,7 +253,7 @@ class Module
                         $container
                     );
                 },
-                Controller\AuthController::class => function($container) {
+                Controller\AuthController::class => function ($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\AuthController(
                         $oDbAdapter,
@@ -257,7 +261,7 @@ class Module
                         $container
                     );
                 },
-                Controller\ApiController::class => function($container) {
+                Controller\ApiController::class => function ($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(
                         $oDbAdapter,

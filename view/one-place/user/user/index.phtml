@@ -3,13 +3,13 @@
         <?= $this->partial('partial/indexheader',['sTitle'=>'Users']) ?>
     </div>
     <div class="card-body py-0">
-        <?php if($iSeatsLeft != -1) { ?>
-            <?php if($iSeatsLeft == 0) { ?>
+        <?php if ($iSeatsLeft != -1) { ?>
+            <?php if ($iSeatsLeft == 0) { ?>
                 <div class="alert alert-danger">You have no seats left. <a href="/store/list/seats">add more seats</a> to your licence</div>
                 <!-- Remove User Add Button if no seats left -->
                 <script>
-                    $('.plc-button-panel a').each(function() {
-                        if($(this).attr('href') == '/user/add') {
+                    $('.plc-button-panel a').each(function () {
+                        if ($(this).attr('href') == '/user/add') {
                             $(this).remove();
                         }
                     })

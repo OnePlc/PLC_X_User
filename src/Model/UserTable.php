@@ -57,11 +57,11 @@ class UserTable
         $oWh = new Where();
         foreach(array_keys($aWhere) as $sWh) {
             $bIsLike = stripos($sWh,'-like');
-            if($bIsLike === false) {
+            if ($bIsLike === false) {
 
             } else {
                 $sFieldKey = substr($sWh,0,strlen($sWh)-strlen('-like'));
-                if($sFieldKey == 'label') {
+                if ($sFieldKey == 'label') {
                     $sFieldKey = 'username';
                 }
                 # its a like

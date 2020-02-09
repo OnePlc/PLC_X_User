@@ -23,8 +23,8 @@ foreach(array_keys($aFieldsByForm) as $sForm) {
                         //var_dump($oField);
                         $bHasPerm = false;
 
-                        if(array_key_exists($oForm->form_key,$aUserFields)) {
-                            if(array_key_exists($oField->Field_ID,$aUserFields[$oForm->form_key])) {
+                        if (array_key_exists($oForm->form_key,$aUserFields)) {
+                            if (array_key_exists($oField->Field_ID,$aUserFields[$oForm->form_key])) {
                                 $bHasPerm = true;
                             }
                         }

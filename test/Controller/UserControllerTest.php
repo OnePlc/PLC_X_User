@@ -50,7 +50,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $configOverrides = [];
 
         $sAppFile = __DIR__.'/../../../../../config/application.config.php';
-        if(file_exists('/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php')) {
+        if (file_exists('/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php')) {
             $sAppFile = '/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/application.config.php';
         }
 

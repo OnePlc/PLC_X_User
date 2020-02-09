@@ -17,8 +17,8 @@ foreach(array_keys($aTabsByForm) as $sTable) {
                         //var_dump($oField);
                         $bHasPerm = false;
 
-                        if(array_key_exists($oForm->form_key,$aUserTabs)) {
-                            if(array_key_exists($oTab->Tab_ID,$aUserTabs[$oForm->form_key])) {
+                        if (array_key_exists($oForm->form_key,$aUserTabs)) {
+                            if (array_key_exists($oTab->Tab_ID,$aUserTabs[$oForm->form_key])) {
                                 $bHasPerm = true;
                             }
                         }

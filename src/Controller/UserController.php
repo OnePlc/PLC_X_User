@@ -25,7 +25,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Session\Container;
 
-class UserController extends CoreController {
+class UserController extends CoreController
+{
     /**
      * User Table Object
      *
@@ -42,10 +43,10 @@ class UserController extends CoreController {
      * @param $oServiceManager
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway,$oServiceManager) {
+    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager) {
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'user-single';
-        parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
+        parent::__construct($oDbAdapter, $oTableGateway, $oServiceManager);
     }
 
     /**
@@ -78,7 +79,7 @@ class UserController extends CoreController {
 
         # set to -1 to disable
         $iSeatsLeft = -1;
-        if(isset(CoreController::$aGlobalSettings['user-limit'])) {
+        if (isset(CoreController::$aGlobalSettings['user-limit'])) {
             $iLimit = CoreController::$aGlobalSettings['user-limit'];
             $iSeatsUsed = count($this->oTableGateway->fetchAll(false));
             $iSeatsLeft = $iLimit-$iSeatsUsed;
@@ -116,12 +117,12 @@ class UserController extends CoreController {
 
         # check if a licence is set
         $iSeatsLeft = -1;
-        if(isset(CoreController::$aGlobalSettings['user-limit'])) {
+        if (isset(CoreController::$aGlobalSettings['user-limit'])) {
             $iLimit = CoreController::$aGlobalSettings['user-limit'];
             $iSeatsUsed = count($this->oTableGateway->fetchAll(false));
             # there must be at least 1 seat left
             $iSeatsLeft = $iLimit-$iSeatsUsed;
-            if($iSeatsLeft == 0) {
+            if ($iSeatsLeft == 0) {
                 # Display Success Message and View New User
                 $this->flashMessenger()->addErrorMessage('no seats left');
                 return $this->redirect()->toRoute('user');
@@ -129,7 +130,7 @@ class UserController extends CoreController {
         }
 
         # Display Add Form
-        if(!$oRequest->isPost()) {
+        if (!$oRequest->isPost()) {
             # Add Buttons for breadcrumb
             $this->setViewButtons('user-single');
 
@@ -320,7 +321,7 @@ class UserController extends CoreController {
         $oRequest = $this->getRequest();
 
         # Display Edit Form
-        if(!$oRequest->isPost()) {
+        if (!$oRequest->isPost()) {
             # Get User ID from route
             $iUserID = $this->params()->fromRoute('id', 0);
 
@@ -403,8 +404,8 @@ class UserController extends CoreController {
                     //$aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
                     break;
                 default:
-                    if($sFieldName != '') {
-                        if(!$oUser->setTextField($sFieldName,$_REQUEST[$sKey])) {
+                    if ($sFieldName != '') {
+                        if (!$oUser->setTextField($sFieldName,$_REQUEST[$sKey])) {
                             echo 'could not save field '.$sFieldName;
                         }
                     }
@@ -463,7 +464,7 @@ class UserController extends CoreController {
         # Prepare JSON Answer
         $aReturn = ['state'=>'success','message'=>'nothing todo'];
 
-        if($oRequest->isPost()) {
+        if ($oRequest->isPost()) {
             $sTable = $oRequest->getPost('table');
             $aColumns = $oRequest->getPost('columns');
 
@@ -477,12 +478,12 @@ class UserController extends CoreController {
 
                 # Check if table exists
                 $oTable = CoreController::$aCoreTables['table-index']->select(['table_name'=>$sTable]);
-                if(count($oTable) > 0) {
+                if (count($oTable) > 0) {
 
                     # check if field exists
                     $oTable = $oTable->current();
                     $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$oTable->form,'fieldkey'=>$sColumn]);
-                    if(count($oField) > 0) {
+                    if (count($oField) > 0) {
                         $oField = $oField->current();
 
                         # check if column exists for used
@@ -493,7 +494,7 @@ class UserController extends CoreController {
                         ]);
 
                         # update column sortid
-                        if(count($oColFound) > 0) {
+                        if (count($oColFound) > 0) {
                             $oColFound = $oColFound->current();
                             CoreController::$aCoreTables['table-col']->update([
                                 'sortID'=>$iSortID,

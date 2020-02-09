@@ -19,8 +19,8 @@ foreach(array_keys($aWidgetsByForm) as $sWidgetle) {
                         //var_dump($oField);
                         $bHasPerm = false;
 
-                        if(array_key_exists($oForm->form_key,$aUserWidgets)) {
-                            if(array_key_exists($oWidget->Widget_ID,$aUserWidgets[$oForm->form_key])) {
+                        if (array_key_exists($oForm->form_key,$aUserWidgets)) {
+                            if (array_key_exists($oWidget->Widget_ID,$aUserWidgets[$oForm->form_key])) {
                                 $bHasPerm = true;
                             }
                         }

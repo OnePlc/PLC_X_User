@@ -46,8 +46,8 @@ class ApiController extends CoreController
      * @param UserTable $oTableGateway
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter,UserTable $oTableGateway,$oServiceManager) {
-        parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
+    public function __construct(AdapterInterface $oDbAdapter, UserTable $oTableGateway, $oServiceManager) {
+        parent::__construct($oDbAdapter, $oTableGateway, $oServiceManager);
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'apikey-single';
     }
@@ -81,7 +81,7 @@ class ApiController extends CoreController
         $oRequest = $this->getRequest();
 
         # Display Add Form
-        if(!$oRequest->isPost()) {
+        if (!$oRequest->isPost()) {
             # Add Buttons for breadcrumb
             $this->setViewButtons('apikey-single');
 
@@ -169,14 +169,14 @@ class ApiController extends CoreController
         $sListLabel = 'username';
 
         # Get list mode from query
-        if(isset($_REQUEST['listmode'])) {
-            if($_REQUEST['listmode'] == 'entity') {
+        if (isset($_REQUEST['listmode'])) {
+            if ($_REQUEST['listmode'] == 'entity') {
                 $bSelect2 = false;
             }
         }
 
         # get list label from query
-        if(isset($_REQUEST['listlabel'])) {
+        if (isset($_REQUEST['listlabel'])) {
             $sListLabel = $_REQUEST['listlabel'];
         }
 
@@ -191,7 +191,7 @@ class ApiController extends CoreController
         }
 
         # only allow form fields as list labels
-        if(!array_key_exists($sListLabel,$aFieldsByKey)) {
+        if (!array_key_exists($sListLabel,$aFieldsByKey)) {
             $aReturn = [
                 'state' => 'error',
                 'results' => [],
@@ -205,18 +205,18 @@ class ApiController extends CoreController
 
         # Get All Skeleton Entities from Database
         $oItemsDB = $this->oTableGateway->fetchAll(false);
-        if(count($oItemsDB) > 0) {
+        if (count($oItemsDB) > 0) {
             # Loop all items
             foreach($oItemsDB as $oItem) {
 
                 # Output depending on list mode
-                if($bSelect2) {
+                if ($bSelect2) {
                     $sVal = null;
                     # get value for list label field
                     switch($aFieldsByKey[$sListLabel]->type) {
                         case 'select':
                             $oTag = $oItem->getSelectField($aFieldsByKey[$sListLabel]->fieldkey);
-                            if($oTag) {
+                            if ($oTag) {
                                 $sVal = $oTag->getLabel();
                             }
                             break;

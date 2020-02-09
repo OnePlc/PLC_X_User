@@ -17,8 +17,8 @@ foreach(array_keys($aColumnsByTable) as $sTable) {
                         //var_dump($oField);
                         $bHasPerm = false;
 
-                        if(array_key_exists($oTbl->table_name,$aUserColumns)) {
-                            if(array_key_exists($oField->fieldkey,$aUserColumns[$oTbl->table_name])) {
+                        if (array_key_exists($oTbl->table_name,$aUserColumns)) {
+                            if (array_key_exists($oField->fieldkey,$aUserColumns[$oTbl->table_name])) {
                                 $bHasPerm = true;
                             }
                         }

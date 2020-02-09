@@ -120,23 +120,23 @@ class User extends CoreEntityModel
     public function __construct($oDbAdapter) {
         parent::__construct($oDbAdapter);
         # User Permissions Table
-        if(!isset(CoreEntityModel::$aEntityTables['user-permission'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-permission'])) {
             CoreEntityModel::$aEntityTables['user-permission'] = new TableGateway('user_permission', CoreEntityModel::$oDbAdapter);
         }
         # User Index Table Columns
-        if(!isset(CoreEntityModel::$aEntityTables['user-table-cols'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-table-cols'])) {
             CoreEntityModel::$aEntityTables['user-table-cols'] = new TableGateway('user_table_column', CoreEntityModel::$oDbAdapter);
         }
         # User Form Tabs
-        if(!isset(CoreEntityModel::$aEntityTables['user-form-tabs'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-form-tabs'])) {
             CoreEntityModel::$aEntityTables['user-form-tabs'] = new TableGateway('user_form_tab', CoreEntityModel::$oDbAdapter);
         }
         # User
-        if(!isset(CoreEntityModel::$aEntityTables['user'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user'])) {
             CoreEntityModel::$aEntityTables['user'] = new TableGateway('user', CoreEntityModel::$oDbAdapter);
         }
         # User Form Fields
-        if(!isset(CoreEntityModel::$aEntityTables['user-form-fields'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-form-fields'])) {
             CoreEntityModel::$aEntityTables['user-form-fields'] = new TableGateway('user_form_field', CoreEntityModel::$oDbAdapter);
         }
         $this->aMyPermissions = $this->getMyPermissions();
@@ -150,19 +150,19 @@ class User extends CoreEntityModel
     public function setAdapter($oDbAdapter) {
         CoreEntityModel::$oDbAdapter = $oDbAdapter;
         # User Permissions Table
-        if(!isset(CoreEntityModel::$aEntityTables['user-permission'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-permission'])) {
             CoreEntityModel::$aEntityTables['user-permission'] = new TableGateway('user_permission', CoreEntityModel::$oDbAdapter);
         }
         # User Index Table Columns
-        if(!isset(CoreEntityModel::$aEntityTables['user-table-cols'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-table-cols'])) {
             CoreEntityModel::$aEntityTables['user-table-cols'] = new TableGateway('user_table_column', CoreEntityModel::$oDbAdapter);
         }
         # User Form Tabs
-        if(!isset(CoreEntityModel::$aEntityTables['user-form-tabs'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-form-tabs'])) {
             CoreEntityModel::$aEntityTables['user-form-tabs'] = new TableGateway('user_form_tab', CoreEntityModel::$oDbAdapter);
         }
         # User Form Fields
-        if(!isset(CoreEntityModel::$aEntityTables['user-form-fields'])) {
+        if (!isset(CoreEntityModel::$aEntityTables['user-form-fields'])) {
             CoreEntityModel::$aEntityTables['user-form-fields'] = new TableGateway('user_form_field', CoreEntityModel::$oDbAdapter);
         }
     }
@@ -207,20 +207,20 @@ class User extends CoreEntityModel
      * @since 1.0.0
      */
     public function hasPermission($sPermission,$sModule) {
-        if(!$this->aMyPermissions) {
+        if (!$this->aMyPermissions) {
             $this->aMyPermissions = $this->getMyPermissions();
         }
         $sModule = str_replace(['\\'],['-'],$sModule);
 
         # Whitelisted Actions
-        if($sPermission == 'login' || $sPermission == 'logout' || $sPermission == 'home') {
+        if ($sPermission == 'login' || $sPermission == 'logout' || $sPermission == 'home') {
             return true;
         }
 
         # Check if User has Permissions on Module
-        if(array_key_exists($sModule,$this->aMyPermissions)) {
+        if (array_key_exists($sModule,$this->aMyPermissions)) {
             # Check if User has permission
-            if(array_key_exists($sPermission,$this->aMyPermissions[$sModule])) {
+            if (array_key_exists($sPermission,$this->aMyPermissions[$sModule])) {
                 # Has Permission
                 return true;
             }
@@ -240,7 +240,7 @@ class User extends CoreEntityModel
      */
     public function getMyPermissions($sPermissionFilter = '',$bInfo = false) {
         $aWhere = ['user_idfs' => $this->getID()];
-        if($sPermissionFilter != '') {
+        if ($sPermissionFilter != '') {
             $aWhere['permission'] = $sPermissionFilter;
         }
         $aMyPermsDB = CoreEntityModel::$aEntityTables['user-permission']->select($aWhere);
@@ -248,12 +248,12 @@ class User extends CoreEntityModel
         foreach($aMyPermsDB as $oPerm) {
             $sModule = str_replace(['\\'],['-'],$oPerm->module);
             # Sort Permissions By Module
-            if(!array_key_exists($sModule,$aMyPermsByModule)) {
+            if (!array_key_exists($sModule,$aMyPermsByModule)) {
                 $aMyPermsByModule[$sModule] = [];
             }
-            if($bInfo) {
+            if ($bInfo) {
                 $oPermData = CoreController::$aCoreTables['permission']->select(['module' => $oPerm->module,'permission_key' => $oPerm->permission]);
-                if(count($oPermData) > 0) {
+                if (count($oPermData) > 0) {
                     $oPermData = $oPermData->current();
                     $aMyPermsByModule[$sModule][$oPerm->permission] = $oPermData;
                 }
@@ -322,7 +322,7 @@ class User extends CoreEntityModel
         # Get Users Index Table Columns from DB
         $aMyColumnsDB = CoreEntityModel::$aEntityTables['user-table-cols']->selectWith($oColumnSel);
         foreach($aMyColumnsDB as $oCol) {
-            if(!array_key_exists($oCol->tbl_name,$aMyColumnsByTable)) {
+            if (!array_key_exists($oCol->tbl_name,$aMyColumnsByTable)) {
                 $aMyColumnsByTable[$oCol->tbl_name] = [];
             }
             $aMyColumnsByTable[$oCol->tbl_name][$oCol->fieldkey] = $oCol;
@@ -392,7 +392,7 @@ class User extends CoreEntityModel
 
         foreach($oMyTabsDB as $oTab) {
             # Order By Form
-            if(!array_key_exists($oTab->form,$aMyTabsByForm)) {
+            if (!array_key_exists($oTab->form,$aMyTabsByForm)) {
                 $aMyTabsByForm[$oTab->form] = [];
             }
             $aMyTabsByForm[$oTab->form][$oTab->Tab_ID] = $oTab;
@@ -462,7 +462,7 @@ class User extends CoreEntityModel
 
         foreach($oMyFieldsDB as $oField) {
             # Order By Form
-            if(!array_key_exists($oField->form,$aMyFieldsByForm)) {
+            if (!array_key_exists($oField->form,$aMyFieldsByForm)) {
                 $aMyFieldsByForm[$oField->form] = [];
             }
             $aMyFieldsByForm[$oField->form][$oField->Field_ID] = $oField;
@@ -534,7 +534,7 @@ class User extends CoreEntityModel
     public function getExperience() {
         $oNextLvl = CoreController::$aCoreTables['user-xp-level']->select(['Level_ID' => ($this->xp_level+1)])->current();
         $dPercent = 0;
-        if($this->xp_current != 0) {
+        if ($this->xp_current != 0) {
             $dPercent = round((100/($oNextLvl->xp_total/$this->xp_current)),2);
         }
 
@@ -558,7 +558,7 @@ class User extends CoreEntityModel
     public function addXP($sXPKey) {
         # Load XP Activity
         $oActivity = CoreController::$aCoreTables['user-xp-activity']->select(['xp_key' => $sXPKey]);
-        if(count($oActivity) > 0) {
+        if (count($oActivity) > 0) {
             # get activity
             $oActivity = $oActivity->current();
             # get base xp
@@ -569,7 +569,7 @@ class User extends CoreEntityModel
             # calculate new level and experience
             $iNewLvl = $this->xp_level;
             $iCurrentXP = $this->xp_current;
-            if($oNextLvl->xp_total <= ($iCurrentXP+$iXP)) {
+            if ($oNextLvl->xp_total <= ($iCurrentXP+$iXP)) {
                 $iNewLvl++;
                 $iCurrentXP = ($this->xp_current+$iXP)-$oNextLvl->xp_total;
             } else {
@@ -630,7 +630,7 @@ class User extends CoreEntityModel
 
         # Add new settings
         foreach($aWidgetData as $iWidgetID) {
-            if(is_numeric($iWidgetID) && !empty($iWidgetID)) {
+            if (is_numeric($iWidgetID) && !empty($iWidgetID)) {
                 # insert new setting
                 CoreController::$aCoreTables['user-widget']->insert([
                     'widget_idfs' => $iWidgetID,
