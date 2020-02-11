@@ -47,8 +47,8 @@ install:
 
 before_script:
   - chmod -R 777 /home/travis/build/OnePlc/PLC_X_User
-  - cp /home/travis/build/OnePlc/config/autoload/local.php.dist /home/travis/build/OnePlc/config/autoload/local.php
-  - cp /home/travis/build/OnePlc/config/autoload/global.php.dist /home/travis/build/OnePlc/config/autoload/global.php
+  - cp /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php.dist /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php
+  - cp /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/global.php.dist /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/global.php
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/phpunit --coverage-clover ./clover.xml ; fi
