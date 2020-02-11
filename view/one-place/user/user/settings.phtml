@@ -33,6 +33,16 @@ use Application\Controller\CoreController;
                             </a>
                         </div>
                     </div>
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Updates')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <a href="<?=$this->url('application',['action'=>'checkforupdates'])?>">
+                                <?=$this->translate('Check for Updates')?>
+                            </a>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

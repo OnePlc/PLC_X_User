@@ -33,7 +33,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.11';
+    const VERSION = '1.0.12';
 
     /**
      * Load module config file
@@ -100,18 +100,23 @@ class Module
 
                     $container->oUser->setAdapter($oDbAdapter);
 
-                    if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
-                        && $sRouteName != 'denied') {
-                        $response = $e->getResponse();
-                        $response->getHeaders()->addHeaderLine(
-                            'Location',
-                            $e->getRouter()->assemble(
-                                ['id' => $aRouteInfo['action']],
-                                ['name' => 'denied']
-                            )
-                        );
-                        $response->setStatusCode(302);
-                        return $response;
+                    $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
+                    if($bIsSetupController === false) {
+                        if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
+                            && $sRouteName != 'denied') {
+                            $response = $e->getResponse();
+                            $response->getHeaders()->addHeaderLine(
+                                'Location',
+                                $e->getRouter()->assemble(
+                                    ['id' => $aRouteInfo['action']],
+                                    ['name' => 'denied']
+                                )
+                            );
+                            $response->setStatusCode(302);
+                            return $response;
+                        }
+                    } else {
+                        # let user install module
                     }
                 }
 
