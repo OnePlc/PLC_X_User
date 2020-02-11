@@ -183,7 +183,7 @@ class Module
 
                 /**
                  * Enforce Setup
-                 */
+
                 if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
                     echo $sRouteName;
                     echo 'no config yet4';
@@ -193,7 +193,7 @@ class Module
                         ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
                     $response->setStatusCode(302);
                     return $response;
-                }
+                }  */
             },
             -100
         );
