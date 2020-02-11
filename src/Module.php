@@ -101,7 +101,7 @@ class Module
                     $container->oUser->setAdapter($oDbAdapter);
 
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
-                    if($bIsSetupController === false) {
+                    if ($bIsSetupController === false) {
                         if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
                             && $sRouteName != 'denied') {
                             $response = $e->getResponse();

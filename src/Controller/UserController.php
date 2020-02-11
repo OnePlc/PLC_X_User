@@ -576,7 +576,8 @@ class UserController extends CoreController
         return new ViewModel([]);
     }
 
-    public function updatesettingAction() {
+    public function updatesettingAction()
+    {
         $this->layout('layout/json');
 
         $oRequest = $this->getRequest();
@@ -593,7 +594,7 @@ class UserController extends CoreController
                 'user_idfs' => $iUserID,
                 'setting_name' => $sSettingKey,
             ]);
-            if(count($oExists) > 0) {
+            if (count($oExists) > 0) {
                 # Update Setting
                 $oSettingsTbl->update([
                     'setting_value' => $sSettingVal,

@@ -685,6 +685,13 @@ class User extends CoreEntityModel
         }
     }
 
+    /**
+     * Get user based setting
+     *
+     * @param $sSettingKey name of setting
+     * @return bool|string false or setting value
+     * @since 1.0.13
+     */
     public function getSetting($sSettingKey)
     {
         $oSettingsTbl = new TableGateway('user_setting', CoreController::$oDbAdapter);
@@ -692,7 +699,7 @@ class User extends CoreEntityModel
             'user_idfs' => $this->getID(),
             'setting_name' => $sSettingKey,
         ]);
-        if(count($oExists) > 0) {
+        if (count($oExists) > 0) {
             $oSetting = $oExists->current();
             return $oSetting->setting_value;
         }
