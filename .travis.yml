@@ -49,6 +49,11 @@ before_script:
   - chmod -R 777 /home/travis/build/OnePlc/PLC_X_User
   - cp /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php.dist /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php
   - cp /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/global.php.dist /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/global.php
+  - mysql -u travis --password="" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/data/structure.sql
+  - mysql -u travis --password="" "travis" < /home/travis/build/OnePlc/PLC_X_User/data/structure.sql
+  - mysql -u travis --password="" "travis" < /home/travis/build/OnePlc/PLC_X_User/data/data.sql
+  - mysql -u travis --password="" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/data/bootstrap.sql
+  - mysql -u travis --password="" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/data/data.sql
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/phpunit --coverage-clover ./clover.xml ; fi

@@ -78,27 +78,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers \OnePlace\User\Controller\AuthController::loginAction
      */
-    public function testSetupSucceedsWithDefaultData()
-    {
-        $this->getRequest()->setMethod('POST')
-            ->setPost(new Parameters([
-                'setup_dbname' => 'travis',
-                'setup_dbhost' => 'localhost',
-                'setup_dbuser' => 'travis',
-                'setup_dbpass' => 'travis',
-                'setup_adminname' => 'plc_travis',
-                'setup_adminemail' => 'travis@1plc.ch',
-                'setup_adminpass' => '1234',
-                'setup_adminpassrep' => '1234',
-            ]));
-        $this->dispatch('/setup');
-        $this->assertRedirectTo('/login');
-        //$this->assertQuery('div.alert-warning');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\AuthController::loginAction
-     */
     public function testLoginIsLoadedOnSecondLoad()
     {
         $this->dispatch('/', 'GET');
