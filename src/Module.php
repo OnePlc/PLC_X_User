@@ -163,7 +163,7 @@ class Module
                     /**
                      * Setup before First Login
                      */
-                    if (! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
+                    if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
                         echo 'no config yet3';
 
@@ -184,7 +184,7 @@ class Module
                 /**
                  * Enforce Setup
                  */
-                if (! file_exists('config/autoload/local.php') && $sRouteName != 'setup') {
+                if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
                     echo $sRouteName;
                     echo 'no config yet4';
 
