@@ -65,6 +65,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
     public function testSetupIsLoadedOnFirstLoad()
     {
         $this->dispatch('/', 'GET');
@@ -72,6 +75,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertRedirectTo('/setup');
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
     public function testSetupSucceedsWithDefaultData()
     {
         $this->getRequest()->setMethod('POST')
@@ -90,6 +96,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         //$this->assertQuery('div.alert-warning');
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
     public function testLoginIsLoadedOnSecondLoad()
     {
         $this->dispatch('/', 'GET');
@@ -97,6 +106,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertRedirectTo('/login');
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
     public function testLoginIsSuccessful()
     {
         $this->getRequest()->setMethod('POST')
@@ -108,12 +120,18 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertRedirectTo('/');
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\UserController::indexAction
+     */
     public function testUserIndexLoading()
     {
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers \OnePlace\User\Controller\UserController::addAction
+     */
     public function testUserAddFormIndexLoading()
     {
         $this->dispatch('/user/add', 'GET');
