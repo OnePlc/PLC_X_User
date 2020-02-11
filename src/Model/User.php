@@ -684,4 +684,19 @@ class User extends CoreEntityModel
             }
         }
     }
+
+    public function getSetting($sSettingKey)
+    {
+        $oSettingsTbl = new TableGateway('user_setting', CoreController::$oDbAdapter);
+        $oExists = $oSettingsTbl->select([
+            'user_idfs' => $this->getID(),
+            'setting_name' => $sSettingKey,
+        ]);
+        if(count($oExists) > 0) {
+            $oSetting = $oExists->current();
+            return $oSetting->setting_value;
+        }
+
+        return false;
+    }
 }

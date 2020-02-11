@@ -575,4 +575,42 @@ class UserController extends CoreController
 
         return new ViewModel([]);
     }
+
+    public function updatesettingAction() {
+        $this->layout('layout/json');
+
+        $oRequest = $this->getRequest();
+
+        # only parse form if its sent by post
+        if ($oRequest->isPost()) {
+            $sSettingKey = $oRequest->getPost('setting_name');
+            $sSettingVal = $oRequest->getPost('setting_value');
+            $iUserID = CoreController::$oSession->oUser->getID();
+
+            # get user settings tbl
+            $oSettingsTbl = new TableGateway('user_setting', CoreController::$oDbAdapter);
+            $oExists = $oSettingsTbl->select([
+                'user_idfs' => $iUserID,
+                'setting_name' => $sSettingKey,
+            ]);
+            if(count($oExists) > 0) {
+                # Update Setting
+                $oSettingsTbl->update([
+                    'setting_value' => $sSettingVal,
+                ], [
+                    'user_idfs' => $iUserID,
+                    'setting_name' => $sSettingKey,
+                ]);
+            } else {
+                # Insert setting
+                $oSettingsTbl->insert([
+                    'setting_value' => $sSettingVal,
+                    'user_idfs' => $iUserID,
+                    'setting_name' => $sSettingKey,
+                ]);
+            }
+        }
+
+        return false;
+    }
 }
