@@ -7,7 +7,8 @@ CREATE TABLE `permission` (
   `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `nav_label` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `nav_href` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `show_in_menu` tinyint(1) NOT NULL
+  `show_in_menu` tinyint(1) NOT NULL,
+  `needs_globaladmin` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `permission`

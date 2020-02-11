@@ -47,18 +47,19 @@ INSERT INTO `core_index_table` (`table_name`, `form`, `label`) VALUES
 --
 -- Basic Permissions
 --
-INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`) VALUES
-('add', 'OnePlace\\User\\Controller\\UserController', 'Add', '', '', 0),
-('edit', 'OnePlace\\User\\Controller\\UserController', 'Edit', '', '', 0),
-('index', 'OnePlace\\User\\Controller\\UserController', 'Index', 'Users', '/user', 1),
-('updateindexcolumnsort', 'OnePlace\\User\\Controller\\UserController', 'Update Column Index', '', '', 0),
-('settheme', 'OnePlace\\User\\Controller\\UserController', 'Set own Theme', '', '', 0),
-('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0),
-('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1),
-('profile', 'OnePlace\\User\\Controller\\UserController', 'Profile', '', '', 0),
-('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0),
-('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0),
-('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0);
+INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`, `needs_globaladmin`) VALUES
+('add', 'OnePlace\\User\\Controller\\UserController', 'Add', '', '', 0, 0),
+('edit', 'OnePlace\\User\\Controller\\UserController', 'Edit', '', '', 0, 0),
+('index', 'OnePlace\\User\\Controller\\UserController', 'Index', 'Users', '/user', 1, 0),
+('updateindexcolumnsort', 'OnePlace\\User\\Controller\\UserController', 'Update Column Index', '', '', 0, 0),
+('settheme', 'OnePlace\\User\\Controller\\UserController', 'Set own Theme', '', '', 0, 0),
+('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0, 0),
+('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1, 0),
+('profile', 'OnePlace\\User\\Controller\\UserController', 'Profile', '', '', 0, 0),
+('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0, 0),
+('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0, 1),
+('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0, 1),
+('globaladmin', 'OnePlace\\Core', 'Super Admin', '', '', 0, 1);
 
 --
 -- Default Leveling Settings

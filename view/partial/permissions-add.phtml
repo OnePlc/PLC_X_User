@@ -9,11 +9,23 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-md-3">
-                    <?=str_replace(['OnePlace-','Controller-'],['',''],$sModule)?>
+                    <?php
+                    $sBaseName = str_replace(['OnePlace-','Controller-','Controller'],['','',''],$sModule);
+                    $aParts = explode('-',$sBaseName);
+                    $sFullName = '';
+                    foreach($aParts as $sPart) {
+                        $sFullName .= $this->translate($sPart).' - ';
+                    }
+                    echo substr($sFullName,0,strlen($sFullName)-strlen(' - '));
+                    ?>
                 </div>
                 <div class="col-md-2">
-                    <a href="#" class="btn btn-light plc-user-permissions-selectall">Select all</a>
-                    <a href="#" class="btn btn-light plc-user-permissions-unselectall">Unselect all</a>
+                    <a href="#" class="btn btn-light plc-user-permissions-selectall">
+                        <?=$this->translate('Select all')?>
+                    </a>
+                    <a href="#" class="btn btn-light plc-user-permissions-unselectall">
+                        <?=$this->translate('Unselect all')?>
+                    </a>
                 </div>
                 <div class="col-md-7">
                     <div class="row plc-user-permission-list">

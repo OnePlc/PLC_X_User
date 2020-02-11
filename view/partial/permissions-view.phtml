@@ -9,7 +9,15 @@ foreach(array_keys($aPermissonsByModules) as $sModule) { ?>
     <li class="list-group-item">
         <div class="row">
             <div class="col-md-4">
-                <?=str_replace(['OnePlace-','Controller-'],['',''],$sModule)?>
+                <?php
+                $sBaseName = str_replace(['OnePlace-','Controller-','Controller'],['','',''],$sModule);
+                $aParts = explode('-',$sBaseName);
+                $sFullName = '';
+                foreach($aParts as $sPart) {
+                    $sFullName .= $this->translate($sPart).' - ';
+                }
+                echo substr($sFullName,0,strlen($sFullName)-strlen(' - '));
+                ?>
             </div>
             <div class="col-md-8">
                 <div class="row">
