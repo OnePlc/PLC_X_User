@@ -642,7 +642,8 @@ class UserController extends CoreController
             $sLang = $oRequest->getPost('user_language');
 
             # Update Users Language
-            $this->oTableGateway->updateAttribute('lang',$sLang,'User_ID',CoreController::$oSession->oUser->getID());
+            $iUserID = CoreController::$oSession->oUser->getID();
+            $this->oTableGateway->updateAttribute('lang', $sLang, 'User_ID', $iUserID);
 
             # Success Message and back to settings
             $this->flashMessenger()->addSuccessMessage('Please logout to apply new language');

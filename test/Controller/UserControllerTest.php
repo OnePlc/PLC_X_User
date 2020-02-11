@@ -89,4 +89,35 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertRedirectTo('/login');
         //$this->assertQuery('div.alert-warning');
     }
+
+    public function testLoginIsLoadedOnSecondLoad()
+    {
+        $this->dispatch('/', 'GET');
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('/login');
+    }
+
+    public function testLoginIsSuccessful()
+    {
+        $this->getRequest()->setMethod('POST')
+            ->setPost(new Parameters([
+                'plc_login_user' => 'plc_travis',
+                'plc_login_pass' => '1234',
+            ]));
+        $this->dispatch('/login');
+        $this->assertRedirectTo('/');
+    }
+
+    public function testUserIndexLoading()
+    {
+        $this->dispatch('/user', 'GET');
+        $this->assertResponseStatusCode(200);
+    }
+
+    public function testUserAddFormIndexLoading()
+    {
+        $this->dispatch('/user/add', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('form.plc-core-basic-form');
+    }
 }
