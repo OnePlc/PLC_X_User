@@ -69,6 +69,9 @@ class UserTable
                 $oWh->like($sFieldKey, $aWhere[$sWh].'%');
             }
         }
+        if(array_key_exists('is_globaladmin',$aWhere)) {
+            $oWh->equalTo('is_globaladmin',$aWhere['is_globaladmin']);
+        }
         $oSel->where($oWh);
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {

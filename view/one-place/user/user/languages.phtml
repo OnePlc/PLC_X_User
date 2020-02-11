@@ -1,0 +1,30 @@
+<?php
+use Application\Controller\CoreController;
+
+$sCurrentLang = CoreController::$oSession->oUser->getLang();
+$aLangs = CoreController::$aGlobalSettings['app-languages'];
+if($aLangs != '') {
+    $aLangs = json_decode($aLangs);
+}
+?>
+<form action="" method="POST">
+    <ul class="list-group">
+        <?php if(is_array($aLangs)) {
+            if(count($aLangs) > 0) {
+                foreach($aLangs as $sLang) {
+                    $sChecked = ($sCurrentLang == $sLang) ? ' checked' : '';
+                    ?>
+                    <li class="list-group-item">
+                        <input type="radio" name="user_language" value="<?=$sLang?>" <?=$sChecked?>/> <?=$sLang?>
+                    </li>
+                <?php }
+            }
+        }
+        ?>
+    </ul>
+    <form class="form-row">
+        <button class="btn btn-primary" type="submit">
+            <?=$this->translate('Set Language')?>
+        </button>
+    </form>
+</form>

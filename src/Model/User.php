@@ -104,6 +104,14 @@ class User extends CoreEntityModel
     public $theme;
 
     /**
+     * User Selected Language
+     *
+     * @var string selected language
+     * @since 1.0.13
+     */
+    public $lang;
+
+    /**
      * User Permissions (Cache)
      *
      * @var array contains users permissions
@@ -189,6 +197,7 @@ class User extends CoreEntityModel
         $this->id = ! empty($data['User_ID']) ? $data['User_ID'] : 0;
         $this->email = ! empty($data['email']) ? $data['email'] : '';
         $this->username = ! empty($data['username']) ? $data['username'] : '';
+        $this->lang = ! empty($data['lang']) ? $data['lang'] : '';
         $this->full_name = ! empty($data['full_name']) ? $data['full_name'] : '';
         $this->password = ! empty($data['password']) ? $data['password'] : '';
         $this->password_reset_token = ! empty($data['password_reset_token'])
@@ -705,5 +714,16 @@ class User extends CoreEntityModel
         }
 
         return false;
+    }
+
+    /**
+     * Get users language
+     *
+     * @return mixed
+     * @since 1.0.13
+     */
+    public function getLang()
+    {
+        return $this->lang;
     }
 }

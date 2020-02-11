@@ -60,7 +60,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('manage', 'OnePlace\\User\\Controller\\ApiController', 'Manage API Keys', '', '', 0, 1),
 ('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0, 1),
 ('globaladmin', 'OnePlace\\Core', 'Super Admin', '', '', 0, 1),
-('updatesetting', 'OnePlace\\User\\Controller\\UserController', 'Update Personal Setting', '', '', 0, 0);
+('updatesetting', 'OnePlace\\User\\Controller\\UserController', 'Update Personal Setting', '', '', 0, 0),
+('languages', 'OnePlace\\User\\Controller\\UserController', 'Language Selection', '', '', 0, 0);
 
 --
 -- Default Leveling Settings

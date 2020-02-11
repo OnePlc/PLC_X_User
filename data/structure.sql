@@ -28,6 +28,7 @@ CREATE TABLE `user` (
   `xp_total` int(11) NOT NULL DEFAULT 0,
   `xp_current` int(11) NOT NULL DEFAULT 0,
   `is_backend_user` tinyint(1) NOT NULL DEFAULT 1,
+  `is_globaladmin` tinyint(1) NOT NULL DEFAULT 0,
   `mobile` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `password_reset_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password_reset_date` datetime DEFAULT NULL,

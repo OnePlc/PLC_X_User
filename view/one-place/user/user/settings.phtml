@@ -14,6 +14,17 @@ use Application\Controller\CoreController;
                 <form action="" method="POST">
                     <div class="form-row">
                         <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Language')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <?=CoreController::$oSession->oUser->getLang()?> -
+                            <a href="<?=$this->url('user',['action'=>'languages'])?>">
+                                <?=$this->translate('Change language')?>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
                             <?=$this->translate('Theme')?>
                         </label>
                         <div class="col-md-9 mb-3">
@@ -23,6 +34,7 @@ use Application\Controller\CoreController;
                             </a>
                         </div>
                     </div>
+                    <?php if(CoreController::$oSession->oUser->hasPermission('manage','OnePlace-User-Controller-ApiController')) { ?>
                     <div class="form-row">
                         <label for="input01" class="col-md-3 mb-3">
                             <?=$this->translate('API')?>
@@ -33,6 +45,9 @@ use Application\Controller\CoreController;
                             </a>
                         </div>
                     </div>
+                    <?php } ?>
+
+                    <?php if(CoreController::$oSession->oUser->hasPermission('checkforupdates','Application-Controller-IndexController')) { ?>
                     <div class="form-row">
                         <label for="input01" class="col-md-3 mb-3">
                             <?=$this->translate('Updates')?>
@@ -43,6 +58,8 @@ use Application\Controller\CoreController;
                             </a>
                         </div>
                     </div>
+                    <?php } ?>
+
                 </form>
             </div>
         </div>

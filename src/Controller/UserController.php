@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace OnePlace\User\Controller;
 
+use Application\Controller\CoreEntityController;
 use OnePlace\User\Model\User;
 use OnePlace\User\Model\UserTable;
 use Application\Controller\CoreController;
@@ -73,20 +74,26 @@ class UserController extends CoreController
         $this->setIndexColumns('user-index');
 
         # Get Paginator
-        $oPaginator = $this->oTableGateway->fetchAll(true);
+        $aWhere = [];
+        if (! CoreEntityController::$oSession->oUser->hasPermission('globaladmin', 'OnePlace-Core')) {
+            $aWhere['is_globaladmin'] = 0;
+        }
+        $oPaginator = $this->oTableGateway->fetchAll(true, $aWhere);
         $iPage = (int) $this->params()->fromQuery('page', 1);
         $iPage = ($iPage < 1) ? 1 : $iPage;
         $oPaginator->setCurrentPageNumber($iPage);
-        $oPaginator->setItemCountPerPage(3);
+
+        $iItemsPerPage = (CoreEntityController::$oSession->oUser->getSetting('user-index-items-per-page'))
+            ? CoreEntityController::$oSession->oUser->getSetting('user-index-items-per-page') : 10;
+        $oPaginator->setItemCountPerPage($iItemsPerPage);
 
         # set to -1 to disable
         $iSeatsLeft = -1;
         if (isset(CoreController::$aGlobalSettings['user-limit'])) {
             $iLimit = CoreController::$aGlobalSettings['user-limit'];
-            $iSeatsUsed = count($this->oTableGateway->fetchAll(false));
+            $iSeatsUsed = count($this->oTableGateway->fetchAll(false, $aWhere));
             $iSeatsLeft = $iLimit - $iSeatsUsed;
         }
-
 
         $aMeasureEnd = getrusage();
         $sTimeOne = $this->rutime($aMeasureEnd, CoreController::$aPerfomanceLogStart, "utime");
@@ -613,5 +620,33 @@ class UserController extends CoreController
         }
 
         return false;
+    }
+
+    /**
+     * User Language Settings
+     *
+     * @return ViewModel
+     * @since 1.0.13
+     */
+    public function languagesAction()
+    {
+        $oRequest = $this->getRequest();
+
+        if (! $oRequest->isPost()) {
+            # Set Layout based on users theme
+            $this->setThemeBasedLayout('user');
+
+            return new ViewModel([]);
+        } else {
+            # get selected language
+            $sLang = $oRequest->getPost('user_language');
+
+            # Update Users Language
+            $this->oTableGateway->updateAttribute('lang',$sLang,'User_ID',CoreController::$oSession->oUser->getID());
+
+            # Success Message and back to settings
+            $this->flashMessenger()->addSuccessMessage('Please logout to apply new language');
+            return $this->redirect()->toRoute('user', ['action' => 'settings']);
+        }
     }
 }

@@ -25,6 +25,7 @@ use Laminas\ModuleManager\ModuleManager;
 use Laminas\Session\Config\StandardConfig;
 use Laminas\Session\SessionManager;
 use Laminas\Session\Container;
+use Laminas\I18n\Translator\TranslatorInterface;
 
 class Module
 {
@@ -33,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.13';
+    const VERSION = '1.0.14';
 
     /**
      * Load module config file
@@ -72,6 +73,9 @@ class Module
 
                 $oDbAdapter = $sm->get(AdapterInterface::class);
 
+                $translator = $sm->get(TranslatorInterface::class);
+                $translator->setLocale('en_US');
+
                 /**
                 # set session manager
                 $config = new StandardConfig();
@@ -95,6 +99,8 @@ class Module
                 if (isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
+                    $translator->setLocale($container->oUser->getLang());
+
 
                     //echo 'check for '.$aRouteInfo['action'].'-'.$aRouteInfo['controller'];
 

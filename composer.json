@@ -3,7 +3,7 @@
     "description": "onePlace User Module",
     "type": "oneplace-module",
     "license": "BSD-3-Clause",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "keywords": [
         "laminas",
         "mvc",
