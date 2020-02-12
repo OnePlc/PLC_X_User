@@ -102,6 +102,11 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserIndexLoading()
     {
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
+
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
     }
@@ -111,6 +116,11 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserAddFormIndexLoading()
     {
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
+
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form.plc-core-basic-form');
