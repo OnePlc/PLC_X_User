@@ -88,15 +88,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserIndexLoading()
     {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession->oUser = $oTestUser;
-
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('table.plc-core-basic-table');
@@ -107,15 +98,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserAddFormIndexLoading()
     {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession->oUser = $oTestUser;
-
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form.plc-core-basic-form');
@@ -126,15 +108,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserViewFormLoading()
     {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession->oUser = $oTestUser;
-
         $this->dispatch('/user/view/1', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.plc-core-basic-view');
