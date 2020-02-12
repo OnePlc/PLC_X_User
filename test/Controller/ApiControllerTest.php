@@ -85,7 +85,11 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $data = json_decode($this->getResponse()->getBody(), true);
-        $this->assertArrayHasKey('message', $data);
+        if ( !is_array($data)) {
+            var_dump($data);
+            throw new \Exception('invalid api response');
+        }
+        $this->assertArrayHasKey('message', (array)$data);
     }
 
     /**
@@ -112,7 +116,7 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $data = json_decode($this->getResponse()->getBody(), true);
-        if(!is_array($data)) {
+        if ( !is_array($data)) {
             var_dump($data);
             throw new \Exception('invalid api response');
         }
@@ -193,7 +197,7 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $data = json_decode($this->getResponse()->getBody(), true);
-        if(!is_array($data)) {
+        if ( !is_array($data)) {
             var_dump($data);
             throw new \Exception('invalid api response');
         }
