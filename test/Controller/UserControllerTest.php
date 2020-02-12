@@ -86,8 +86,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
         $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
-
         CoreController::$oSession->oUser = $oTestUser;
+
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
                 'plc_login_user' => 'plc_travis',
@@ -106,6 +106,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
         $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
+        CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
@@ -120,6 +121,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
         $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
+        CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
