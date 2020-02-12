@@ -165,13 +165,15 @@ class Module
                      */
                     if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
                         echo $sRouteName;
-                        echo 'no config yet3';
-
-                        $response = $e->getResponse();
-                        $response->getHeaders()
-                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
-                        $response->setStatusCode(302);
-                        return $response;
+                        echo 'still no config....';
+                        if(! file_exists('/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php')) {
+                            echo 'no travis config too';
+                            $response = $e->getResponse();
+                            $response->getHeaders()
+                                ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
+                            $response->setStatusCode(302);
+                            return $response;
+                        }
                     } else {
                         $response = $e->getResponse();
                         $response->getHeaders()
