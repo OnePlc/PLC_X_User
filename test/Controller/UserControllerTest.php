@@ -32,6 +32,9 @@ use OnePlace\User\Model\User;
 /**
  * Class UserControllerTest
  * @covers \OnePlace\User\Controller\UserController
+ * @covers \OnePlace\User\Model\User
+ * @covers \OnePlace\User\Model\UserTable
+ * @covers \OnePlace\User\Module
  * @package OnePlaceTest\User\Controller
  */
 class UserControllerTest extends AbstractHttpControllerTestCase
@@ -92,6 +95,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\UserController::indexAction
+     * @covers \OnePlace\User\Model\UserTable::fetchAll
      */
     public function testUserIndexLoading()
     {
@@ -142,6 +146,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\UserController::viewAction
+     * @covers \OnePlace\User\Model\UserTable::getSingle
      */
     public function testUserViewFormLoading()
     {
@@ -167,6 +172,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\UserController::editAction
+     * @covers \OnePlace\User\Model\UserTable::getSingle
      */
     public function testUseEditFormLoading()
     {
