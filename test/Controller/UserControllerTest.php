@@ -28,6 +28,7 @@ use OnePlace\User\Model\TestUser;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Stdlib\Parameters;
 use OnePlace\User\Model\User;
+use OnePlace\User\Model\UserTable;
 
 /**
  * Class UserControllerTest
@@ -269,5 +270,33 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/user/languages', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('ul.list-group');
+    }
+
+    /**
+     * @covers \OnePlace\User\Model\UserTable::saveSingle
+     */
+    public function addNewUserTest() {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
+        $oUserTbl = $oSm->get(UserTable::class);
+        $aTestNewUser = [
+            'username' => 'travisadd',
+            'email' => 'travisadd@1plc.ch',
+            'full_name' => 'Travis CI added',
+        ];
+        $oUserTbl->saveSingle($aTestNewUser);
     }
 }
