@@ -84,11 +84,12 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/user/api', 'GET');
         $this->assertResponseStatusCode(200);
 
-        $this->expectOutputRegex('/message/');
+        $this->expectOutputRegex('/Welcome/');
     }
 
     /**
      * @covers \OnePlace\User\Controller\ApiController::listAction
+     * @covers \OnePlace\User\Model\UserTable::fetchAll
      */
     public function testAPIListIsLoading()
     {
@@ -115,6 +116,7 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\ApiController::addAction
+     * @covers \OnePlace\User\Model\Apikey
      */
     public function testAPIAddFormIsLoading()
     {
@@ -139,6 +141,7 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\ApiController::manageAction
+     * @covers \OnePlace\User\Model\ApikeyTable::fetchAll
      */
     public function testAPIManageListIsLoading()
     {
@@ -164,6 +167,8 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers \OnePlace\User\Controller\ApiController::getAction
+     * @covers \OnePlace\User\Model\User
+     * @covers \OnePlace\User\Model\UserTable::getSingle
      */
     public function testAPIGetIsLoading()
     {
@@ -185,12 +190,7 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/user/api/get/1', 'GET');
         $this->assertResponseStatusCode(200);
 
-        $data = json_decode($this->getResponse()->getBody(), true);
-        if ( !is_array($data)) {
-            var_dump($data);
-            throw new \Exception('invalid api response');
-        }
+        $this->expectOutputRegex('/oItem/');
 
-        $this->assertArrayHasKey('oItem', (array)$data);
     }
 }
