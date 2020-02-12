@@ -77,7 +77,7 @@ class Module
                 $translator->setLocale('en_US');
 
                 $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
-                if(is_dir($sTravisBase)) {
+                if (is_dir($sTravisBase)) {
                     return;
                 }
 
@@ -186,7 +186,9 @@ class Module
                         return $response;
                     }
                 }
-            }, -100);
+        },
+        -100
+        );
     }
 
     /**
