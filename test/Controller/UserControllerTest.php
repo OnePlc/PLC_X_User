@@ -71,6 +71,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
         $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->getRequest()->setMethod('POST')
