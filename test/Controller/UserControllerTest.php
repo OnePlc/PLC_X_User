@@ -28,17 +28,14 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Stdlib\Parameters;
 use OnePlace\User\Model\User;
 
-if ( !isset( $_SESSION ) ) $_SESSION = [];
+if (! isset($_SESSION)) {
+    $_SESSION = [];
+}
 
 class UserControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = true;
     protected $backupGlobalsBlacklist = [ '_SESSION' ];
-
-    private function initFakeTestSession()
-    {
-
-    }
 
     public function setUp() : void
     {
@@ -73,7 +70,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
@@ -97,8 +99,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/logout');
@@ -116,8 +122,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/denied');
@@ -135,8 +145,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/forgot-password');
@@ -154,8 +168,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->getRequest()->setMethod('POST')
@@ -178,8 +196,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user', 'GET');
@@ -198,8 +220,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/add', 'GET');
@@ -218,8 +244,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/view/1', 'GET');
@@ -238,8 +268,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/edit/1', 'GET');
@@ -258,8 +292,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/profile', 'GET');
@@ -278,8 +316,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/settings', 'GET');
@@ -298,8 +340,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/languages', 'GET');

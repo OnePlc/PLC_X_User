@@ -186,8 +186,8 @@ class Module
                         return $response;
                     }
                 }
-        },
-        -100
+            },
+            -100
         );
     }
 
