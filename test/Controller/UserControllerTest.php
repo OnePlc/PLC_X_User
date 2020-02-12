@@ -19,12 +19,14 @@ declare(strict_types=1);
 namespace OnePlaceTest\User\Controller;
 
 use OnePlace\User\Controller\UserController;
+use Application\Controller\CoreController;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Laminas\Session\Container;
 use OnePlace\User\Model\TestUser;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Stdlib\Parameters;
+use OnePlace\User\Model\User;
 
 class UserControllerTest extends AbstractHttpControllerTestCase
 {
@@ -68,16 +70,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers \OnePlace\User\Controller\AuthController::loginAction
      */
-    public function testSetupIsLoadedOnFirstLoad()
-    {
-        $this->dispatch('/', 'GET');
-        $this->assertResponseStatusCode(302);
-        $this->assertRedirectTo('/setup');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\AuthController::loginAction
-     */
     public function testLoginIsLoadedOnSecondLoad()
     {
         $this->dispatch('/', 'GET');
@@ -90,6 +82,12 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testLoginIsSuccessful()
     {
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'Test','email'=>'travis@travis.com']);
+
+        CoreController::$oSession->oUser = $oTestUser;
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
                 'plc_login_user' => 'plc_travis',
