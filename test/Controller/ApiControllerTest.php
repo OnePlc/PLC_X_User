@@ -191,6 +191,5 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $this->expectOutputRegex('/oItem/');
-
     }
 }
