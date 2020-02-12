@@ -31,10 +31,10 @@ use OnePlace\User\Model\User;
 
 /**
  * Class UserControllerTest
- * @covers \OnePlace\User\Controller\UserController
+ * @covers \OnePlace\User\Controller\ApiController
  * @package OnePlaceTest\User\Controller
  */
-class UserControllerTest extends AbstractHttpControllerTestCase
+class ApiControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = true;
     protected $backupGlobalsBlacklist = [ '_SESSION' ];
@@ -62,9 +62,9 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * @covers \OnePlace\User\Controller\UserController::updatesettingAction
+     * @covers \OnePlace\User\Controller\ApiController::indexAction
      */
-    public function testUpdateSettingIsSuccessful()
+    public function testAPIIndexIsLoading()
     {
         /**
          * Init Test Session to Fake Login
@@ -81,19 +81,73 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
-        $this->getRequest()->setMethod('POST')
-            ->setPost(new Parameters([
-                'setting_name' => 'test-setting',
-                'setting_value' => '1234',
-            ]));
-        $this->dispatch('/user/updatesetting');
+        $this->dispatch('/user/api', 'GET');
+        $this->assertResponseStatusCode(200);
+
+        $data = json_decode($this->getResponse()->getBody(), true);
+        $this->assertArrayHasKey('message', $data);
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\ApiController::listAction
+     */
+    public function testAPIListIsLoading()
+    {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
+        $this->dispatch('/user/api/list', 'GET');
+        $this->assertResponseStatusCode(200);
+
+        $data = json_decode($this->getResponse()->getBody(), true);
+        if(!is_array($data)) {
+            var_dump($data);
+            throw new \Exception('invalid api response');
+        }
+
+        $this->assertArrayHasKey('results', (array)$data);
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\ApiController::addAction
+     */
+    public function testAPIAddFormIsLoading()
+    {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
+        $this->dispatch('/user/api/add', 'GET');
         $this->assertResponseStatusCode(200);
     }
 
     /**
-     * @covers \OnePlace\User\Controller\UserController::indexAction
+     * @covers \OnePlace\User\Controller\ApiController::manageAction
      */
-    public function testUserIndexLoading()
+    public function testAPIManageListIsLoading()
     {
         /**
          * Init Test Session to Fake Login
@@ -110,15 +164,15 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
-        $this->dispatch('/user', 'GET');
+        $this->dispatch('/user/api/manage', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('table.plc-core-basic-table');
     }
 
     /**
-     * @covers \OnePlace\User\Controller\UserController::addAction
+     * @covers \OnePlace\User\Controller\ApiController::getAction
      */
-    public function testUserAddFormIndexLoading()
+    public function testAPIGetIsLoading()
     {
         /**
          * Init Test Session to Fake Login
@@ -135,133 +189,15 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
-        $this->dispatch('/user/add', 'GET');
+        $this->dispatch('/user/api/get/1', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('form.plc-core-basic-form');
-    }
 
-    /**
-     * @covers \OnePlace\User\Controller\UserController::viewAction
-     */
-    public function testUserViewFormLoading()
-    {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray([
-            'username' => 'travis',
-            'email' => 'travis@1plc.ch',
-            'id' => 1,
-            'full_name' => 'Travis CI',
-        ]);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
+        $data = json_decode($this->getResponse()->getBody(), true);
+        if(!is_array($data)) {
+            var_dump($data);
+            throw new \Exception('invalid api response');
+        }
 
-        $this->dispatch('/user/view/1', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertQuery('div.plc-core-basic-view');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\UserController::editAction
-     */
-    public function testUseEditFormLoading()
-    {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray([
-            'username' => 'travis',
-            'email' => 'travis@1plc.ch',
-            'id' => 1,
-            'full_name' => 'Travis CI',
-        ]);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
-        $this->dispatch('/user/edit/1', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertQuery('form.plc-core-basic-form');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\UserController::profileAction
-     */
-    public function testUserProfileIsLoading()
-    {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray([
-            'username' => 'travis',
-            'email' => 'travis@1plc.ch',
-            'id' => 1,
-            'full_name' => 'Travis CI',
-        ]);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
-        $this->dispatch('/user/profile', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertQuery('h3.card-title');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\UserController::settingsAction
-     */
-    public function testUserSettingsIsLoading()
-    {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray([
-            'username' => 'travis',
-            'email' => 'travis@1plc.ch',
-            'id' => 1,
-            'full_name' => 'Travis CI',
-        ]);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
-        $this->dispatch('/user/settings', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertQuery('h3.card-title');
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\UserController::languagesAction
-     */
-    public function testUserLanguagesIsLoading()
-    {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray([
-            'username' => 'travis',
-            'email' => 'travis@1plc.ch',
-            'id' => 1,
-            'full_name' => 'Travis CI',
-        ]);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
-        $this->dispatch('/user/languages', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertQuery('ul.list-group');
+        $this->assertArrayHasKey('oItem', (array)$data);
     }
 }
