@@ -28,10 +28,6 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Stdlib\Parameters;
 use OnePlace\User\Model\User;
 
-if (! isset($_SESSION)) {
-    $_SESSION = [];
-}
-
 class UserControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = true;
@@ -104,7 +100,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/logout');
@@ -127,7 +124,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/denied');
@@ -150,7 +148,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/forgot-password');
@@ -173,7 +172,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->getRequest()->setMethod('POST')
@@ -201,7 +201,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user', 'GET');
@@ -225,7 +226,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/add', 'GET');
@@ -249,7 +251,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/view/1', 'GET');
@@ -273,7 +276,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/edit/1', 'GET');
@@ -297,7 +301,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/profile', 'GET');
@@ -321,7 +326,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/settings', 'GET');
@@ -345,7 +351,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             'email' => 'travis@1plc.ch',
             'id' => 1,
             'full_name' => 'Travis CI',
-        ]);        CoreController::$oSession = new Container('plcauth');
+        ]);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/languages', 'GET');
