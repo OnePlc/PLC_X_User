@@ -52,6 +52,7 @@ before_script:
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/module/Application/data/structure.sql
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/data/structure.sql
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/data/data.sql
+  - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/data/testuser.sql
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/module/Application/data/bootstrap.sql
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/module/Application/data/data.sql
 
