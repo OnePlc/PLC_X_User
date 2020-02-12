@@ -197,7 +197,8 @@ class ApiControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers \OnePlace\User\Model\ApikeyTable::saveSingle
      */
-    public function addNewUserTest() {
+    public function addNewUserTest()
+    {
         /**
          * Init Test Session to Fake Login
          */

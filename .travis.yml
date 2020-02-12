@@ -57,7 +57,7 @@ before_script:
   - mysql -u travis --password="travis" "travis" < /home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/module/Application/data/data.sql
 
 script:
-  - vendor/bin/phpunit --coverage-clover ./clover.xml
+  - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/phpunit --coverage-clover ./clover.xml ; else vendor/bin/phpunit ; fi
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
 
 after_script:

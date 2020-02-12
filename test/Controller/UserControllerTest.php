@@ -275,7 +275,8 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers \OnePlace\User\Model\UserTable::saveSingle
      */
-    public function addNewUserTest() {
+    public function addNewUserTest()
+    {
         /**
          * Init Test Session to Fake Login
          */
