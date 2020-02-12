@@ -56,14 +56,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             $configOverrides
         ));
 
-        parent::setUp();
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\AuthController::loginAction
-     */
-    public function testLoginIsSuccessful()
-    {
         /**
          * Init Test Session to Fake Login
          */
@@ -74,6 +66,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
+        parent::setUp();
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
+    public function testLoginIsSuccessful()
+    {
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
                 'plc_login_user' => 'travis',
