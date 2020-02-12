@@ -69,8 +69,17 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers \OnePlace\User\Controller\AuthController::loginAction
      */
-    public function testLoginIsLoadedOnSecondLoad()
+    public function testLoginIsLoadedWithWrongData()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'tratest','email'=>'tratest@1plc.ch','id'=>2,'full_name'=>'Travis CI']);
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(302);
         $this->assertRedirectTo('/login');
@@ -101,6 +110,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
+        $this->assertQuery('table.plc-core-basic-table');
     }
 
     /**
@@ -113,5 +123,66 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form.plc-core-basic-form');
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\UserController::viewAction
+     */
+    public function testUserViewFormLoading()
+    {
+        initFakeTestSession();
+
+        $this->dispatch('/user/view/1', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('div.plc-core-basic-view');
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\UserController::editAction
+     */
+    public function testUseEditFormLoading()
+    {
+        initFakeTestSession();
+
+        $this->dispatch('/user/edit/1', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('div.plc-core-basic-view');
+        $this->assertQuery('form.plc-core-basic-form');
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\UserController::profileAction
+     */
+    public function testUserProfileIsLoading()
+    {
+        initFakeTestSession();
+
+        $this->dispatch('/user/profile', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('h3.card-title');
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\UserController::settingsAction
+     */
+    public function testUserSettingsIsLoading()
+    {
+        initFakeTestSession();
+
+        $this->dispatch('/user/settings', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('h3.card-title');
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\UserController::languagesAction
+     */
+    public function testUserLanguagessIsLoading()
+    {
+        initFakeTestSession();
+
+        $this->dispatch('/user/languages', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('ul.list-group');
     }
 }
