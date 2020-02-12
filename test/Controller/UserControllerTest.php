@@ -56,6 +56,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             $configOverrides
         ));
 
+        parent::setUp();
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
+    public function testLoginIsSuccessful()
+    {
         /**
          * Init Test Session to Fake Login
          */
@@ -66,14 +74,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
-        parent::setUp();
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\AuthController::loginAction
-     */
-    public function testLoginIsSuccessful()
-    {
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
                 'plc_login_user' => 'travis',
@@ -88,6 +88,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserIndexLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('table.plc-core-basic-table');
@@ -98,6 +108,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserAddFormIndexLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form.plc-core-basic-form');
@@ -108,6 +128,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserViewFormLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user/view/1', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.plc-core-basic-view');
@@ -125,6 +155,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oTestUser = new User($oDbAdapter);
         $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/edit/1', 'GET');
@@ -138,6 +169,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserProfileIsLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user/profile', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('h3.card-title');
@@ -148,6 +189,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserSettingsIsLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user/settings', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('h3.card-title');
@@ -158,6 +209,16 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserLanguagessIsLoading()
     {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
         $this->dispatch('/user/languages', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('ul.list-group');
