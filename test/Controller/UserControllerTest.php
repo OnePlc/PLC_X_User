@@ -90,7 +90,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testLoginIsSuccessful()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
@@ -106,7 +106,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserIndexLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
@@ -118,7 +118,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserAddFormIndexLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
@@ -130,7 +130,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserViewFormLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/view/1', 'GET');
         $this->assertResponseStatusCode(200);
@@ -142,7 +142,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUseEditFormLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/edit/1', 'GET');
         $this->assertResponseStatusCode(200);
@@ -155,7 +155,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserProfileIsLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/profile', 'GET');
         $this->assertResponseStatusCode(200);
@@ -167,7 +167,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserSettingsIsLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/settings', 'GET');
         $this->assertResponseStatusCode(200);
@@ -179,7 +179,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserLanguagessIsLoading()
     {
-        initFakeTestSession();
+        $this->initFakeTestSession();
 
         $this->dispatch('/user/languages', 'GET');
         $this->assertResponseStatusCode(200);
