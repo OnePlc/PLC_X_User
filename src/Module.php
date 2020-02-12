@@ -163,11 +163,12 @@ class Module
                     /**
                      * Setup before First Login
                      */
-                    if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
+                    $sBaseConf = __DIR__.'/../../../config/autoload/local.php';
+                    if (! file_exists($sBaseConf) && $sRouteName != 'setup') {
                         echo $sRouteName;
-                        echo 'still no config....';
-                        if(! file_exists('/home/travis/build/OnePlc/PLC_X_User/vendor/oneplace/oneplace-core/config/autoload/local.php')) {
-                            echo 'no travis config too';
+                        $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
+                        $sTravisPath = $sTravisBase.'/vendor/oneplace/oneplace-core/config/autoload/local.php';
+                        if (! file_exists($sTravisPath)) {
                             $response = $e->getResponse();
                             $response->getHeaders()
                                 ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
@@ -182,23 +183,7 @@ class Module
                         return $response;
                     }
                 }
-
-                /**
-                 * Enforce Setup
-
-                if (! file_exists(__DIR__.'/../../../config/autoload/local.php') && $sRouteName != 'setup') {
-                    echo $sRouteName;
-                    echo 'no config yet4';
-
-                    $response = $e->getResponse();
-                    $response->getHeaders()
-                        ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
-                    $response->setStatusCode(302);
-                    return $response;
-                }  */
-            },
-            -100
-        );
+            }, -100);
     }
 
     /**

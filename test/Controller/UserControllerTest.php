@@ -94,7 +94,7 @@ class UserControllerTest extends AbstractHttpControllerTestCase
 
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
-                'plc_login_user' => 'plc_travis',
+                'plc_login_user' => 'travis',
                 'plc_login_pass' => '1234',
             ]));
         $this->dispatch('/login');
@@ -107,6 +107,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     public function testUserIndexLoading()
     {
         $this->initFakeTestSession();
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
@@ -119,6 +127,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     public function testUserAddFormIndexLoading()
     {
         $this->initFakeTestSession();
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
@@ -131,6 +147,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
     public function testUserViewFormLoading()
     {
         $this->initFakeTestSession();
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
+        CoreController::$oSession->oUser = $oTestUser;
 
         $this->dispatch('/user/view/1', 'GET');
         $this->assertResponseStatusCode(200);
