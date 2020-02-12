@@ -76,6 +76,11 @@ class Module
                 $translator = $sm->get(TranslatorInterface::class);
                 $translator->setLocale('en_US');
 
+                $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
+                if(is_dir($sTravisBase)) {
+                    return;
+                }
+
                 /**
                 # set session manager
                 $config = new StandardConfig();
@@ -165,8 +170,6 @@ class Module
                      */
                     $sBaseConf = __DIR__.'/../../../config/autoload/local.php';
                     if (! file_exists($sBaseConf) && $sRouteName != 'setup') {
-                        echo $sRouteName;
-                        $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
                         $sTravisPath = $sTravisBase.'/vendor/oneplace/oneplace-core/config/autoload/local.php';
                         if (! file_exists($sTravisPath)) {
                             $response = $e->getResponse();

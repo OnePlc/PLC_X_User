@@ -8,23 +8,38 @@ if($aLangs != '') {
 }
 ?>
 <form action="" method="POST">
-    <ul class="list-group">
-        <?php if(is_array($aLangs)) {
-            if(count($aLangs) > 0) {
-                foreach($aLangs as $sLang) {
-                    $sChecked = ($sCurrentLang == $sLang) ? ' checked' : '';
-                    ?>
-                    <li class="list-group-item">
-                        <input type="radio" name="user_language" value="<?=$sLang?>" <?=$sChecked?>/> <?=$sLang?>
-                    </li>
-                <?php }
-            }
-        }
-        ?>
-    </ul>
-    <form class="form-row">
-        <button class="btn btn-primary" type="submit">
-            <?=$this->translate('Set Language')?>
-        </button>
-    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <?=$this->translate('Choose Language')?>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <?php if(is_array($aLangs)) {
+                            if(count($aLangs) > 0) {
+                                foreach($aLangs as $sLang) {
+                                    $sChecked = ($sCurrentLang == $sLang) ? ' checked' : '';
+                                    ?>
+                                    <li class="list-group-item">
+                                        <input type="radio" name="user_language" value="<?=$sLang?>" <?=$sChecked?>/> <?=$sLang?>
+                                    </li>
+                                <?php }
+                            }
+                        }
+                        ?>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="form-row">
+                        <button class="btn btn-primary" type="submit">
+                            <?=$this->translate('Set Language')?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
