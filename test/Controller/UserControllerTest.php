@@ -359,4 +359,31 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
         $this->assertQuery('ul.list-group');
     }
+
+    /**
+     * @covers \OnePlace\User\Controller\ApiController::indexAction
+     */
+    public function testAPIIndexIsLoading()
+    {
+        /**
+         * Init Test Session to Fake Login
+         */
+        $oSm = $this->getApplicationServiceLocator();
+        $oDbAdapter = $oSm->get(AdapterInterface::class);
+        $oTestUser = new User($oDbAdapter);
+        $oTestUser->exchangeArray([
+            'username' => 'travis',
+            'email' => 'travis@1plc.ch',
+            'id' => 1,
+            'full_name' => 'Travis CI',
+        ]);
+        CoreController::$oSession = new Container('plcauth');
+        CoreController::$oSession->oUser = $oTestUser;
+
+        $this->dispatch('/user/api', 'GET');
+        $this->assertResponseStatusCode(200);
+
+        $data = json_decode($this->getResponse()->getBody(), true);
+        $this->assertArrayHasKey('data', $data);
+    }
 }
