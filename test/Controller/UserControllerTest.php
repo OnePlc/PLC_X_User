@@ -28,9 +28,12 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Stdlib\Parameters;
 use OnePlace\User\Model\User;
 
+if ( !isset( $_SESSION ) ) $_SESSION = [];
+
 class UserControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = true;
+    protected $backupGlobalsBlacklist = [ '_SESSION' ];
 
     private function initFakeTestSession()
     {
@@ -56,14 +59,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
             $configOverrides
         ));
 
-        parent::setUp();
-    }
-
-    /**
-     * @covers \OnePlace\User\Controller\AuthController::loginAction
-     */
-    public function testLoginIsSuccessful()
-    {
         /**
          * Init Test Session to Fake Login
          */
@@ -74,6 +69,14 @@ class UserControllerTest extends AbstractHttpControllerTestCase
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oSession->oUser = $oTestUser;
 
+        parent::setUp();
+    }
+
+    /**
+     * @covers \OnePlace\User\Controller\AuthController::loginAction
+     */
+    public function testLoginIsSuccessful()
+    {
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters([
                 'plc_login_user' => 'travis',
@@ -88,16 +91,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserIndexLoading()
     {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
         $this->dispatch('/user', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('table.plc-core-basic-table');
@@ -108,16 +101,6 @@ class UserControllerTest extends AbstractHttpControllerTestCase
      */
     public function testUserAddFormIndexLoading()
     {
-        /**
-         * Init Test Session to Fake Login
-         */
-        $oSm = $this->getApplicationServiceLocator();
-        $oDbAdapter = $oSm->get(AdapterInterface::class);
-        $oTestUser = new User($oDbAdapter);
-        $oTestUser->exchangeArray(['username'=>'travis','email'=>'travis@1plc.ch','id'=>1,'full_name'=>'Travis CI']);
-        CoreController::$oSession = new Container('plcauth');
-        CoreController::$oSession->oUser = $oTestUser;
-
         $this->dispatch('/user/add', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form.plc-core-basic-form');
