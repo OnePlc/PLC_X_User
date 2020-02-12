@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Zend Framework Coding Standard">
+<ruleset name="onePlace Coding Standard">
     <description>Zend Framework Coding Standard</description>
 
     <!-- display progress -->
@@ -8,7 +8,6 @@
 
     <!-- inherit rules from: -->
     <rule ref="PSR2"/>
-    <rule ref="PSR12"/>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
     <rule ref="Generic.Formatting.SpaceAfterNot"/>
     <rule ref="Squiz.WhiteSpace.OperatorSpacing">
