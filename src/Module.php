@@ -188,11 +188,19 @@ class Module
                 }
 
                 if($sRouteName != 'login' && !$bLoggedIn) {
-                    $response = $e->getResponse();
-                    $response->getHeaders()
-                        ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
-                    $response->setStatusCode(302);
-                    return $response;
+                    if($sRouteName == 'setup') {
+                        $response = $e->getResponse();
+                        $response->getHeaders()
+                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
+                        $response->setStatusCode(302);
+                        return $response;
+                    } else {
+                        $response = $e->getResponse();
+                        $response->getHeaders()
+                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
+                        $response->setStatusCode(302);
+                        return $response;
+                    }
                 }
             },
             -100
