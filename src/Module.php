@@ -164,11 +164,10 @@ class Module
                  * Redirect to Login Page if not logged in
                  */
                 if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
-
                     /**
                      * Setup before First Login
                      */
-                    $sBaseConf = __DIR__.'/../../../config/autoload/local.php';
+                    $sBaseConf = 'config/autoload/local.php';
                     if (! file_exists($sBaseConf) && $sRouteName != 'setup') {
                         $sTravisPath = $sTravisBase.'/vendor/oneplace/oneplace-core/config/autoload/local.php';
                         if (! file_exists($sTravisPath)) {
@@ -176,14 +175,19 @@ class Module
                             $response->getHeaders()
                                 ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
                             $response->setStatusCode(302);
-                            return $response;
+                            //return $response;
+                        } else {
+                            $response = $e->getResponse();
+                            $response->getHeaders()
+                                ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
+                            $response->setStatusCode(302);
                         }
                     } else {
                         $response = $e->getResponse();
                         $response->getHeaders()
                             ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
                         $response->setStatusCode(302);
-                        return $response;
+                        //return $response;
                     }
                 }
             },
