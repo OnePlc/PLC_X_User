@@ -186,22 +186,6 @@ class Module
                         return $response;
                     }
                 }
-
-                if($sRouteName != 'login' && !$bLoggedIn) {
-                    if($sRouteName == 'setup') {
-                        $response = $e->getResponse();
-                        $response->getHeaders()
-                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
-                        $response->setStatusCode(302);
-                        return $response;
-                    } else {
-                        $response = $e->getResponse();
-                        $response->getHeaders()
-                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
-                        $response->setStatusCode(302);
-                        return $response;
-                    }
-                }
             },
             -100
         );
