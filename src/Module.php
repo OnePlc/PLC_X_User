@@ -34,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.14';
+    const VERSION = '1.0.15';
 
     /**
      * Load module config file
@@ -185,6 +185,14 @@ class Module
                         $response->setStatusCode(302);
                         return $response;
                     }
+                }
+
+                if($sRouteName != 'login' && !$bLoggedIn) {
+                    $response = $e->getResponse();
+                    $response->getHeaders()
+                        ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
+                    $response->setStatusCode(302);
+                    return $response;
                 }
             },
             -100

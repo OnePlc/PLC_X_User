@@ -173,6 +173,22 @@ ALTER TABLE `core_api_key`
   MODIFY `Apikey_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- User saved searches
+--
+CREATE TABLE `user_search` (
+    `Search_ID` int(11) NOT NULL,
+    `user_idfs` int(11) NOT NULL,
+    `filters` text NOT NULL,
+    `list_name` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `user_search`
+    ADD PRIMARY KEY (`Search_ID`);
+
+ALTER TABLE `user_search`
+    MODIFY `Search_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Save
 --
 COMMIT;
