@@ -59,6 +59,12 @@ class UserController extends CoreController
      */
     public function indexAction()
     {
+        # Check license
+        if(!$this->checkLicense('user')) {
+            $this->flashMessenger()->addErrorMessage('You have no active license for user');
+            $this->redirect()->toRoute('home');
+        }
+
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
@@ -89,8 +95,8 @@ class UserController extends CoreController
 
         # set to -1 to disable
         $iSeatsLeft = -1;
-        if (isset(CoreController::$aGlobalSettings['user-limit'])) {
-            $iLimit = CoreController::$aGlobalSettings['user-limit'];
+        if (isset(CoreController::$oSession->aSeats['user'])) {
+            $iLimit = (int)CoreController::$oSession->aSeats['user'];
             $iSeatsUsed = count($this->oTableGateway->fetchAll(false, $aWhere));
             $iSeatsLeft = $iLimit - $iSeatsUsed;
         }

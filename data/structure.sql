@@ -182,6 +182,7 @@ CREATE TABLE `user_search` (
     `Search_ID` int(11) NOT NULL,
     `user_idfs` int(11) NOT NULL,
     `filters` text NOT NULL,
+    `label` varchar(150) NOT NULL,
     `list_name` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

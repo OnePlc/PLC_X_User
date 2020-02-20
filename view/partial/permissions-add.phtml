@@ -35,7 +35,7 @@
                             $bHasPerm = false; ?>
                             <div class="col-md-4">
                                 <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-permissions[]" value="<?=$oPerm->permission_key?>-<?=$sModule?>" />
-                                <?=$oPerm->label?>
+                                <?=$this->translate($oPerm->label)?>
                             </div>
                         <?php } ?>
                     </div>

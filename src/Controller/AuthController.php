@@ -121,6 +121,7 @@ class AuthController extends CoreController
         # Remove User from Session
         unset(CoreController::$oSession->oUser);
         unset(CoreController::$oSession->aLicences);
+        unset(CoreController::$oSession->aSeats);
 
         # Back to Login
         return $this->redirect()->toRoute('login');

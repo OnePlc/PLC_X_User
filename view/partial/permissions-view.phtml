@@ -31,7 +31,7 @@ foreach(array_keys($aPermissonsByModules) as $sModule) { ?>
                         ?>
                         <div class="col-md-4">
                             <?=($bHasPerm) ? ' <i class="fas fa-check"></i>' : ''?>
-                            <?=$oPerm->label?>,
+                            <?=$this->translate($oPerm->label)?>,
                         </div>
                     <?php } ?>
                 </div>

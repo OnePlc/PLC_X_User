@@ -19,7 +19,7 @@
                             ?>
                             <div class="col-md-4">
                                 <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-formfields[]" value="<?=$oField->Field_ID?>_<?=$oForm->form_key?>" />
-                                <?=$oField->label?>
+                                <?=$this->translate($oField->label)?>
                             </div>
                         <?php } ?>
                     </div>

@@ -34,14 +34,20 @@
                         foreach($aPermissonsByModules[$sModule] as $oPerm) {
                             $sModule = str_replace(['\\'],['-'],$sModule);
                             $bHasPerm = false;
+                            $sLabelSyle = '';
                             if (array_key_exists($sModule,$aUserPermissions)) {
                                 if (array_key_exists($oPerm->permission_key,$aUserPermissions[$sModule])) {
                                     $bHasPerm = true;
                                 }
-                            } ?>
+                            }
+                            if($oPerm->needs_globaladmin == 1) {
+                                $sLabelSyle = 'color:red;';
+                            }?>
                             <div class="col-md-4">
                                 <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-permissions[]" value="<?=$oPerm->permission_key?>-<?=$sModule?>" />
-                                <?=$oPerm->label?>
+                                <span style="<?=$sLabelSyle?>">
+                                    <?=$this->translate($oPerm->label)?>
+                                </span>
                             </div>
                         <?php } ?>
                     </div>

@@ -46,3 +46,48 @@ msgstr "Alle Rechte vorbehalten"
 
 msgid "Featured Image"
 msgstr "Hauptbild"
+
+msgid "Add"
+msgstr "Erstellen"
+
+msgid "View"
+msgstr "Anzeigen"
+
+msgid "Index"
+msgstr "Übersicht"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Columns"
+msgstr "Spalten"
+
+msgid "Index Info"
+msgstr "Übersichtstabellen"
+
+msgid "Fields"
+msgstr "Felder"
+
+msgid "Form fields"
+msgstr "Formulare"
+
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+msgid "What is allowed"
+msgstr "Benutzerrechte"
+
+msgid "Change theme"
+msgstr "Design wechseln"
+
+msgid "Change language"
+msgstr "Sprache wechseln"
+
+msgid "Choose Language"
+msgstr "Sprache wählen"
+
+msgid "Set Language"
+msgstr "Sprache wählen"
+
+msgid "My Settings"
+msgstr "Meine Einstellungen"

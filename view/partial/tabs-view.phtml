@@ -10,7 +10,9 @@ foreach(array_keys($aTabsByForm) as $sTable) {
     $aTabs = $aTabsByForm[$sTable]['aTabs']; ?>
     <li class="list-group-item">
         <div class="row">
-            <div class="col-md-4"><?=$oForm->label?></div>
+            <div class="col-md-4">
+                <?=$this->translate($oForm->label)?>
+            </div>
             <div class="col-md-8">
                 <div class="row">
                     <?php foreach($aTabs as $oTab) {
@@ -25,7 +27,7 @@ foreach(array_keys($aTabsByForm) as $sTable) {
                         ?>
                         <div class="col-md-4">
                             <?=($bHasPerm) ? ' <i class="fas fa-check"></i>' : ''?>
-                            <?=$oTab->title?>
+                            <?=$this->translate($oTab->title)?>
                         </div>
                     <?php } ?>
                 </div>

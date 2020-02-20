@@ -11,7 +11,7 @@ foreach(array_keys($aTabsByForm) as $sTable) {
     <li class="list-group-item">
         <div class="row">
             <div class="col-md-2">
-                <?=$oForm->label?>
+                <?=$this->translate($oForm->label)?>
             </div>
             <div class="col-md-2">
                 <a href="#" class="btn btn-light plc-user-permissions-selectall">
@@ -35,7 +35,7 @@ foreach(array_keys($aTabsByForm) as $sTable) {
                         ?>
                         <div class="col-md-4">
                             <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-tabs[]" value="<?=$oTab->Tab_ID?>_<?=$oForm->form_key?>" />
-                            <?=$oTab->title?>
+                            <?=$this->translate($oTab->title)?>
                         </div>
                     <?php } ?>
                 </div>
