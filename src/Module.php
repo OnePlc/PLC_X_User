@@ -34,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.17';
+    const VERSION = '1.0.18';
 
     /**
      * Load module config file
@@ -66,9 +66,6 @@ class Module
         $app->getEventManager()->attach(
             'route',
             function ($e) {
-
-                echo 'OMG?!!!!!';
-                return;
 
                 # get basic info from application
                 $app = $e->getApplication();
