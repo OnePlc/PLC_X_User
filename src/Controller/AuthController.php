@@ -238,7 +238,7 @@ class AuthController extends CoreController
 
             # Send E-Mail
             $this->sendEmail('one-place/user/email/reset-password', [
-                'sResetUrl' => $this->getSetting('app-url').'/reset-password/'.$sToken,
+                'sResetUrl' => $this->getSetting('app-url').'/reset-password/'.$oUser->username.'/'.$sToken,
                 'sUserName' => $oUser->getLabel(),
                 'sInstallInfo' => 'onePlace'
             ], $oUser->getTextField('email'), $oUser->getTextField('full_name'), 'Password Reset');

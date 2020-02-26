@@ -162,8 +162,10 @@ class UserTable
         }
 
         # add modified date
-        $data['modified_by'] = CoreController::$oSession->oUser->getID();
-        $data['modified_date'] = date('Y-m-d H:i:s', time());
+        if(isset($oSession->oUser)) {
+            $data['modified_by'] = CoreController::$oSession->oUser->getID();
+            $data['modified_date'] = date('Y-m-d H:i:s', time());
+        }
 
         $this->tableGateway->update($data, ['User_ID' => $id]);
 
