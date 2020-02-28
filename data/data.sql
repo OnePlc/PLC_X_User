@@ -173,3 +173,8 @@ INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `cou
 INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
 (NULL, 'text', 'API Key', 'api_key', 'apikey-base', 'apikey-single', 'col-md-6', '', '', '0', '1', '0', '', '', ''),
 (NULL, 'text', 'API Token', 'api_token', 'apikey-base', 'apikey-single', 'col-md-6', '', '', '0', '1', '0', '', '', '');
+
+--
+-- module icon
+--
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('user-icon', 'fas fa-users');
