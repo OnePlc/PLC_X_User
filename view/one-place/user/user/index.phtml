@@ -1,6 +1,12 @@
+<?php
+use Application\Controller\CoreController;
+
+$sIcon = (array_key_exists('user-icon',CoreController::$aGlobalSettings))
+    ?  CoreController::$aGlobalSettings['user-icon'] : '';
+?>
 <div class="card">
     <div class="card-header">
-        <?= $this->partial('partial/indexheader',['sTitle'=>'Users']) ?>
+        <?= $this->partial('partial/indexheader',['sTitle'=>'Users','sIcon' => $sIcon]) ?>
     </div>
     <div class="card-body py-0">
         <?php if ($iSeatsLeft != -1) { ?>
