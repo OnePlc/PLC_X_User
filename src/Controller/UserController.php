@@ -656,4 +656,118 @@ class UserController extends CoreController
             return $this->redirect()->toRoute('user', ['action' => 'settings']);
         }
     }
+
+    public function copyAction()
+    {
+        $oRequest = $this->getRequest();
+
+        $iBaseUserID = $this->params()->fromRoute('id', 0);
+        $sCustomForm = 'user-copy';
+
+        if (! $oRequest->isPost()) {
+            # Set Layout based on users theme
+            $this->setThemeBasedLayout('user');
+
+            # Add Buttons for breadcrumb
+            $this->setViewButtons($sCustomForm);
+
+            # Load Tabs for Add Form
+            $this->setViewTabs($sCustomForm);
+
+            # Load Fields for Add Form
+            $this->setFormFields($sCustomForm);
+
+            return new ViewModel([]);
+        } else {
+            $this->layout('layout/json');
+
+            $oBaseUser = $this->oTableGateway->getSingle($iBaseUserID);
+
+            $sUserName = $_REQUEST[$sCustomForm.'_username'];
+            $sFullName = $_REQUEST[$sCustomForm.'_full_name'];
+            $sEmail = $_REQUEST[$sCustomForm.'_email'];
+            $sPassword = $_REQUEST[$sCustomForm.'_password'];
+
+            $aUserData = [
+                'username' => $sUserName,
+                'full_name' => $sFullName,
+                'email' => $sEmail,
+                'password' => password_hash($sPassword, PASSWORD_DEFAULT),
+                'lang' => $oBaseUser->getLang(),
+                'theme' => $oBaseUser->getTheme(),
+            ];
+
+            # Copy User
+            $oNewUser = $this->oTableGateway->generateNew();
+            $oNewUser->exchangeArray($aUserData);
+            $iNewUserID = $this->oTableGateway->saveSingle($oNewUser);
+
+            # Copy Permissions
+            $oUserPermTbl = new TableGateway('user_permission', CoreController::$oDbAdapter);
+            $aPermissions = $oUserPermTbl->select(['user_idfs' => $iBaseUserID]);
+            if(count($aPermissions) > 0) {
+                foreach($aPermissions as $oPerm) {
+                    $oUserPermTbl->insert([
+                        'user_idfs' => $iNewUserID,
+                        'permission' => $oPerm->permission,
+                        'module' => $oPerm->module,
+                    ]);
+                }
+            }
+
+            # Copy Form Fields
+            $aUserFields = CoreController::$aCoreTables['form-field']->select(['user_idfs' => $iBaseUserID]);
+            if(count($aUserFields) > 0) {
+                foreach($aUserFields as $oField) {
+                    CoreController::$aCoreTables['form-field']->insert([
+                       'user_idfs' => $iNewUserID,
+                       'field_idfs' => $oField->field_idfs,
+                       'sort_id' => $oField->sort_id
+                    ]);
+                }
+            }
+
+            # Copy Form Tabs
+            $aUserTabs = CoreController::$aCoreTables['form-tab']->select(['user_idfs' => $iBaseUserID]);
+            if(count($aUserTabs) > 0) {
+                foreach($aUserTabs as $oTab) {
+                    CoreController::$aCoreTables['form-tab']->insert([
+                        'user_idfs' => $iNewUserID,
+                        'tab_idfs' => $oTab->tab_idfs,
+                        'sort_id' => $oTab->sort_id
+                    ]);
+                }
+            }
+
+            # Copy Widgets
+            $aUserWidgets = CoreController::$aCoreTables['user-widget']->select(['user_idfs' => $iBaseUserID]);
+            if(count($aUserWidgets) > 0) {
+                foreach($aUserWidgets as $oWidget) {
+                    CoreController::$aCoreTables['user-widget']->insert([
+                        'user_idfs' => $iNewUserID,
+                        'widget_idfs' => $oWidget->widget_idfs,
+                        'sort_id' => $oWidget->sort_id
+                    ]);
+                }
+            }
+
+            # Copy Table Columns
+            $aUserTblCols = CoreController::$aCoreTables['table-col']->select(['user_idfs' => $iBaseUserID]);
+            if(count($aUserTblCols) > 0) {
+                foreach($aUserTblCols as $oCol) {
+                    CoreController::$aCoreTables['table-col']->insert([
+                        'user_idfs' => $iNewUserID,
+                        'field_idfs' => $oCol->field_idfs,
+                        'width' => $oCol->width,
+                        'tbl_name' => $oCol->tbl_name,
+                        'sortID' => $oCol->sortID
+                    ]);
+                }
+            }
+
+            # Success Message and back to settings
+            $this->flashMessenger()->addSuccessMessage('User copied succuessfully');
+            return $this->redirect()->toRoute('user', ['action' => 'view','id' => $iNewUserID]);
+        }
+    }
 }

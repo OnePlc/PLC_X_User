@@ -40,6 +40,14 @@ class User extends CoreEntityModel
     public $full_name;
 
     /**
+     * User Profile Image
+     *
+     * @var string $featured_image
+     * @since 1.0.20
+     */
+    public $featured_image;
+
+    /**
      * Username
      *
      * @var string

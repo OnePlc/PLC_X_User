@@ -137,6 +137,8 @@ class UserTable
             'full_name' => $user->full_name,
             'email' => $user->email,
             'password' => $user->password,
+            'theme' => $user->theme,
+            'lang' => $user->lang,
         ];
 
         $id = (int) $user->id;
@@ -195,5 +197,9 @@ class UserTable
     public function updateAttribute($sAttribute, $sVal, $sIDKey, $iEntityID)
     {
         CoreController::$aCoreTables['user']->update([$sAttribute => $sVal], ['User_ID' => $iEntityID]);
+    }
+
+    public function generateNew() {
+        return new User(CoreController::$oDbAdapter);
     }
 }

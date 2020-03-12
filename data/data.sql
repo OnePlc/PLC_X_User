@@ -2,7 +2,8 @@
 -- Core Form
 --
 INSERT INTO `core_form` (`form_key`, `label`, `entity_class`, `entity_tbl_class`) VALUES
-('user-single', 'User', 'OnePlace\\User\\Model\\User', 'OnePlace\\User\\Model\\UserTable');
+('user-single', 'User', 'OnePlace\\User\\Model\\User', 'OnePlace\\User\\Model\\UserTable'),
+('user-copy', 'Copy User', 'OnePlace\\User\\Model\\User', 'OnePlace\\User\\Model\\UserTable');
 
 --
 -- Core Form Button
@@ -10,7 +11,9 @@ INSERT INTO `core_form` (`form_key`, `label`, `entity_class`, `entity_tbl_class`
 INSERT INTO `core_form_button` (`Button_ID`, `label`, `icon`, `title`, `href`, `class`, `append`, `form`, `mode`, `filter_check`, `filter_value`) VALUES
 (NULL, 'Add User', 'fas fa-plus', 'Add User', '/user/add', 'primary', '', 'user-index', 'link', '', ''),
 (NULL, 'Save User', 'fas fa-save', 'Save User', '#', 'primary saveForm', '', 'user-single', 'link', '', ''),
-(NULL, 'Edit User', 'fas fa-edit', 'Edit User', '/user/edit/##ID##', 'primary', '', 'user-view', 'link', '', '');
+(NULL, 'Edit User', 'fas fa-edit', 'Edit User', '/user/edit/##ID##', 'primary', '', 'user-view', 'link', '', ''),
+(NULL, 'Copy User', 'fas fa-copy', 'Copy User', '/user/copy/##ID##', 'primary', '', 'user-view', 'link', '', ''),
+(NULL, 'Copy User', 'fas fa-copy', 'Copy User', '#', 'primary saveForm', '', 'user-copy', 'link', '', '');
 
 --
 -- Core Form Field
@@ -25,7 +28,11 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 (NULL, 'partial', 'Tabs', 'tabs', 'user-tabs', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Fields', 'formfields', 'user-fields', 'user-single', 'col-md-12', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'partial', 'Widgets', 'widgets', 'user-widgets', 'user-single', 'col-md-12', '', '', '0', '1', '0', '', '', ''),
-(NULL, 'featuredimage', 'Featured Image', 'featured_image', 'user-base', 'user-single', 'col-md-3', '', '', '0', '1', '0', '', '', '');
+(NULL, 'featuredimage', 'Featured Image', 'featured_image', 'user-base', 'user-single', 'col-md-3', '', '', '0', '1', '0', '', '', ''),
+(NULL, 'text', 'Username', 'username', 'usercopy-base', 'user-copy', 'col-md-3', '/user/view/##ID##', '', 0, 1, 0, '', '', ''),
+(NULL, 'text', 'Full Name', 'full_name', 'usercopy-base', 'user-copy', 'col-md-3', '', '', 0, 1, 0, '', '', ''),
+(NULL, 'email', 'E-Mail', 'email', 'usercopy-base', 'user-copy', 'col-md-3', '/user/view/##ID##', '', 0, 1, 0, '', '', ''),
+(NULL, 'password', 'Password', 'password', 'usercopy-base', 'user-copy', 'col-md-3', '', '', 0, 1, 0, '', '', '');
 
 --
 -- Core Form Tab
@@ -36,7 +43,8 @@ INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `cou
 ('user-fields', 'user-single', 'Fields', 'Form fields', 'fas fa-edit', '', 0, '', ''),
 ('user-permissions', 'user-single', 'Permissions', 'What is allowed', 'fas fa-key', '', 0, '', ''),
 ('user-tabs', 'user-single', 'Tabs', 'Form tabs', 'fas fa-bars', '', 0, '', ''),
-('user-widgets', 'user-single', 'Widgets', 'Dashboard Widgets', 'fas fa-window-restore', '', 0, '', '');
+('user-widgets', 'user-single', 'Widgets', 'Dashboard Widgets', 'fas fa-window-restore', '', 0, '', ''),
+('usercopy-base', 'user-single', 'User', 'Base Data', 'fas fa-user', '', 0, '', '');
 
 --
 -- Core Index Table
@@ -54,6 +62,7 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('updateindexcolumnsort', 'OnePlace\\User\\Controller\\UserController', 'Update Column Index', '', '', 0, 0),
 ('settheme', 'OnePlace\\User\\Controller\\UserController', 'Set own Theme', '', '', 0, 0),
 ('view', 'OnePlace\\User\\Controller\\UserController', 'View', '', '', 0, 0),
+('copy', 'OnePlace\\User\\Controller\\UserController', 'Copy', '', '', 0, 0),
 ('list', 'OnePlace\\User\\Controller\\ApiController', 'List', '', '', 1, 0),
 ('profile', 'OnePlace\\User\\Controller\\UserController', 'Profile', '', '', 0, 0),
 ('settings', 'OnePlace\\User\\Controller\\UserController', 'Settings', '', '', 0, 0),
