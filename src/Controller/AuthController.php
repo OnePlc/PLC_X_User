@@ -118,6 +118,67 @@ class AuthController extends CoreController
                 }
             }
 
+            # Check if it is first login
+            $aTabs = CoreController::$aCoreTables['form-tab']->select();
+            if(count($aTabs) == 0) {
+                $aBaseTabs = CoreController::$aCoreTables['core-form-tab']->select([]);
+                if(count($aBaseTabs) > 0) {
+                    $iSortID = 0;
+                    foreach($aBaseTabs as $oTab) {
+                        CoreController::$aCoreTables['form-tab']->insert([
+                            'user_idfs' => $oUser->getID(),
+                            'tab_idfs' => $oTab->Tab_ID,
+                            'sort_id' => $iSortID,
+                        ]);
+                        $iSortID++;
+                    }
+                }
+            }
+
+            # Check if it is first login
+            $aFields = CoreController::$aCoreTables['form-field']->select();
+            if(count($aFields) == 0) {
+                $aBaseFields = CoreController::$aCoreTables['core-form-field']->select([]);
+                if(count($aBaseFields) > 0) {
+                    $iSortID = 0;
+                    foreach($aBaseFields as $oField) {
+                        CoreController::$aCoreTables['form-field']->insert([
+                            'user_idfs' => $oUser->getID(),
+                            'field_idfs' => $oField->Field_ID,
+                            'sort_id' => $iSortID,
+                        ]);
+                        $iSortID++;
+                    }
+                }
+            }
+
+            # Check if it is first login
+            $aList = CoreController::$aCoreTables['table-col']->select();
+            if(count($aFields) == 0) {
+                $aBaseLists = CoreController::$aCoreTables['table-index']->select();
+                if(count($aBaseLists) > 0) {
+                    foreach($aBaseLists as $oList) {
+                        $aListFields = CoreController::$aCoreTables['core-form-field']->select(['form' => $oList->form]);
+                        if(count($aListFields) > 0) {
+                            $iSortID = 0;
+                            foreach($aListFields as $oListField) {
+                                if($iSortID == 5) {
+                                    break;
+                                }
+                                CoreController::$aCoreTables['table-col']->insert([
+                                    'user_idfs' => $oUser->getID(),
+                                    'tbl_name' => $oList->table_name,
+                                    'field_idfs' => $oListField->Field_ID,
+                                    'sortID' => $iSortID,
+                                    'width' => 'col-m-2',
+                                ]);
+                                $iSortID++;
+                            }
+                        }
+                    }
+                }
+            }
+
             # Add XP for successful login
             $oUser->addXP('login');
 
