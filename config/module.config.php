@@ -53,9 +53,12 @@ return [
                 ],
             ],
             'denied' => [
-                'type'    => Literal::class,
+                'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/denied',
+                    'route'    => '/denied[/:permission]',
+                    'constraints' => [
+                        'permission' => '[a-zA-Z0-9-_]*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
                         'action'     => 'denied',
@@ -77,7 +80,7 @@ return [
                 'options' => [
                     'route'    => '/reset-password[/:username[/:token]]',
                     'constraints' => [
-                        'username' => '[a-zA-Z0-9]*',
+                        'username' => '[a-zA-Z0-9-_]*',
                         'token' => '[a-zA-Z0-9]+',
                     ],
                     'defaults' => [

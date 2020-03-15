@@ -192,6 +192,18 @@ ALTER TABLE `user_search`
 ALTER TABLE `user_search`
     MODIFY `Search_ID` int(11) NOT NULL AUTO_INCREMENT;
 
+CREATE TABLE `user_registration` (
+     `Registration_ID` int(11) NOT NULL,
+     `user_token` varchar(255) NOT NULL,
+     `created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `user_registration`
+    ADD PRIMARY KEY (`Registration_ID`);
+
+ALTER TABLE `user_registration`
+    MODIFY `Registration_ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- Save
 --

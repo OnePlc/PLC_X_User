@@ -100,6 +100,24 @@ class AuthController extends CoreController
             # Login Successful - redirect to Dashboard
             CoreController::$oSession->oUser = $oUser;
 
+            # Check if it is first login
+            $oPermTbl = new TableGateway('user_permission', CoreController::$oDbAdapter);
+            $aPerms = $oPermTbl->select();
+            if(count($aPerms) == 0) {
+                $aBasePerms = CoreController::$aCoreTables['permission']->select([
+                    'needs_globaladmin' => 0
+                ]);
+                if(count($aBasePerms) > 0) {
+                    foreach($aBasePerms as $oPerm) {
+                        $oPermTbl->insert([
+                            'user_idfs' => $oUser->getID(),
+                            'permission' => $oPerm->permission_key,
+                            'module' => $oPerm->module,
+                        ]);
+                    }
+                }
+            }
+
             # Add XP for successful login
             $oUser->addXP('login');
 
@@ -138,7 +156,7 @@ class AuthController extends CoreController
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
-        $sPermission = $this->params()->fromRoute('id', 'Def');
+        $sPermission = $this->params()->fromRoute('permission', 'Def');
 
         return new ViewModel([
             'sPermission' => $sPermission,

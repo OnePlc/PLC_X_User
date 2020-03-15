@@ -34,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.21';
+    const VERSION = '1.0.22';
 
     /**
      * Load module config file
@@ -120,7 +120,7 @@ class Module
                             $response->getHeaders()->addHeaderLine(
                                 'Location',
                                 $e->getRouter()->assemble(
-                                    ['id' => $aRouteInfo['action']],
+                                    ['permission' => $aRouteInfo['action'].'-'.str_replace(['\\'],['-'],$aRouteInfo['controller'])],
                                     ['name' => 'denied']
                                 )
                             );
@@ -159,6 +159,7 @@ class Module
                     'login' => [],
                     'reset-pw' => [],
                     'forgot-pw' => [],
+                    'register' => [],
                 ];
 
                 /**

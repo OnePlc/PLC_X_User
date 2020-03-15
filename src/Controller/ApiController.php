@@ -330,4 +330,35 @@ class ApiController extends CoreController
 
         return $sKey;
     }
+
+    public function finishsetupAction()
+    {
+        $this->layout('layout/json');
+
+        $sSystemName = $this->params()->fromRoute('systemkey', '');
+
+        $aResponse = ['state' => 'error', 'message' => 'unkown error'];
+        if($sSystemName != '') {
+            $oReqTbl = new TableGateway('user_instance_request', CoreController::$oDbAdapter);
+
+            $oRequest = $oReqTbl->select(['name' => $sSystemName]);
+            if(count($oRequest) > 0 ) {
+                $oRequest = $oRequest->current();
+                $bHasProtocol = stripos('https://',$oRequest->url);
+                if($bHasProtocol === false) {
+                    $oRequest->url = 'https://'.$oRequest->url;
+                }
+                $sLog = '+++ Starting Installation<br/>+++ Request to License Server<br/>+++ Installing onePlace Modules<br/>+++ Done ! You can now login to <a target="_blank" href="'.$oRequest->url.'">your new onePlace</a><br/>Username: '.$sSystemName.'<br/>Password: <i>Your my.onep.lc Password</i>';
+                file_put_contents($_SERVER['DOCUMENT_ROOT'].'/data/installer/'.$oRequest->Request_ID.'/status.log',$sLog);
+                $oReqTbl->delete(['Request_ID' => $oRequest->Request_ID]);
+            } else {
+                $aResponse = ['state' => 'error', 'message' => 'request not found'];
+            }
+        } else {
+            $aResponse = ['state' => 'error', 'message' => 'invalid system name'];
+        }
+
+        echo json_encode($aResponse);
+        return false;
+    }
 }

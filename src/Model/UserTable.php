@@ -141,13 +141,15 @@ class UserTable
             'lang' => $user->lang,
         ];
 
+        $iCreatorID = (isset(CoreController::$oSession->oUser)) ? CoreController::$oSession->oUser->getID() : 1;
+
         $id = (int) $user->id;
 
         if ($id === 0) {
             # add dates
-            $data['created_by'] = CoreController::$oSession->oUser->getID();
+            $data['created_by'] = $iCreatorID;
             $data['created_date'] = date('Y-m-d H:i:s', time());
-            $data['modified_by'] = CoreController::$oSession->oUser->getID();
+            $data['modified_by'] = $iCreatorID;
             $data['modified_date'] = date('Y-m-d H:i:s', time());
 
             $this->tableGateway->insert($data);
@@ -165,7 +167,7 @@ class UserTable
 
         # add modified date
         if(isset($oSession->oUser)) {
-            $data['modified_by'] = CoreController::$oSession->oUser->getID();
+            $data['modified_by'] = $iCreatorID;
             $data['modified_date'] = date('Y-m-d H:i:s', time());
         }
 

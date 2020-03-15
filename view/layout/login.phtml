@@ -38,6 +38,21 @@
 
                 </div>
                 <div class="col-md-4" style="min-height: 100vh; padding:173px 55px 55px 55px; vertical-align: middle;">
+                    <?php
+                    /**
+                     * Print Flashmessenger messages (alerts)
+                     */
+                    $flash = $this->flashMessenger();
+                    $flash->setMessageOpenFormat('<div%s style="">
+                                 <ul><li>')
+                        ->setMessageSeparatorString('</li><li>')
+                        ->setMessageCloseString('</li></ul></div>');
+                    echo $flash->render('error',   ['alert', 'alert-dismissible', 'alert-danger', 'alert-plc']);
+                    echo $flash->render('info',    ['alert', 'alert-dismissible', 'alert-info', 'alert-plc']);
+                    echo $flash->render('default', ['alert', 'alert-dismissible', 'alert-info', 'alert-plc']);
+                    echo $flash->render('warning', ['alert', 'alert-dismissible', 'alert-warning', 'alert-plc']);
+                    echo $flash->render('success', ['alert', 'alert-dismissible', 'alert-success', 'alert-plc']);?>
+
                     <?= $this->content ?>
                     <hr>
                     <footer>

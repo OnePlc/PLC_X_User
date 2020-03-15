@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Password Reset Email</title>
+    <style>
+        /* -------------------------------------
+            GLOBAL RESETS
+        ------------------------------------- */
+        img {
+            border: none;
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%; }
+        body {
+            background-color: #f6f6f6;
+            font-family: sans-serif;
+            -webkit-font-smoothing: antialiased;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%; }
+        table {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            width: 100%; }
+        table td {
+            font-family: sans-serif;
+            font-size: 14px;
+            vertical-align: top; }
+        /* -------------------------------------
+            BODY & CONTAINER
+        ------------------------------------- */
+        .body {
+            background-color: #f6f6f6;
+            width: 100%; }
+        /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
+        .container {
+            display: block;
+            Margin: 0 auto !important;
+            /* makes it centered */
+            max-width: 580px;
+            padding: 10px;
+            width: 580px; }
+        /* This should also be a block element, so that it will fill 100% of the .container */
+        .content {
+            box-sizing: border-box;
+            display: block;
+            Margin: 0 auto;
+            max-width: 580px;
+            padding: 10px; }
+        /* -------------------------------------
+            HEADER, FOOTER, MAIN
+        ------------------------------------- */
+        .main {
+            background: #ffffff;
+            border-radius: 3px;
+            width: 100%; }
+        .wrapper {
+            box-sizing: border-box;
+            padding: 20px; }
+        .content-block {
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+        .footer {
+            clear: both;
+            Margin-top: 10px;
+            text-align: center;
+            width: 100%; }
+        .footer td,
+        .footer p,
+        .footer span,
+        .footer a {
+            color: #999999;
+            font-size: 12px;
+            text-align: center; }
+        /* -------------------------------------
+            TYPOGRAPHY
+        ------------------------------------- */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #000000;
+            font-family: sans-serif;
+            font-weight: 400;
+            line-height: 1.4;
+            margin: 0;
+            Margin-bottom: 30px; }
+        h1 {
+            font-size: 35px;
+            font-weight: 300;
+            text-align: center;
+            text-transform: capitalize; }
+        p,
+        ul,
+        ol {
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            margin: 0;
+            Margin-bottom: 15px; }
+        p li,
+        ul li,
+        ol li {
+            list-style-position: inside;
+            margin-left: 5px; }
+        a {
+            color: #3498db;
+            text-decoration: underline; }
+        /* -------------------------------------
+            BUTTONS
+        ------------------------------------- */
+        .btn {
+            box-sizing: border-box;
+            width: 100%; }
+        .btn > tbody > tr > td {
+            padding-bottom: 15px; }
+        .btn table {
+            width: auto; }
+        .btn table td {
+            background-color: #ffffff;
+            border-radius: 5px;
+            text-align: center; }
+        .btn a {
+            background-color: #ffffff;
+            border: solid 1px #3498db;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: #3498db;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            padding: 12px 25px;
+            text-decoration: none;
+            text-transform: capitalize; }
+        .btn-primary table td {
+            background-color: #3498db; }
+        .btn-primary a {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #ffffff; }
+        /* -------------------------------------
+            OTHER STYLES THAT MIGHT BE USEFUL
+        ------------------------------------- */
+        .last {
+            margin-bottom: 0; }
+        .first {
+            margin-top: 0; }
+        .align-center {
+            text-align: center; }
+        .align-right {
+            text-align: right; }
+        .align-left {
+            text-align: left; }
+        .clear {
+            clear: both; }
+        .mt0 {
+            margin-top: 0; }
+        .mb0 {
+            margin-bottom: 0; }
+        .preheader {
+            color: transparent;
+            display: none;
+            height: 0;
+            max-height: 0;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            mso-hide: all;
+            visibility: hidden;
+            width: 0; }
+        .powered-by a {
+            text-decoration: none; }
+        hr {
+            border: 0;
+            border-bottom: 1px solid #f6f6f6;
+            Margin: 20px 0; }
+        /* -------------------------------------
+            RESPONSIVE AND MOBILE FRIENDLY STYLES
+        ------------------------------------- */
+        @media only screen and (max-width: 620px) {
+            table[class=body] h1 {
+                font-size: 28px !important;
+                margin-bottom: 10px !important; }
+            table[class=body] p,
+            table[class=body] ul,
+            table[class=body] ol,
+            table[class=body] td,
+            table[class=body] span,
+            table[class=body] a {
+                font-size: 16px !important; }
+            table[class=body] .wrapper,
+            table[class=body] .article {
+                padding: 10px !important; }
+            table[class=body] .content {
+                padding: 0 !important; }
+            table[class=body] .container {
+                padding: 0 !important;
+                width: 100% !important; }
+            table[class=body] .main {
+                border-left-width: 0 !important;
+                border-radius: 0 !important;
+                border-right-width: 0 !important; }
+            table[class=body] .btn table {
+                width: 100% !important; }
+            table[class=body] .btn a {
+                width: 100% !important; }
+            table[class=body] .img-responsive {
+                height: auto !important;
+                max-width: 100% !important;
+                width: auto !important; }}
+        /* -------------------------------------
+            PRESERVE THESE STYLES IN THE HEAD
+        ------------------------------------- */
+        @media all {
+            .ExternalClass {
+                width: 100%; }
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div {
+                line-height: 100%; }
+            .apple-link a {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important; }
+            .btn-primary table td:hover {
+                background-color: #34495e !important; }
+            .btn-primary a:hover {
+                background-color: #34495e !important;
+                border-color: #34495e !important; } }
+
+
+        .plc-alert {
+            padding: 8px 35px 8px 14px;
+            margin-bottom: 18px;
+            color: #c09853;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            background-color: #fcf8e3;
+            border: 1px solid #fbeed5;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            width:250px;
+        }
+        .plc-alert-heading {
+            color: inherit;
+        }
+        .plc-alert .close {
+            position: relative;
+            top: -2px;
+            right: 0;
+            line-height: 18px;
+        }
+
+        .plc-alert-success {
+            color: #468847;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+
+        .plc-alert-danger {
+            color: #b94a48;
+            background-color: #f2dede;
+            border-color: #eed3d7;
+        }
+
+        .plc-alert-info {
+            color: #3a87ad;
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+        }
+    </style>
+</head>
+<body class="">
+<table border="0" cellpadding="0" cellspacing="0" class="body">
+    <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+            <div class="content">
+                <!-- START CENTERED WHITE CONTAINER -->
+                <span class="preheader">Your onePlace is ready to use</span>
+                <table class="main">
+                    <div style="width:100%; text-align:center; display: inline-block; padding:20px;">
+                        <img src="data:image/png;base64,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" />
+                    </div>
+                    <!-- START MAIN CONTENT AREA -->
+                    <tr>
+                        <td class="wrapper">
+                            <table border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <p>Hi ,</p>
+                                        <p>you have request to sign up for onePlace.
+                                        <br/>You can now create your <b>free</b> onePlace Account with
+                                        the link below. <br/><br/>
+                                        With your onePlace Account, you will be able to create your own onePlace
+                                        Setup for your Company for free.
+
+                                        <br/There are also paid premium options like themes and plugins available to enhance your experience.</p>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                            <tbody>
+                                            <tr>
+                                                <td align="left">
+                                                    <table border="0" cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td> <a href="<?=$sResetUrl?>">Complete your Sign up</a> </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <p>If you have problems, copy this link to your browser <a href="<?=$sResetUrl?>"><?= $this->escapeHtml($sResetUrl) ?></a></p>
+
+                                        <p>If you did not apply for a free onePlace account, you can just delete this E-Mail. Your E-Mail address will be deleted from our database within 48hours if you dont complete this process. Your Adress is only stored as a hash, we don't have your plain e-mail address and wont be able to send eny further emails if you dont sign up. No further action required.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- END MAIN CONTENT AREA -->
+                </table>
+
+                <!-- START FOOTER -->
+                <div class="footer">
+                    <table border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="content-block">
+                                <span class="apple-link"><?=$sInstallInfo?></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- END FOOTER -->
+
+                <!-- END CENTERED WHITE CONTAINER -->
+            </div>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+</body>
+</html>
