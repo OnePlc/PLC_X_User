@@ -578,7 +578,40 @@ class UserController extends CoreController
         # Set Layout based on users theme
         $this->setThemeBasedLayout('user');
 
-        return new ViewModel([]);
+        $oRequest = $this->getRequest();
+        if($oRequest->isPost()) {
+            $iUserID = $oRequest->getPost('user_id');
+            $sUserDesc = $oRequest->getPost('user_description');
+            $sUserName = $oRequest->getPost('user_fullname');
+
+            if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iUserID)) {
+                mkdir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iUserID);
+            }
+
+            if(count($_FILES) > 0) {
+                move_uploaded_file($_FILES['profile_image']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iUserID.'/avatar.png');
+            }
+
+            if($sUserName != '') {
+                $oUserTbl = new TableGateway('user', CoreController::$oDbAdapter);
+                $oUserTbl->update(['full_name' => $sUserName],['User_ID' => $iUserID]);
+                CoreController::$oSession->oUser->full_name = $sUserName;
+            }
+
+            if($sUserDesc != '') {
+                $oUserTbl = new TableGateway('user', CoreController::$oDbAdapter);
+                $oUserTbl->update(['description' => $sUserDesc],['User_ID' => $iUserID]);
+                CoreController::$oSession->oUser->description = $sUserDesc;
+            }
+
+            $this->flashMessenger()->addSuccessMessage('Deine Profil Einstellungen wurden gespeichert');
+            return $this->redirect()->toRoute('user', ['action' => 'profile']);
+        } else {
+            $oUser = CoreController::$oSession->oUser;
+            return new ViewModel([
+                'oUser' => $oUser,
+            ]);
+        }
     }
 
     public function settingsAction()

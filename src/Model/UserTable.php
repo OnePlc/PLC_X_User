@@ -52,7 +52,7 @@ class UserTable
      * @return mixed
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false, $aWhere = [])
+    public function fetchAll($bPaginated = false, $aWhere = [],$sSort = '')
     {
         $oSel = new Select($this->tableGateway->getTable());
         # Build where
@@ -72,7 +72,13 @@ class UserTable
         if (array_key_exists('is_globaladmin', $aWhere)) {
             $oWh->equalTo('is_globaladmin', $aWhere['is_globaladmin']);
         }
+        if (array_key_exists('is_analyst', $aWhere)) {
+            $oWh->equalTo('is_analyst', $aWhere['is_analyst']);
+        }
         $oSel->where($oWh);
+        if($sSort != '') {
+            $oSel->order($sSort);
+        }
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {
             # Create result set for user entity

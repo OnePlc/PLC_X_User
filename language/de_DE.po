@@ -91,3 +91,9 @@ msgstr "Sprache wählen"
 
 msgid "My Settings"
 msgstr "Meine Einstellungen"
+
+msgid "Repeat Password"
+msgstr "Passwort wiederholen"
+
+msgid "Sign up"
+msgstr "Registrieren"

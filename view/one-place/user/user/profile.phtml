@@ -8,8 +8,51 @@
                 <h3 class="card-title"><?=$this->translate('Profile')?></h3>
             </div>
             <div class="card-body">
-
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="user_id" value="<?=$oUser->getID()?>" />
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Profilbild')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <?php
+                            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$oUser->getID().'/avatar.png')) {
+                                echo '<img src="/data/profile/'.$oUser->getID().'/avatar.png" style="max-width:200px; max-height:150px;" />';
+                            }
+                            ?>
+                            <input type="file" name="profile_image" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Name')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <input type="text" name="user_fullname" value="<?=$oUser->getLabel()?>"/ >
+                        </div>
+                    </div>
+                    <?php if(isset($oUser->description)) { ?>
+                    <div class="form-row">
+                        <label for="input01" class="col-md-3 mb-3">
+                            <?=$this->translate('Biographie')?>
+                        </label>
+                        <div class="col-md-9 mb-3">
+                            <textarea class="plcnote" name="user_description"><?=$oUser->description?></textarea>
+                        </div>
+                    </div>
+                    <?php } ?>
+                    <div class="form-row">
+                        <input type="submit" value="Speichern" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('.plcnote').summernote({
+            height: 150
+        });
+    });
+</script>

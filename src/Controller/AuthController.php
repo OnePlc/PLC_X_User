@@ -203,7 +203,7 @@ class AuthController extends CoreController
         unset(CoreController::$oSession->aSeats);
 
         # Back to Login
-        return $this->redirect()->toRoute('login');
+        return $this->redirect()->toRoute('home');
     }
 
     /**
@@ -417,6 +417,175 @@ class AuthController extends CoreController
                 return new ViewModel([
                     'sErrorMessage' => 'invalid token',
                 ]);
+            }
+        }
+    }
+
+    public function signupAction() {
+        $this->layout('layout/signup');
+
+        $oRequest = $this->getRequest();
+
+        if (! $oRequest->isPost()) {
+            $oFound = false;
+            $sToken = $this->params()->fromRoute('token', '');
+            $bShowForm = false;
+            $aExtraData = [];
+            if($sToken != '') {
+                $oRegisterTbl = new TableGateway('user_registration', CoreController::$oDbAdapter);
+                $oFound = $oRegisterTbl->select(['user_token' => $sToken]);
+                if(count($oFound) > 0) {
+                    $oFound = $oFound->current();
+                    $oSalutTag = CoreController::$aCoreTables['core-tag']->select(['tag_key' => 'salutation']);
+                    if(count($oSalutTag) > 0) {
+                        $oSalutTag = $oSalutTag->current();
+                        $aSalutsDB = CoreController::$aCoreTables['core-entity-tag']->select([
+                            'tag_idfs' => $oSalutTag->Tag_ID,
+                            'entity_form_idfs' => 'contact-single',
+                        ]);
+                        $aSaluts = [];
+                        if(count($aSalutsDB) > 0) {
+                            foreach($aSalutsDB as $oSal) {
+                                $aSaluts[] = (object)['id' => $oSal->Entitytag_ID, 'text' => $oSal->tag_value];
+                            }
+                        }
+                        $oFound->aSalutations = $aSaluts;
+                    }
+                    $bShowForm = true;
+                } else {
+                    $aExtraData['sErrorMessage'] = 'Invalid token.';
+                }
+            }
+            $aViewData = array_merge([
+                'sToken' => $sToken,
+                'bShowForm' => $bShowForm,
+                'oContact' => $oFound
+            ],$aExtraData);
+            # Display Success Messages
+            return new ViewModel($aViewData);
+        } else {
+            /**
+             * Registration Step 2
+             */
+            if(isset($_REQUEST['plc_account_pass'])) {
+                $sEmail = $oRequest->getPost('plc_account_email');
+                $sPass = $oRequest->getPost('plc_account_pass');
+                $sPassRep = $oRequest->getPost('plc_account_pass_rep');
+                //$iSalutationID = $oRequest->getPost('plc_account_salutation');
+                //$sPhone = $oRequest->getPost('plc_account_phone');
+                //$sCity = $oRequest->getPost('plc_account_city');
+                //$sZIP = $oRequest->getPost('plc_account_zip');
+                //$sCompany = $oRequest->getPost('plc_account_company');
+                $sLastname = $oRequest->getPost('plc_account_lastname');
+                //$sFirstname = $oRequest->getPost('plc_account_firstname');
+                //$sStreet = $oRequest->getPost('plc_account_street');
+                //$sStreetNr = $oRequest->getPost('plc_account_street_nr');
+
+                /**
+                 * Create User
+                 */
+                $oNewUser = $this->oTableGateway->generateNew();
+                $aDefSettings = [
+                    'lang' => 'de_DE',
+                    'theme' => 'vuze',
+                ];
+                $aUserData = [
+                    'username' => str_replace([' '],['.'],strtolower($sLastname)),
+                    'full_name' => $sLastname,
+                    'email' => $sEmail,
+                    'password' => password_hash($sPass, PASSWORD_DEFAULT),
+                ];
+                $aUserData = array_merge($aUserData,$aDefSettings);
+                $oNewUser->exchangeArray($aUserData);
+                $iNewUserID = $this->oTableGateway->saveSingle($oNewUser);
+
+                if(isset($_FILES['plc_account_profile'])) {
+                    if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID)) {
+                        mkdir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID);
+                    }
+                    move_uploaded_file($_FILES['plc_account_profile']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID.'/avatar.png');
+                }
+
+                $oLoginUser = $this->oTableGateway->getSingle($iNewUserID);
+
+                /**
+                 * Add Permissions
+                 */
+                $aUserPermissions = [
+                    (object)['permission' => 'index', 'module' => 'Application\Controller\IndexController'],
+                    (object)['permission' => 'profile', 'module' => 'OnePlace\User\Controller\UserController'],
+                    (object)['permission' => 'upgrade', 'module' => 'OnePlace\Stockchart\Controller\StockchartController'],
+                ];
+                $oUserPermTbl = new TableGateway('user_permission', CoreController::$oDbAdapter);
+                $oRegisterTbl = new TableGateway('user_registration', CoreController::$oDbAdapter);
+                foreach($aUserPermissions as $oPerm) {
+                    $oUserPermTbl->insert([
+                        'user_idfs' => $iNewUserID,
+                        'permission' => $oPerm->permission,
+                        'module' => $oPerm->module,
+                    ]);
+                }
+
+                /**
+                 * Add Widgets
+                 */
+                $aUserWidgets = [
+                    (object)['name' => 'echoapp_start'],
+                ];
+                $oUserWidgetTbl = new TableGateway('core_widget_user', CoreController::$oDbAdapter);
+                $oWidgetTbl = new TableGateway('core_widget', CoreController::$oDbAdapter);
+                $iSortID = 0;
+                foreach($aUserWidgets as $oUserWidget) {
+                    $oWidget = $oWidgetTbl->select(['widget_name' => $oUserWidget->name]);
+                    if(count($oWidget) > 0) {
+                        $oWidget = $oWidget->current();
+                        $oUserWidgetTbl->insert(['user_idfs' => $iNewUserID, 'widget_idfs' => $oWidget->Widget_ID, 'sort_id' => $iSortID]);
+                        $iSortID++;
+                    }
+                }
+
+                $oRegisterTbl->delete(['user_email' => $sEmail]);
+
+                # Login Successful - redirect to Dashboard
+                CoreController::$oSession->oUser = $oLoginUser;
+
+                # Success Message and back to settings
+                return $this->redirect()->toRoute('home');
+            } else {
+                /**
+                 * Registration Step 1
+                 */
+                $sEmail = $oRequest->getPost('plc_login_email');
+                $sRegisterToken = str_replace(['$','/','.'],[],password_hash($sEmail, PASSWORD_DEFAULT));
+
+                $oRegisterTbl = new TableGateway('user_registration', CoreController::$oDbAdapter);
+                $oAlreadyReg = $oRegisterTbl->select(['user_email' => $sEmail]);
+                if(count($oAlreadyReg) > 0) {
+                    # Display Success Messages
+                    return new ViewModel([
+                        'sErrorMessage' => 'You already have a pending request.',
+                    ]);
+                } else {
+                    $oRegisterTbl->insert([
+                        'user_token' => $sRegisterToken,
+                        'user_email' => $sEmail,
+                        'created_date' => date('Y-m-d H:i:s', time()),
+                    ]);
+
+                    # Send E-Mail
+                    $this->sendEmail('email/user/register-init', [
+                        'sResetUrl' => $this->getSetting('app-url').'/signup/'.$sRegisterToken,
+                        'sInstallInfo' => 'onePlace',
+                        'sWelcomeText' => CoreController::$aGlobalSettings['register-welcome'],
+                        'sPrivacyLink' => $this->getSetting('app-url').'/datenschutz',
+                        'sEmailTitle' => CoreController::$aGlobalSettings['signup-email-subject'],
+                    ], $sEmail, $sEmail, CoreController::$aGlobalSettings['signup-email-subject']);
+
+                    # Display Success Messages
+                    return new ViewModel([
+                        'successMessage' => 'Vielen Dank für dein Interesse. Wir haben dir eine E-Mail geschickt, mit der du die Registrierung abschliessen kannst.',
+                    ]);
+                }
             }
         }
     }

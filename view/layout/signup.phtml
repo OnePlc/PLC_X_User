@@ -5,7 +5,7 @@ use Application\Controller\CoreController;
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?= $this->headTitle(CoreController::$aGlobalSettings['app-title'].' - Login')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?= $this->headTitle(CoreController::$aGlobalSettings['app-title'].' - Registration')->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <?= $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -37,10 +37,10 @@ use Application\Controller\CoreController;
     <body style="padding:0; overflow:hidden;">
         <div class="container-fluid px-0 py-0">
             <div class="row">
-                <div class="col-md-8" style="background-image: url('https://source.unsplash.com/random/featured/?nature') !important; background-position: center; background-repeat: no-repeat; background-size: cover;">
+                <div class="col-md-3" style="background-image: url('https://source.unsplash.com/random/featured/?nature') !important; background-position: center; background-repeat: no-repeat; background-size: cover;">
 
                 </div>
-                <div class="col-md-4" style="min-height: 100vh; padding:173px 55px 55px 55px; vertical-align: middle;">
+                <div class="col-md-9" style="min-height: 100vh; padding:173px 55px 55px 55px; vertical-align: middle;">
                     <?php
                     /**
                      * Print Flashmessenger messages (alerts)
@@ -59,8 +59,7 @@ use Application\Controller\CoreController;
                     <?= $this->content ?>
                     <hr>
                     <footer>
-                        <p>&copy; <?= date('Y') ?>
-                            <a href="<?=CoreController::$aGlobalSettings['app-url']?>/impressum" target="_blank">
+                        <p>&copy; <?= date('Y') ?> <a href="<?=CoreController::$aGlobalSettings['app-url']?>/impressum" target="_blank">
                                 <?=CoreController::$aGlobalSettings['app-copyright']?>
                             </a>. <?=$this->translate('All rights reserved')?>.</p>
                     </footer>

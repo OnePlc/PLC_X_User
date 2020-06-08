@@ -52,6 +52,19 @@ return [
                     ],
                 ],
             ],
+            'signup' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/signup[/:token]',
+                    'constraints' => [
+                        'token' => '[a-zA-Z0-9.$]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'signup',
+                    ],
+                ],
+            ],
             'denied' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -124,6 +137,7 @@ return [
     'view_manager' => [
         'template_map' => [
             'layout/login'           => __DIR__ . '/../view/layout/login.phtml',
+            'layout/signup'           => __DIR__ . '/../view/layout/signup.phtml',
         ],
         'template_path_stack' => [
             'user' => __DIR__ . '/../view',

@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Password Reset Email</title>
+    <title><?=$sEmailTitle?></title>
     <style>
         /* -------------------------------------
             GLOBAL RESETS
@@ -291,10 +291,10 @@
         <td class="container">
             <div class="content">
                 <!-- START CENTERED WHITE CONTAINER -->
-                <span class="preheader">Your onePlace is ready to use</span>
+                <span class="preheader">Schliesse deine Registrierung ab</span>
                 <table class="main">
                     <div style="width:100%; text-align:center; display: inline-block; padding:20px;">
-                        <img src="data:image/png;base64,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" />
+                        <img src="https://b-echo.onep.lc/img/logo.png" />
                     </div>
                     <!-- START MAIN CONTENT AREA -->
                     <tr>
@@ -302,14 +302,9 @@
                             <table border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <p>Hi ,</p>
-                                        <p>you have request to sign up for onePlace.
-                                        <br/>You can now create your <b>free</b> onePlace Account with
-                                        the link below. <br/><br/>
-                                        With your onePlace Account, you will be able to create your own onePlace
-                                        Setup for your Company for free.
+                                        <p>Guten Tag ,</p>
+                                        <p><?=$sWelcomeText?></p>
 
-                                        <br/There are also paid premium options like themes and plugins available to enhance your experience.</p>
                                         <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                                             <tbody>
                                             <tr>
@@ -317,7 +312,7 @@
                                                     <table border="0" cellpadding="0" cellspacing="0">
                                                         <tbody>
                                                         <tr>
-                                                            <td> <a href="<?=$sResetUrl?>">Complete your Sign up</a> </td>
+                                                            <td> <a href="<?=$sResetUrl?>">Registrierung abschliessen</a> </td>
                                                         </tr>
                                                         </tbody>
                                                     </table>
@@ -326,9 +321,9 @@
                                             </tbody>
                                         </table>
 
-                                        <p>If you have problems, copy this link to your browser <a href="<?=$sResetUrl?>"><?= $this->escapeHtml($sResetUrl) ?></a></p>
+                                        <p>Sollten Sie Probleme mit dem Button haben, kopieren Sie diesen Link in Ihren Browser <a href="<?=$sResetUrl?>"><?= $this->escapeHtml($sResetUrl) ?></a></p>
 
-                                        <p>If you did not apply for a free onePlace account, you can just delete this E-Mail. Your E-Mail address will be deleted from our database within 48hours if you dont complete this process. Your Adress is only stored as a hash, we don't have your plain e-mail address and wont be able to send eny further emails if you dont sign up. No further action required.</p>
+                                        <p>Mit dem Abschluss der Registrierung akzeptieren Sie unsere <a href="<?=$sPrivacyLink?>">Datenschutzbestimmungen</a>, welchen Sie bereits im ersten Schritt zugestimmt haben.</p>
                                     </td>
                                 </tr>
                             </table>

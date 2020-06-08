@@ -219,6 +219,19 @@ class User extends CoreEntityModel
         $this->xp_level = ! empty($data['xp_level']) ? $data['xp_level'] : 1;
         $this->xp_current = ! empty($data['xp_current']) ? $data['xp_current'] : 0;
         $this->xp_total = ! empty($data['xp_total']) ? $data['xp_total'] : 0;
+
+        if(array_key_exists('is_analyst',$data)) {
+            $this->is_analyst = ! empty($data['is_analyst']) ? $data['is_analyst'] : 0;
+        }
+        if(array_key_exists('is_globaladmin',$data)) {
+            $this->is_globaladmin = ! empty($data['is_globaladmin']) ? $data['is_globaladmin'] : 0;
+        }
+        if(array_key_exists('function',$data)) {
+            $this->function = ! empty($data['function']) ? $data['function'] : '';
+        }
+        if(array_key_exists('description',$data)) {
+            $this->description = ! empty($data['description']) ? $data['description'] : '';
+        }
     }
 
     /**

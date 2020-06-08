@@ -75,7 +75,7 @@ class Module
                 $oDbAdapter = $sm->get(AdapterInterface::class);
 
                 $translator = $sm->get(TranslatorInterface::class);
-                $translator->setLocale('en_US');
+                $translator->setLocale('de_DE');
 
                 $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
                 if (is_dir($sTravisBase)) {
@@ -101,21 +101,105 @@ class Module
                 $container = new Container('plcauth');
                 $bLoggedIn = false;
 
+                if(isset($_REQUEST['lang'])) {
+                    switch($_REQUEST['lang']) {
+                        case 'de':
+                            $container->sLang = 'de_DE';
+                            //$translator->setLocale('de_DE');
+                            break;
+                        case 'en':
+                            $container->sLang = 'en_US';
+                            //$translator->setLocale('en_US');
+                            break;
+                        case 'fr':
+                            $container->sLang = 'de_DE';
+                            //$translator->setLocale('en_US');
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if(isset($container->sLang)) {
+                    if($container->sLang != '') {
+                        $translator->setLocale($container->sLang);
+                    }
+                }
+
+                # Whitelisted routes that need no authentication
+                $aWhiteListedRoutes = [
+                    'tokenlogin' => [],
+                    'setup' => [],
+                    'login' => [],
+                    'reset-pw' => [],
+                    'forgot-pw' => [],
+                    'register' => [],
+                    'web-home' => [],
+                    'stockchart-web' => [],
+                    'article-commodities' => [],
+                    'article-currency' => [],
+                    'discipline-web' => [],
+                    'signup' => [],
+                    'stockchart-news' => [],
+                    'taskforce-web' => [],
+                    'stockchart-experts' => [],
+                    'home' => [],
+                    'stockchart-muster' => [],
+                    'stockchart-webinar' => [],
+                    'signupletter' => [],
+                    'impressum' => [],
+                    'web-contact' => [],
+                    'web-blog' => [],
+                    'werbung' => [],
+                    'homealt' => [],
+                    'datenschutz' => [],
+                    'article-stocks' => [],
+                    'article-crypto' => [],
+                    'haftungsausschluss' => [],
+                    'trading-wiki' => [],
+                    'emailcontact' => [],
+                    'stockchart-web-index' => [],
+                    'stockchart-vote' => [],
+                    'bookmark-web' => [],
+                    'stockchart-comment' => [],
+                    'article-indices' => [],
+                    'project-web' => [],
+                    'community-web' => [],
+                    'web-map' => [],
+                    'web-shop-article-view' => [],
+                ];
+
                 # check if user is logged in
                 if (isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
-                    $translator->setLocale($container->oUser->getLang());
-
-
-                    //echo 'check for '.$aRouteInfo['action'].'-'.$aRouteInfo['controller'];
+                    /**
+                    if(isset($_REQUEST['lang'])) {
+                        switch($_REQUEST['lang']) {
+                            case 'de':
+                                $container->sLang = 'de_DE';
+                                break;
+                            case 'en':
+                                $container->sLang = 'de_DE';
+                                break;
+                            case 'fr':
+                                $container->sLang = 'de_DE';
+                                break;
+                            default:
+                                break;
+                        }
+                    } elseif(!isset($container->sLang)) {
+                        $container->sLang = $container->oUser->getLang();
+                    }
+                    $translator->setLocale($container->sLang);
+                     * **/
 
                     $container->oUser->setAdapter($oDbAdapter);
 
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
                     if ($bIsSetupController === false) {
                         if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
-                            && $sRouteName != 'denied') {
+                            && $sRouteName != 'denied' && !array_key_exists($sRouteName,$aWhiteListedRoutes)) {
                             $response = $e->getResponse();
                             $response->getHeaders()->addHeaderLine(
                                 'Location',
@@ -151,16 +235,6 @@ class Module
                         # could not load auth key
                     }
                 }
-
-                # Whitelisted routes that need no authentication
-                $aWhiteListedRoutes = [
-                    'tokenlogin' => [],
-                    'setup' => [],
-                    'login' => [],
-                    'reset-pw' => [],
-                    'forgot-pw' => [],
-                    'register' => [],
-                ];
 
                 /**
                  * Redirect to Login Page if not logged in

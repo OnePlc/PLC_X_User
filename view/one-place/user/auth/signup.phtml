@@ -1,0 +1,69 @@
+<form class="plc-login-form" action="" method="POST" style="margin-top:-100px;" enctype="multipart/form-data">
+    <img src="/img/logo.png" style="max-height:80px; max-width:100%;"/>
+    <br/>
+    <hr/>
+    <?php if($bShowForm) { ?>
+        <h2><?=$this->translate('Willkommen bei Börsen Echo')?></h2>
+        <p><?=$this->translate('Ergänze dein Profil noch um deine persönlichen Daten, um die Aktivierung abzuschliessen.')?></p>
+        <div class="form-row md-form">
+            <div class="col-md-5 py-1">
+                <label for="plc_account_lastname"><?=$this->translate('Name')?></label>
+                <input type="text" id="plc_account_lastname" name="plc_account_lastname" value="" class="form-control" />
+            </div>
+            <div class="col-md-5 py-1">
+                <input type="file" id="plc_account_profile" name="plc_account_profile" class="form-control" />
+                <label for="plc_account_profile" class="active"><?=$this->translate('Profilbild')?></label>
+            </div>
+        </div>
+
+        <div class="md-form">
+            <input type="text" id="plc_account_email" name="plc_account_email" value="<?=($oContact) ? $oContact->user_email : ''?>" class="form-control" readonly />
+            <label for="plc_account_email" class="active"><?=$this->translate('E-Mail')?></label>
+        </div>
+
+        <div class="form-row md-form">
+            <div class="col-md-6">
+                <input type="password" id="plc_account_pass" name="plc_account_pass" value="" class="form-control" />
+                <label for="plc_account_pass"><?=$this->translate('Password')?></label>
+            </div>
+            <div class="col-md-6">
+                <input type="password" id="plc_account_pass_rep" name="plc_account_pass_rep" value="" class="form-control" />
+                <label for="plc_account_pass_rep"><?=$this->translate('Repeat Password')?></label>
+            </div>
+        </div>
+
+        <div class="md-form">
+            <button type="submit" value="<?=$this->translate('Registrierung abschliessen')?>" class="btn-floating btn btn-primary" style="background-color:#13B2DF !important;">
+                <i class="fas fa-check ml-1"></i> <?=$this->translate('Registrierung abschliessen')?>
+            </button>
+        </div>
+    <?php } else { ?>
+        <h2><?=$this->translate('Willkommen bei Börsen Echo')?></h2>
+        <?php if (isset($successMessage)) { ?>
+            <div class="alert alert-success">
+                <?=$this->translate($successMessage)?>
+            </div>
+        <?php } else { ?>
+            <p><?=$this->translate('Erstelle ein kostenloses Konto, um Kommentare zu schreiben und Zugriff auf geschützte Bereiche zu erhalten.')?></p>
+            <?php if (isset($sErrorMessage)) { ?>
+                <div class="alert alert-danger">
+                    <?=$this->translate($sErrorMessage)?>
+                </div>
+            <?php } ?>
+            <div class="md-form">
+                <input required type="text" id="plc_login_email" name="plc_login_email" value="" class="form-control" />
+                <label for="plc_login_email"><?=$this->translate('Deine E-Mail Adresse')?></label>
+            </div>
+
+            <div class="md-form">
+                <input required type="checkbox" id="plc_login_accept" name="plc_login_accept" /> Ich habe die <a href="/datenschutz" title="Datenschutzbestimmungen" target="_blank">Datenschutzbestimmungen</a> gelesen und akzeptiere sie
+            </div>
+
+            <div class="md-form">
+                <button type="submit" value="<?=$this->translate('Jetzt kostenlos registrieren')?>" class="btn-floating btn btn-primary" style="background-color:#13B2DF !important;">
+                    <i class="fas fa-envelope ml-1"></i> <?=$this->translate('Jetzt kostenlos registrieren')?>
+                </button>
+            </div>
+        <?php } ?>
+    <?php } ?>
+</form>
