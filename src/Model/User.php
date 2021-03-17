@@ -162,6 +162,7 @@ class User extends CoreEntityModel
                 new TableGateway('user_form_field', CoreEntityModel::$oDbAdapter);
         }
         $this->aMyPermissions = $this->getMyPermissions();
+        $this->sSingleForm = 'user-single';
     }
 
     /**
@@ -231,6 +232,9 @@ class User extends CoreEntityModel
         }
         if(array_key_exists('description',$data)) {
             $this->description = ! empty($data['description']) ? $data['description'] : '';
+        }
+        if(array_key_exists('contact_idfs',$data)) {
+            $this->contact_idfs = ! empty($data['contact_idfs']) ? $data['contact_idfs'] : 0;
         }
     }
 

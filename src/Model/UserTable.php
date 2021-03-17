@@ -147,6 +147,10 @@ class UserTable
             'lang' => $user->lang,
         ];
 
+        if(isset($user->contact_idfs)) {
+            $data['contact_idfs'] = $user->contact_idfs;
+        }
+
         $iCreatorID = (isset(CoreController::$oSession->oUser)) ? CoreController::$oSession->oUser->getID() : 1;
 
         $id = (int) $user->id;
