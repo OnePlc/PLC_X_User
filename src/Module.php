@@ -127,47 +127,24 @@ class Module
                 }
 
                 # Whitelisted routes that need no authentication
-                $aWhiteListedRoutes = [
-                    'tokenlogin' => [],
-                    'setup' => [],
-                    'login' => [],
-                    'reset-pw' => [],
-                    'forgot-pw' => [],
-                    'register' => [],
-                    'web-home' => [],
-                    'stockchart-web' => [],
-                    'article-commodities' => [],
-                    'article-currency' => [],
-                    'discipline-web' => [],
-                    'signup' => [],
-                    'stockchart-news' => [],
-                    'taskforce-web' => [],
-                    'stockchart-experts' => [],
-                    'home' => [],
-                    'stockchart-muster' => [],
-                    'stockchart-webinar' => [],
-                    'signupletter' => [],
-                    'impressum' => [],
-                    'web-contact' => [],
-                    'web-blog' => [],
-                    'werbung' => [],
-                    'homealt' => [],
-                    'datenschutz' => [],
-                    'article-stocks' => [],
-                    'article-crypto' => [],
-                    'haftungsausschluss' => [],
-                    'trading-wiki' => [],
-                    'emailcontact' => [],
-                    'stockchart-web-index' => [],
-                    'stockchart-vote' => [],
-                    'bookmark-web' => [],
-                    'stockchart-comment' => [],
-                    'article-indices' => [],
-                    'project-web' => [],
-                    'community-web' => [],
-                    'web-map' => [],
-                    'web-shop-article-view' => [],
-                ];
+                if(!isset($container->aWhiteList)) {
+                    $aWhiteListedRoutes = [];
+                    $oWhiteListTbl = new TableGateway('settings', $oDbAdapter);
+                    $oWhiteList = $oWhiteListTbl->select(['settings_key' => 'firewall-whitelist']);
+                    if(count($oWhiteList) > 0) {
+                        $oWhiteList = $oWhiteList->current();
+
+                        $aListEntries = json_decode($oWhiteList->settings_value);
+                        if(count($aListEntries) > 0) {
+                            foreach($aListEntries as $sEntry) {
+                                $aWhiteListedRoutes[$sEntry] = [];
+                            }
+                        }
+                    }
+
+                    $container->aWhiteList = $aWhiteListedRoutes;
+                }
+
 
                 # check if user is logged in
                 if (isset($container->oUser)) {
@@ -199,7 +176,7 @@ class Module
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
                     if ($bIsSetupController === false) {
                         if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
-                            && $sRouteName != 'denied' && !array_key_exists($sRouteName,$aWhiteListedRoutes)) {
+                            && $sRouteName != 'denied' && !array_key_exists($sRouteName,$container->aWhiteList)) {
                             $response = $e->getResponse();
                             $response->getHeaders()->addHeaderLine(
                                 'Location',
@@ -239,7 +216,7 @@ class Module
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
+                if (! $bLoggedIn && ! array_key_exists($sRouteName, $container->aWhiteList)) {
                     /**
                      * Setup before First Login
                      */

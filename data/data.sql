@@ -187,3 +187,8 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 -- module icon
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('user-icon', 'fas fa-users');
+
+--
+-- basic whitelist
+--
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-whitelist', '[\"setup\",\"login\",\"reset-pw\",\"forgot-pw\",\"home\"]');
