@@ -1,1 +1,18 @@
 <?= $this->partial('partial/basicform', ['sFormName'=>$sFormName]); ?>
+<script>
+    $(function () {
+        $('.plc-user-permissions-selectall').on('click',function () {
+            $(this).parent('div').parent('div').find('.plc-user-permission-list').find('input').each(function () {
+                $(this).prop( "checked", true );
+            });
+            return false;
+        });
+        $('.plc-user-permissions-unselectall').on('click',function () {
+            $(this).parent('div').parent('div').find('.plc-user-permission-list').find('input').each(function () {
+                $(this).prop( "checked", false );
+            });
+            return false;
+        });
+    });
+</script>
+

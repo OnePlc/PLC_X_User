@@ -10,9 +10,17 @@ foreach(array_keys($aTabsByForm) as $sTable) {
     $aTabs = $aTabsByForm[$sTable]['aTabs']; ?>
     <li class="list-group-item">
         <div class="row">
-            <div class="col-md-4"><?=$this->translate($oForm->label)?></div>
+            <div class="col-md-2"><?=$this->translate($oForm->label)?></div>
+            <div class="col-md-2">
+                <a href="#" class="btn btn-light plc-user-permissions-selectall">
+                    <?=$this->translate('Select all')?>
+                </a>
+                <a href="#" class="btn btn-light plc-user-permissions-unselectall">
+                    <?=$this->translate('Unselect all')?>
+                </a>
+            </div>
             <div class="col-md-8">
-                <div class="row">
+                <div class="row plc-user-permission-list">
                     <?php foreach($aTabs as $oTab) {
                         //var_dump($oField);
                         $bHasPerm = false;
