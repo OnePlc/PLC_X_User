@@ -32,7 +32,9 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 (NULL, 'text', 'Username', 'username', 'usercopy-base', 'user-copy', 'col-md-3', '/user/view/##ID##', '', 0, 1, 0, '', '', ''),
 (NULL, 'text', 'Full Name', 'full_name', 'usercopy-base', 'user-copy', 'col-md-3', '', '', 0, 1, 0, '', '', ''),
 (NULL, 'email', 'E-Mail', 'email', 'usercopy-base', 'user-copy', 'col-md-3', '/user/view/##ID##', '', 0, 1, 0, '', '', ''),
-(NULL, 'password', 'Password', 'password', 'usercopy-base', 'user-copy', 'col-md-3', '', '', 0, 1, 0, '', '', '');
+(NULL, 'password', 'Password', 'password', 'usercopy-base', 'user-copy', 'col-md-3', '', '', 0, 1, 0, '', '', ''),
+(NULL, 'text', 'Theme', 'theme', 'user-base', 'user-single', 'col-md-3', '', '', 0, 1, 0, '', '', ''),
+(NULL, 'text', 'Language', 'lang', 'user-base', 'user-single', 'col-md-3', '', '', 0, 1, 0, '', '', '');
 
 --
 -- Core Form Tab
