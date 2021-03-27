@@ -72,10 +72,8 @@ class Module
                 $routeMatch = $e->getRouteMatch();
                 $sm = $app->getServiceManager();
 
-                # get database connection
                 $oDbAdapter = $sm->get(AdapterInterface::class);
 
-                # set language
                 CoreController::$oTranslator = $sm->get(TranslatorInterface::class);
                 CoreController::$oTranslator->setLocale('en_US');
                 if(getenv('PLCWEBLANG')) {
@@ -90,7 +88,6 @@ class Module
                     }
                 }
 
-                # fixes for travis ci
                 $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
                 if (is_dir($sTravisBase)) {
                     return;
@@ -115,63 +112,21 @@ class Module
                 $container = new Container('plcauth');
                 $bLoggedIn = false;
 
-                # override lang if query param is se
-                if(isset($_REQUEST['lang'])) {
-                    switch($_REQUEST['lang']) {
-                        case 'de':
-                            $container->sLang = 'de_DE';
-                            //$translator->setLocale('de_DE');
-                            break;
-                        case 'en':
-                            $container->sLang = 'en_US';
-                            //$translator->setLocale('en_US');
-                            break;
-                        case 'fr':
-                            $container->sLang = 'de_DE';
-                            //$translator->setLocale('en_US');
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                # override lang if user preference is set and logged in
-                if(isset($container->sLang)) {
-                    if($container->sLang != '') {
-                        CoreController::$oTranslator->setLocale($container->sLang);
-                    }
-                }
-
-                # Whitelisted routes that need no authentication
-                if(!isset($container->aWhiteList)) {
-                    $aWhiteListedRoutes = [];
-                    $oWhiteListTbl = new TableGateway('settings', $oDbAdapter);
-                    $oWhiteList = $oWhiteListTbl->select(['settings_key' => 'firewall-whitelist']);
-                    if(count($oWhiteList) > 0) {
-                        $oWhiteList = $oWhiteList->current();
-
-                        $aListEntries = json_decode($oWhiteList->settings_value);
-                        if(count($aListEntries) > 0) {
-                            foreach($aListEntries as $sEntry) {
-                                $aWhiteListedRoutes[$sEntry] = [];
-                            }
-                        }
-                    }
-
-                    $container->aWhiteList = $aWhiteListedRoutes;
-                }
-
-
                 # check if user is logged in
                 if (isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
+                    CoreController::$oTranslator->setLocale($container->oUser->getLang());
+
+
+                    //echo 'check for '.$aRouteInfo['action'].'-'.$aRouteInfo['controller'];
+
                     $container->oUser->setAdapter($oDbAdapter);
 
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
                     if ($bIsSetupController === false) {
                         if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
-                            && $sRouteName != 'denied' && !array_key_exists($sRouteName,$container->aWhiteList)) {
+                            && $sRouteName != 'denied') {
                             $response = $e->getResponse();
                             $response->getHeaders()->addHeaderLine(
                                 'Location',
@@ -208,10 +163,20 @@ class Module
                     }
                 }
 
+                # Whitelisted routes that need no authentication
+                $aWhiteListedRoutes = [
+                    'tokenlogin' => [],
+                    'setup' => [],
+                    'login' => [],
+                    'reset-pw' => [],
+                    'forgot-pw' => [],
+                    'register' => [],
+                ];
+
                 /**
                  * Redirect to Login Page if not logged in
                  */
-                if (! $bLoggedIn && ! array_key_exists($sRouteName, $container->aWhiteList)) {
+                if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
                     /**
                      * Setup before First Login
                      */
