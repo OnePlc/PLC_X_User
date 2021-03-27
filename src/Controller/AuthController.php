@@ -64,7 +64,7 @@ class AuthController extends CoreController
         # Check if user is already logged in
         if (isset(CoreController::$oSession->oUser)) {
             // already logged in
-            return $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('app-home');
         }
 
         # Get current Request - if post - perform login - otherwise show for,m
@@ -182,7 +182,7 @@ class AuthController extends CoreController
             # Add XP for successful login
             $oUser->addXP('login');
 
-            return $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('app-home');
         } else {
             # Show Login Form
             return new ViewModel();
@@ -203,7 +203,7 @@ class AuthController extends CoreController
         unset(CoreController::$oSession->aSeats);
 
         # Back to Login
-        return $this->redirect()->toRoute('home');
+        return $this->redirect()->toRoute('app-home');
     }
 
     /**
@@ -249,7 +249,7 @@ class AuthController extends CoreController
             // If request specified a G Suite domain:
             //$domain = $payload['hd'];
             echo 'is good for '.$userid;
-            return $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('app-home');
         } else {
             // Invalid ID token
             echo 'not good';
