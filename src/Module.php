@@ -34,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.23';
+    const VERSION = '1.0.24';
 
     /**
      * Load module config file
@@ -72,11 +72,25 @@ class Module
                 $routeMatch = $e->getRouteMatch();
                 $sm = $app->getServiceManager();
 
+                # get database connection
                 $oDbAdapter = $sm->get(AdapterInterface::class);
 
-                $translator = $sm->get(TranslatorInterface::class);
-                $translator->setLocale('de_DE');
+                # set language
+                CoreController::$oTranslator = $sm->get(TranslatorInterface::class);
+                CoreController::$oTranslator->setLocale('en_US');
+                if(getenv('PLCWEBLANG')) {
+                    if(getenv('PLCWEBLANG') != '') {
+                        switch(getenv('PLCWEBLANG')) {
+                            case 'de':
+                                CoreController::$oTranslator->setLocale('de_DE');
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
 
+                # fixes for travis ci
                 $sTravisBase = '/home/travis/build/OnePlc/PLC_X_User';
                 if (is_dir($sTravisBase)) {
                     return;
@@ -101,6 +115,7 @@ class Module
                 $container = new Container('plcauth');
                 $bLoggedIn = false;
 
+                # override lang if query param is se
                 if(isset($_REQUEST['lang'])) {
                     switch($_REQUEST['lang']) {
                         case 'de':
@@ -120,9 +135,10 @@ class Module
                     }
                 }
 
+                # override lang if user preference is set and logged in
                 if(isset($container->sLang)) {
                     if($container->sLang != '') {
-                        $translator->setLocale($container->sLang);
+                        CoreController::$oTranslator->setLocale($container->sLang);
                     }
                 }
 
@@ -150,27 +166,6 @@ class Module
                 if (isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
-                    /**
-                    if(isset($_REQUEST['lang'])) {
-                        switch($_REQUEST['lang']) {
-                            case 'de':
-                                $container->sLang = 'de_DE';
-                                break;
-                            case 'en':
-                                $container->sLang = 'de_DE';
-                                break;
-                            case 'fr':
-                                $container->sLang = 'de_DE';
-                                break;
-                            default:
-                                break;
-                        }
-                    } elseif(!isset($container->sLang)) {
-                        $container->sLang = $container->oUser->getLang();
-                    }
-                    $translator->setLocale($container->sLang);
-                     * **/
-
                     $container->oUser->setAdapter($oDbAdapter);
 
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
