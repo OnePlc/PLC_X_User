@@ -71,6 +71,8 @@ class Module
                 $app = $e->getApplication();
                 $routeMatch = $e->getRouteMatch();
                 $sm = $app->getServiceManager();
+                $sRouteName = $routeMatch->getMatchedRouteName();
+                $aRouteInfo = $routeMatch->getParams();
 
                 $oDbAdapter = $sm->get(AdapterInterface::class);
 
@@ -103,10 +105,18 @@ class Module
                 $manager = new SessionManager($config);
                 **/
 
-                $sRouteName = $routeMatch->getMatchedRouteName();
-                $aRouteInfo = $routeMatch->getParams();
-
                 $app->getMvcEvent()->getViewModel()->setVariables(['sRouteName' => $sRouteName]);
+
+                /**
+                 * preparign for firewall access log
+
+                $log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
+                    "URL: ".$sRouteName.PHP_EOL.
+                    "Attempt: ".('Success').PHP_EOL.
+                    "-------------------------".PHP_EOL;
+                //Save string to log, use FILE_APPEND to append.
+                file_put_contents('./log_'.date("Y-m-d").'.log', $log, FILE_APPEND);
+                 * */
 
                 # get session
                 $container = new Container('plcauth');
@@ -125,18 +135,27 @@ class Module
 
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
                     if ($bIsSetupController === false) {
-                        if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
-                            && $sRouteName != 'denied') {
-                            $response = $e->getResponse();
-                            $response->getHeaders()->addHeaderLine(
-                                'Location',
-                                $e->getRouter()->assemble(
-                                    ['permission' => $aRouteInfo['action'].'-'.str_replace(['\\'],['-'],$aRouteInfo['controller'])],
-                                    ['name' => 'denied']
-                                )
-                            );
-                            $response->setStatusCode(302);
-                            return $response;
+                        $aWhiteListedRoutes = [];
+                        $aWhiteListedRoutesDB = json_decode(CoreController::$aGlobalSettings['firewall-user-whitelist']);
+                        if(is_array($aWhiteListedRoutesDB)) {
+                            foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
+                                $aWhiteListedRoutes[$sWhiteRoute] = [];
+                            }
+                        }
+                        if(!array_key_exists($sRouteName, $aWhiteListedRoutes)) {
+                            if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
+                                && $sRouteName != 'denied') {
+                                $response = $e->getResponse();
+                                $response->getHeaders()->addHeaderLine(
+                                    'Location',
+                                    $e->getRouter()->assemble(
+                                        ['permission' => $aRouteInfo['action'].'-'.str_replace(['\\'],['-'],$aRouteInfo['controller'])],
+                                        ['name' => 'denied']
+                                    )
+                                );
+                                $response->setStatusCode(302);
+                                return $response;
+                            }
                         }
                     } else {
                         # let user install module
@@ -165,13 +184,17 @@ class Module
 
                 # Whitelisted routes that need no authentication
                 $aWhiteListedRoutes = [
-                    'tokenlogin' => [],
                     'setup' => [],
                     'login' => [],
-                    'reset-pw' => [],
-                    'forgot-pw' => [],
-                    'register' => [],
                 ];
+                if(isset(CoreController::$aGlobalSettings['firewall-whitelist'])) {
+                    $aWhiteListedRoutesDB = json_decode(CoreController::$aGlobalSettings['firewall-whitelist']);
+                    if(is_array($aWhiteListedRoutesDB)) {
+                        foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
+                            $aWhiteListedRoutes[$sWhiteRoute] = [];
+                        }
+                    }
+                }
 
                 /**
                  * Redirect to Login Page if not logged in
@@ -273,6 +296,14 @@ class Module
                 Controller\ApiController::class => function ($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(
+                        $oDbAdapter,
+                        $container->get(Model\UserTable::class),
+                        $container
+                    );
+                },
+                Controller\FirewallController::class => function ($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\FirewallController(
                         $oDbAdapter,
                         $container->get(Model\UserTable::class),
                         $container

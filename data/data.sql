@@ -72,7 +72,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('add', 'OnePlace\\User\\Controller\\ApiController', 'Create API Key', '', '', 0, 1),
 ('globaladmin', 'OnePlace\\Core', 'Super Admin', '', '', 0, 1),
 ('updatesetting', 'OnePlace\\User\\Controller\\UserController', 'Update Personal Setting', '', '', 0, 0),
-('languages', 'OnePlace\\User\\Controller\\UserController', 'Language Selection', '', '', 0, 0);
+('languages', 'OnePlace\\User\\Controller\\UserController', 'Language Selection', '', '', 0, 0),
+('index', 'OnePlace\\User\\Controller\\FirewallController', 'Firewall Index', '', '', 0, 0);
 
 --
 -- Default Leveling Settings
@@ -194,3 +195,4 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('user-icon', '
 -- basic whitelist
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-whitelist', '[\"setup\",\"login\",\"reset-pw\",\"forgot-pw\",\"home\"]');
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-user-whitelist', '[\"login\",\"reset-pw\",\"forgot-pw\",\"home\",\"app-home\"]');

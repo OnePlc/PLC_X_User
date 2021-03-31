@@ -1,0 +1,16 @@
+<?php
+
+$sBody = '';
+foreach(glob('./log_*') as $sLog) {
+    $sContent = file_get_contents($sLog);
+    $aLines = explode('-------------------------',$sContent);
+    foreach($aLines as $sLine) {
+        $sUrl = explode('URL: ', $sLine)[1];
+        $sUrl = explode('Attempt: ', $sUrl)[0];
+    }
+}
+echo $this->partial('templates/card/basic', [
+    'sCardTitle' => $this->translate('Firewall'),
+    'sCardBody' => $sBody
+]);
+?>

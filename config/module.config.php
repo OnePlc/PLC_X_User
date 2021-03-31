@@ -131,6 +131,20 @@ return [
                     ],
                 ],
             ],
+            'user-firewall' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/firewall[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\FirewallController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
 
