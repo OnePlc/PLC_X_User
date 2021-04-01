@@ -34,7 +34,7 @@ class Module
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.25';
+    const VERSION = '1.0.26';
 
     /**
      * Load module config file
@@ -110,11 +110,11 @@ class Module
                 # set session manager
                 $config = new StandardConfig();
                 $config->setOptions([
-                    'remember_me_seconds' => 1800,
-                    'name'                => 'plcauth',
+                'remember_me_seconds' => 1800,
+                'name'                => 'plcauth',
                 ]);
                 $manager = new SessionManager($config);
-                **/
+                 **/
 
                 $app->getMvcEvent()->getViewModel()->setVariables(['sRouteName' => $sRouteName]);
 
@@ -122,9 +122,9 @@ class Module
                  * preparign for firewall access log
 
                 $log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
-                    "URL: ".$sRouteName.PHP_EOL.
-                    "Attempt: ".('Success').PHP_EOL.
-                    "-------------------------".PHP_EOL;
+                "URL: ".$sRouteName.PHP_EOL.
+                "Attempt: ".('Success').PHP_EOL.
+                "-------------------------".PHP_EOL;
                 //Save string to log, use FILE_APPEND to append.
                 file_put_contents('./log_'.date("Y-m-d").'.log', $log, FILE_APPEND);
                  * */
@@ -139,7 +139,7 @@ class Module
                     # check permissions
                     CoreController::$oTranslator->setLocale($container->oUser->getLang());
 
-
+                    $oSettingsTbl = new TableGateway('settings', $oDbAdapter);
                     //echo 'check for '.$aRouteInfo['action'].'-'.$aRouteInfo['controller'];
 
                     $container->oUser->setAdapter($oDbAdapter);
@@ -147,12 +147,17 @@ class Module
                     $bIsSetupController = stripos($aRouteInfo['controller'], 'InstallController');
                     if ($bIsSetupController === false) {
                         $aWhiteListedRoutes = [];
-                        $aWhiteListedRoutesDB = json_decode(CoreController::$aGlobalSettings['firewall-user-whitelist']);
-                        if(is_array($aWhiteListedRoutesDB)) {
-                            foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
-                                $aWhiteListedRoutes[$sWhiteRoute] = [];
+                        $oWhiteList = $oSettingsTbl->select(['settings_key' => 'firewall-user-whitelist']);
+                        if(count($oWhiteList) > 0) {
+                            $oWhiteList = $oWhiteList->current();
+                            $aWhiteListedRoutesDB = json_decode($oWhiteList->settings_value);
+                            if(is_array($aWhiteListedRoutesDB)) {
+                                foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
+                                    $aWhiteListedRoutes[$sWhiteRoute] = [];
+                                }
                             }
                         }
+
                         if(!array_key_exists($sRouteName, $aWhiteListedRoutes)) {
                             if (! $container->oUser->hasPermission($aRouteInfo['action'], $aRouteInfo['controller'])
                                 && $sRouteName != 'denied') {
@@ -171,70 +176,75 @@ class Module
                     } else {
                         # let user install module
                     }
-                }
+                } else {
 
-                /**
-                 * Api Login
-                 */
-                $bIsApiController = stripos($aRouteInfo['controller'], 'ApiController');
-                if (isset($_REQUEST['authkey']) && $bIsApiController !== false) {
-                    try {
-                        # Do Authtoken login
-                        $oKeysTbl = new TableGateway('core_api_key', $oDbAdapter);
-                        $oKeyActive = $oKeysTbl->select(['api_key' => $_REQUEST['authkey']]);
-                        if (count($oKeyActive) > 0) {
-                            $oKey = $oKeyActive->current();
-                            if (password_verify($_REQUEST['authtoken'], $oKey->api_token)) {
-                                $bLoggedIn = true;
+                    /**
+                     * Api Login
+                     */
+                    $bIsApiController = stripos($aRouteInfo['controller'], 'ApiController');
+                    if (isset($_REQUEST['authkey']) && $bIsApiController !== false) {
+                        try {
+                            # Do Authtoken login
+                            $oKeysTbl = new TableGateway('core_api_key', $oDbAdapter);
+                            $oKeyActive = $oKeysTbl->select(['api_key' => $_REQUEST['authkey']]);
+                            if (count($oKeyActive) > 0) {
+                                $oKey = $oKeyActive->current();
+                                if (password_verify($_REQUEST['authtoken'], $oKey->api_token)) {
+                                    $bLoggedIn = true;
+                                }
+                            }
+                        } catch (\RuntimeException $e) {
+                            # could not load auth key
+                        }
+                    }
+
+                    # Whitelisted routes that need no authentication
+                    $oSettingsTbl = new TableGateway('settings', $oDbAdapter);
+
+                    $aWhiteListedRoutes = [
+                        'setup' => [],
+                        'login' => [],
+                    ];
+                    $oWhiteList = $oSettingsTbl->select(['settings_key' => 'firewall-whitelist']);
+                    if(count($oWhiteList) > 0) {
+                        $oWhiteList = $oWhiteList->current();
+                        $aWhiteListedRoutesDB = json_decode($oWhiteList->settings_value);
+                        if(is_array($aWhiteListedRoutesDB)) {
+                            foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
+                                $aWhiteListedRoutes[$sWhiteRoute] = [];
                             }
                         }
-                    } catch (\RuntimeException $e) {
-                        # could not load auth key
                     }
-                }
 
-                # Whitelisted routes that need no authentication
-                $aWhiteListedRoutes = [
-                    'setup' => [],
-                    'login' => [],
-                ];
-                if(isset(CoreController::$aGlobalSettings['firewall-whitelist'])) {
-                    $aWhiteListedRoutesDB = json_decode(CoreController::$aGlobalSettings['firewall-whitelist']);
-                    if(is_array($aWhiteListedRoutesDB)) {
-                        foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
-                            $aWhiteListedRoutes[$sWhiteRoute] = [];
-                        }
-                    }
-                }
-
-                /**
-                 * Redirect to Login Page if not logged in
-                 */
-                if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
                     /**
-                     * Setup before First Login
+                     * Redirect to Login Page if not logged in
                      */
-                    $sBaseConf = 'config/autoload/local.php';
-                    if (! file_exists($sBaseConf) && $sRouteName != 'setup') {
-                        $sTravisPath = $sTravisBase.'/vendor/oneplace/oneplace-core/config/autoload/local.php';
-                        if (! file_exists($sTravisPath)) {
-                            $response = $e->getResponse();
-                            $response->getHeaders()
-                                ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
-                            $response->setStatusCode(302);
-                            //return $response;
+                    if (! $bLoggedIn && ! array_key_exists($sRouteName, $aWhiteListedRoutes)) {
+                        /**
+                         * Setup before First Login
+                         */
+                        $sBaseConf = 'config/autoload/local.php';
+                        if (! file_exists($sBaseConf) && $sRouteName != 'setup') {
+                            $sTravisPath = $sTravisBase.'/vendor/oneplace/oneplace-core/config/autoload/local.php';
+                            if (! file_exists($sTravisPath)) {
+                                $response = $e->getResponse();
+                                $response->getHeaders()
+                                    ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'setup']));
+                                $response->setStatusCode(302);
+                                //return $response;
+                            } else {
+                                $response = $e->getResponse();
+                                $response->getHeaders()
+                                    ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
+                                $response->setStatusCode(302);
+                            }
                         } else {
                             $response = $e->getResponse();
                             $response->getHeaders()
                                 ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
                             $response->setStatusCode(302);
+                            //return $response;
                         }
-                    } else {
-                        $response = $e->getResponse();
-                        $response->getHeaders()
-                            ->addHeaderLine('Location', $e->getRouter()->assemble([], ['name' => 'login']));
-                        $response->setStatusCode(302);
-                        //return $response;
                     }
                 }
             },
