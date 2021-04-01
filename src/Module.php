@@ -199,22 +199,25 @@ class Module
                     }
 
                     # Whitelisted routes that need no authentication
-                    $oSettingsTbl = new TableGateway('settings', $oDbAdapter);
 
                     $aWhiteListedRoutes = [
                         'setup' => [],
                         'login' => [],
                     ];
-                    $oWhiteList = $oSettingsTbl->select(['settings_key' => 'firewall-whitelist']);
-                    if(count($oWhiteList) > 0) {
-                        $oWhiteList = $oWhiteList->current();
-                        $aWhiteListedRoutesDB = json_decode($oWhiteList->settings_value);
-                        if(is_array($aWhiteListedRoutesDB)) {
-                            foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
-                                $aWhiteListedRoutes[$sWhiteRoute] = [];
+                    if(file_exists('config/autoload/local.php')) {
+                        $oSettingsTbl = new TableGateway('settings', $oDbAdapter);
+                        $oWhiteList = $oSettingsTbl->select(['settings_key' => 'firewall-whitelist']);
+                        if(count($oWhiteList) > 0) {
+                            $oWhiteList = $oWhiteList->current();
+                            $aWhiteListedRoutesDB = json_decode($oWhiteList->settings_value);
+                            if(is_array($aWhiteListedRoutesDB)) {
+                                foreach($aWhiteListedRoutesDB as $sWhiteRoute) {
+                                    $aWhiteListedRoutes[$sWhiteRoute] = [];
+                                }
                             }
                         }
                     }
+
 
                     /**
                      * Redirect to Login Page if not logged in
