@@ -48,6 +48,17 @@ class Module
     }
 
     /**
+     * Get Modules File Directory
+     *
+     * @return string
+     * @since 1.0.25
+     */
+    public static function getModuleDir() : string
+    {
+        return __DIR__.'/../';
+    }
+
+    /**
      * On Bootstrap - is executed on every page request
      *
      * checks if user is logged in and has sufficient

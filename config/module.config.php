@@ -52,6 +52,16 @@ return [
                     ],
                 ],
             ],
+            'user-update' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/user/update',
+                    'defaults' => [
+                        'controller' => Controller\UserController::class,
+                        'action'     => 'update',
+                    ],
+                ],
+            ],
             'signup' => [
                 'type'    => Segment::class,
                 'options' => [

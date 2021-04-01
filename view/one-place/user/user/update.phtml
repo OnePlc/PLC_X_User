@@ -1,0 +1,75 @@
+<form action="" method="POST">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Update Module User</h2>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Current Version')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=$oCurrentModule->version?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('New Version')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=\OnePlace\User\Module::VERSION?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Changes')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?php
+                            $sChangeLog = \OnePlace\User\Module::getModuleDir().'CHANGELOG.md';
+                            if(file_exists($sChangeLog)) {
+                                $sFile = file_get_contents($sChangeLog);
+                                $sNewChanges = explode('## ['.$oCurrentModule->version.'] -',$sFile)[0];
+                                $sNewChanges = explode('## ['.\OnePlace\User\Module::VERSION.'] -',$sNewChanges)[1];
+                                $sNewChanges = str_replace([
+                                    '### Added',
+                                    '### Changed',
+                                    '### Fixed',
+                                    '### Removed',
+                                    '- '
+                                ],[
+                                    '<br/><b>Added</b>',
+                                    '<br/><b>Changed</b>',
+                                    '<br/><b>Fixed</b>',
+                                    '<br/><b>Removed</b>',
+                                    '<br/>- '
+                                ],$sNewChanges);
+                                echo 'Release Date: '.$sNewChanges;
+                            }
+                            ?>
+                            <?php
+                            $sUpdateSQL = \OnePlace\User\Module::getModuleDir().'data/update_'.$oCurrentModule->version.'-'.\OnePlace\User\Module::VERSION.'.sql';
+                            if(file_exists($sUpdateSQL)) {
+                                ?>
+                                <div class="alert alert-warning p-2">
+                                    <?=$this->translate('This update contains Database changes. Please backup before you update')?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <?=$this->translate('Update Module')?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

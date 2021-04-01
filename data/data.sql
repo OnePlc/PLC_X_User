@@ -60,6 +60,7 @@ INSERT INTO `core_index_table` (`table_name`, `form`, `label`) VALUES
 INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`, `needs_globaladmin`) VALUES
 ('add', 'OnePlace\\User\\Controller\\UserController', 'Add', '', '', 0, 0),
 ('edit', 'OnePlace\\User\\Controller\\UserController', 'Edit', '', '', 0, 0),
+('update', 'OnePlace\\User\\Controller\\UserController', 'Update Module', '', '', 0, 0),
 ('index', 'OnePlace\\User\\Controller\\UserController', 'Index', 'Users', '/user', 1, 0),
 ('updateindexcolumnsort', 'OnePlace\\User\\Controller\\UserController', 'Update Column Index', '', '', 0, 0),
 ('settheme', 'OnePlace\\User\\Controller\\UserController', 'Set own Theme', '', '', 0, 0),
@@ -195,4 +196,4 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('user-icon', '
 -- basic whitelist
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-whitelist', '[\"setup\",\"login\",\"reset-pw\",\"forgot-pw\",\"home\"]');
-INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-user-whitelist', '[\"login\",\"reset-pw\",\"forgot-pw\",\"home\",\"app-home\"]');
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('firewall-user-whitelist', '[\"login\",\"reset-pw\",\"forgot-pw\",\"home\",\"app-home\",\"route\"]');
