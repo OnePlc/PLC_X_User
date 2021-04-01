@@ -52,6 +52,16 @@ return [
                     ],
                 ],
             ],
+            'user-update' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/user/update',
+                    'defaults' => [
+                        'controller' => Controller\UserController::class,
+                        'action'     => 'update',
+                    ],
+                ],
+            ],
             'signup' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -127,6 +137,20 @@ return [
                     ],
                     'defaults' => [
                         'controller' => Controller\ApiController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'user-firewall' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/firewall[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\FirewallController::class,
                         'action'     => 'index',
                     ],
                 ],

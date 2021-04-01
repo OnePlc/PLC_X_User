@@ -60,6 +60,19 @@ use Application\Controller\CoreController;
                     </div>
                     <?php } ?>
 
+                    <?php if(CoreController::$oSession->oUser->hasPermission('index','OnePlace-User-Controller-FirewallController')) { ?>
+                        <div class="form-row">
+                            <label for="input01" class="col-md-3 mb-3">
+                                <?=$this->translate('Security')?>
+                            </label>
+                            <div class="col-md-9 mb-3">
+                                <a href="<?=$this->url('user-firewall')?>">
+                                    <?=$this->translate('Firewall')?>
+                                </a>
+                            </div>
+                        </div>
+                    <?php } ?>
+
                 </form>
             </div>
         </div>

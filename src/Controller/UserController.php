@@ -803,4 +803,69 @@ class UserController extends CoreController
             return $this->redirect()->toRoute('user', ['action' => 'view','id' => $iNewUserID]);
         }
     }
+
+    /**
+     * Update Module to the latest version
+     *
+     * @return ViewModel
+     * @since 1.0.25
+     */
+    public function updateAction()
+    {
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout('user');
+
+        $oModTbl = new TableGateway('core_module', CoreController::$oDbAdapter);
+        $oCurrentMod = $oModTbl->select([
+            'module_key'=>'oneplace-user',
+        ])->current();
+
+        $oRequest = $this->getRequest();
+        if(! $oRequest->isPost()) {
+            return new ViewModel([
+                'oCurrentModule' => $oCurrentMod,
+            ]);
+        }
+
+        $sNewVer = \OnePlace\User\Module::VERSION;
+
+        $sUpdateSQL = \OnePlace\User\Module::getModuleDir().'data/update_'.$oCurrentMod->version.'-'.$sNewVer.'.sql';
+        if(file_exists($sUpdateSQL)) {
+            $this->parseSQLInstallFile($sUpdateSQL,CoreController::$oDbAdapter);
+        }
+        $oModTbl->update([
+            'version' => $sNewVer,
+        ],[
+            'module_key'=>'oneplace-user',
+        ]);
+
+        $this->flashMessenger()->addSuccessMessage('User Module successfully updated to version '.$sNewVer);
+
+        return $this->redirect()->toRoute('application', ['action' => 'checkforupdates']);
+    }
+
+    /**
+     * Parse SQL File from Installer and save to database
+     *
+     * @param string $sFile location of sql file
+     * @param AdapterInterface $oAdapter database connection
+     * @since 1.0.2.1
+     */
+    private function parseSQLInstallFile($sFile,$oAdapter) {
+        $templine = '';
+        $lines = file($sFile);
+        // Loop through each line
+        foreach ($lines as $line)  {
+            if (substr($line, 0, 2) == '--' || $line == '')
+                continue;
+            // Add this line to the current segment
+            $templine .= $line;
+            // If it has a semicolon at the end, it's the end of the query
+            if (substr(trim($line), -1, 1) == ';')
+            {
+                $results = $oAdapter->query($templine, $oAdapter::QUERY_MODE_EXECUTE);
+                $templine = '';
+            }
+        }
+    }
 }

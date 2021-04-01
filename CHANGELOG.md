@@ -1,25 +1,25 @@
 # Changelog
 
-All notable changes to this project will be documented in this file, in reverse chronological order by release.
+All notable changes to oneplace-event will be documented in this file.
 
-## 1.0.0 - TBD
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.25] - 
 
 ### Added
-
-- Its a composer package now
+- User Interface for Application Firewall (pre-alpha)
+- Module can now be updated
+- Firewall Whitelist for Logged-in users
 
 ### Changed
 
-- 100% of 0.9.x Codebase
+## [1.0.24] - 2021-03-31
 
-### Deprecated
+### Added
 
-- 100% of 0.9.x Codebase
+- Theme and Language Fields in User Form
 
-### Removed
+### Changed
 
-- 100% of 0.9.x Codebase
-
-### Fixed
-
-- Removed dependencies
+- New Login Route to /home instead of /
