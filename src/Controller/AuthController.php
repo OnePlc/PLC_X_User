@@ -25,6 +25,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Session\Container;
 use Laminas\Math\Rand;
+use OnePlace\User\Module;
 
 class AuthController extends CoreController
 {
@@ -59,7 +60,16 @@ class AuthController extends CoreController
      */
     public function loginAction()
     {
-        $this->layout('layout/login');
+        $oResolver = $this->getEvent()
+            ->getApplication()
+            ->getServiceManager()
+            ->get('Laminas\View\Resolver\TemplatePathStack');
+
+        if (false === $oResolver->resolve('layout/login_custom')) {
+            $this->layout('layout/login');
+        } else {
+            $this->layout('layout/login_custom');
+        }
 
         # Check if user is already logged in
         if (isset(CoreController::$oSession->oUser)) {
@@ -422,7 +432,16 @@ class AuthController extends CoreController
     }
 
     public function signupAction() {
-        $this->layout('layout/signup');
+        $oResolver = $this->getEvent()
+            ->getApplication()
+            ->getServiceManager()
+            ->get('Laminas\View\Resolver\TemplatePathStack');
+
+        if (false === $oResolver->resolve('layout/signup_custom')) {
+            $this->layout('layout/signup');
+        } else {
+            $this->layout('layout/signup_custom');
+        }
 
         $oRequest = $this->getRequest();
 
