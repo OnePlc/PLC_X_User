@@ -83,6 +83,8 @@ class AuthController extends CoreController
             # Get User from Login Form
             $sUser = $oRequest->getPost('plc_login_user');
 
+            $oMetricTbl = new TableGateway('core_metric', CoreController::$oDbAdapter);
+
             try {
                 # Try Login by E-Mail
                 $oUser = $this->oTableGateway->getSingle($sUser, 'email');
@@ -91,6 +93,13 @@ class AuthController extends CoreController
                     # Try Login by Username
                     $oUser = $this->oTableGateway->getSingle($sUser, 'username');
                 } catch (\Exception $e) {
+                    $oMetricTbl->insert([
+                        'user_idfs' => 0,
+                        'action' => 'login',
+                        'type' => 'error',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'comment' => 'user not found ('.$sUser.')',
+                    ]);
                     # Show Login Form
                     return new ViewModel([
                         'sErrorMessage' => $e->getMessage(),
@@ -101,6 +110,13 @@ class AuthController extends CoreController
             # Check Password
             $sPasswordForm = $oRequest->getPost('plc_login_pass');
             if (! password_verify($sPasswordForm, $oUser->password)) {
+                $oMetricTbl->insert([
+                    'user_idfs' => $oUser->getID(),
+                    'action' => 'login',
+                    'type' => 'error',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'wrong password',
+                ]);
                 # Show Login Form
                 return new ViewModel([
                     'sErrorMessage' => 'Wrong password',
@@ -192,7 +208,18 @@ class AuthController extends CoreController
             # Add XP for successful login
             $oUser->addXP('login');
 
-            return $this->redirect()->toRoute('app-home');
+            $oMetricTbl->insert([
+                'user_idfs' => $oUser->getID(),
+                'action' => 'login',
+                'type' => 'success',
+                'date' => date('Y-m-d H:i:s', time()),
+                'comment' => '',
+            ]);
+
+            $sLoginRoute = (isset(CoreController::$aGlobalSettings['login-route']))
+                ? CoreController::$aGlobalSettings['login-route'] : 'app-home';
+
+            return $this->redirect()->toRoute($sLoginRoute);
         } else {
             # Show Login Form
             return new ViewModel();
@@ -503,10 +530,18 @@ class AuthController extends CoreController
                 /**
                  * Create User
                  */
+                $sTheme = 'default';
+                if(isset(CoreController::$aGlobalSettings['default-theme'])) {
+                    $sTheme = CoreController::$aGlobalSettings['default-theme'];
+                }
+                $sLang = 'en_US';
+                if(isset(CoreController::$aGlobalSettings['default-lang'])) {
+                    $sLang = CoreController::$aGlobalSettings['default-lang'];
+                }
                 $oNewUser = $this->oTableGateway->generateNew();
                 $aDefSettings = [
-                    'lang' => 'de_DE',
-                    'theme' => 'vuze',
+                    'lang' => $sLang,
+                    'theme' => $sTheme,
                 ];
                 $aUserData = [
                     'username' => str_replace([' '],['.'],strtolower($sLastname)),
@@ -549,7 +584,7 @@ class AuthController extends CoreController
                  * Add Widgets
                  */
                 $aUserWidgets = [
-                    (object)['name' => 'echoapp_start'],
+                    (object)['name' => ''],
                 ];
                 $oUserWidgetTbl = new TableGateway('core_widget_user', CoreController::$oDbAdapter);
                 $oWidgetTbl = new TableGateway('core_widget', CoreController::$oDbAdapter);
@@ -568,8 +603,9 @@ class AuthController extends CoreController
                 # Login Successful - redirect to Dashboard
                 CoreController::$oSession->oUser = $oLoginUser;
 
+                $this->flashMessenger()->addSuccessMessage('Account created, please login');
                 # Success Message and back to settings
-                return $this->redirect()->toRoute('home');
+                return $this->redirect()->toRoute('app-home');
             } else {
                 /**
                  * Registration Step 1

@@ -227,6 +227,9 @@ class User extends CoreEntityModel
         if(array_key_exists('is_globaladmin',$data)) {
             $this->is_globaladmin = ! empty($data['is_globaladmin']) ? $data['is_globaladmin'] : 0;
         }
+        if(array_key_exists('token_balance',$data)) {
+            $this->token_balance = ! empty($data['token_balance']) ? $data['token_balance'] : 0;
+        }
         if(array_key_exists('function',$data)) {
             $this->function = ! empty($data['function']) ? $data['function'] : '';
         }
