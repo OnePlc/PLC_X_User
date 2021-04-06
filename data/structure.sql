@@ -204,6 +204,17 @@ ALTER TABLE `user_registration`
 ALTER TABLE `user_registration`
     MODIFY `Registration_ID` int(11) NOT NULL AUTO_INCREMENT;
 
+CREATE TABLE `user_session` (
+    `user_idfs` int(11) NOT NULL,
+    `ipaddress` varchar(30) NOT NULL,
+    `browser` text NOT NULL,
+    `date_created` datetime NOT NULL,
+    `date_last_login` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `user_session`
+    ADD PRIMARY KEY (`user_idfs`);
+
 --
 -- Save
 --

@@ -229,6 +229,7 @@ class User extends CoreEntityModel
         }
         if(array_key_exists('token_balance',$data)) {
             $this->token_balance = ! empty($data['token_balance']) ? $data['token_balance'] : 0;
+            $this->prefered_coin = ! empty($data['prefered_coin']) ? $data['prefered_coin'] : 'BCH';
         }
         if(array_key_exists('function',$data)) {
             $this->function = ! empty($data['function']) ? $data['function'] : '';
