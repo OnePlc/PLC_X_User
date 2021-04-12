@@ -150,6 +150,12 @@ class UserTable
         if(isset($user->contact_idfs)) {
             $data['contact_idfs'] = $user->contact_idfs;
         }
+        if(isset($user->ref_user_idfs)) {
+            $data['ref_user_idfs'] = $user->ref_user_idfs;
+        }
+        if(isset($user->telegram_chatid)) {
+            $data['telegram_chatid'] = $user->telegram_chatid;
+        }
 
         $iCreatorID = (isset(CoreController::$oSession->oUser)) ? CoreController::$oSession->oUser->getID() : 1;
 

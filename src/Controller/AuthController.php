@@ -698,6 +698,9 @@ class AuthController extends CoreController
                     'email' => $sEmail,
                     'password' => password_hash($sPass, PASSWORD_DEFAULT),
                 ];
+                if(isset(CoreController::$oSession->oRefUser)) {
+                    $aUserData['ref_user_idfs'] = CoreController::$oSession->oRefUser->getID();
+                }
                 $aUserData = array_merge($aUserData,$aDefSettings);
                 $oNewUser->exchangeArray($aUserData);
                 $iNewUserID = $this->oTableGateway->saveSingle($oNewUser);
