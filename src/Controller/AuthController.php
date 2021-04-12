@@ -25,6 +25,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Session\Container;
 use Laminas\Math\Rand;
+use Laminas\Http\ClientStatic;
 
 class AuthController extends CoreController
 {
@@ -59,7 +60,37 @@ class AuthController extends CoreController
      */
     public function loginAction()
     {
-        $this->layout('layout/login');
+        $oResolver = $this->getEvent()
+            ->getApplication()
+            ->getServiceManager()
+            ->get('Laminas\View\Resolver\TemplatePathStack');
+
+        if (false === $oResolver->resolve('layout/login_custom')) {
+            $this->layout('layout/login');
+        } else {
+            $this->layout('layout/login_custom');
+        }
+
+        if(isset($_REQUEST['g-recaptcha-response'])) {
+            $response = ClientStatic::post(
+                'https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => CoreController::$aGlobalSettings['recaptcha-secret-login'],
+                    'response' => $_REQUEST['g-recaptcha-response']
+                ]);
+
+            $iStatus = $response->getStatusCode();
+            $sRespnse = $response->getBody();
+
+            $oJson = json_decode($sRespnse);
+
+            if(!$oJson->success) {
+                $this->layout()->sErrorMessage = 'Please solve Captcha';
+                # Show Login Form
+                return new ViewModel([
+                    'sErrorMessage' => 'Please solve Captcha',
+                ]);
+            }
+        }
 
         # Check if user is already logged in
         if (isset(CoreController::$oSession->oUser)) {
@@ -73,6 +104,8 @@ class AuthController extends CoreController
             # Get User from Login Form
             $sUser = $oRequest->getPost('plc_login_user');
 
+            $oMetricTbl = new TableGateway('core_metric', CoreController::$oDbAdapter);
+
             try {
                 # Try Login by E-Mail
                 $oUser = $this->oTableGateway->getSingle($sUser, 'email');
@@ -81,6 +114,14 @@ class AuthController extends CoreController
                     # Try Login by Username
                     $oUser = $this->oTableGateway->getSingle($sUser, 'username');
                 } catch (\Exception $e) {
+                    $oMetricTbl->insert([
+                        'user_idfs' => 0,
+                        'action' => 'login',
+                        'type' => 'error',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'comment' => 'user not found ('.$sUser.')',
+                    ]);
+                    $this->layout()->sErrorMessage = $e->getMessage();
                     # Show Login Form
                     return new ViewModel([
                         'sErrorMessage' => $e->getMessage(),
@@ -91,6 +132,14 @@ class AuthController extends CoreController
             # Check Password
             $sPasswordForm = $oRequest->getPost('plc_login_pass');
             if (! password_verify($sPasswordForm, $oUser->password)) {
+                $oMetricTbl->insert([
+                    'user_idfs' => $oUser->getID(),
+                    'action' => 'login',
+                    'type' => 'error',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'wrong password',
+                ]);
+                $this->layout()->sErrorMessage = 'Wrong password';
                 # Show Login Form
                 return new ViewModel([
                     'sErrorMessage' => 'Wrong password',
@@ -182,7 +231,45 @@ class AuthController extends CoreController
             # Add XP for successful login
             $oUser->addXP('login');
 
-            return $this->redirect()->toRoute('app-home');
+            $oMetricTbl->insert([
+                'user_idfs' => $oUser->getID(),
+                'action' => 'login',
+                'type' => 'success',
+                'date' => date('Y-m-d H:i:s', time()),
+                'comment' => '',
+            ]);
+
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $sIpAddr = $_SERVER['REMOTE_ADDR'];
+            }
+            $oSessTbl = new TableGateway('user_session', CoreController::$oDbAdapter);
+            $oCheckSess = $oSessTbl->select([
+                'user_idfs' => $oUser->getID(),
+                'ipaddress' => strip_tags($sIpAddr),
+            ]);
+            if(count($oCheckSess) == 0) {
+                # todo: add security email check
+                $oSessTbl->insert([
+                    'user_idfs' => $oUser->getID(),
+                    'ipaddress' => strip_tags($sIpAddr),
+                    'browser' => json_encode(getallheaders()),
+                    'date_created' => date('Y-m-d H:i:s', time()),
+                    'date_last_login' => date('Y-m-d H:i:s', time()),
+                ]);
+            } else {
+                $oSessTbl->update([
+                    'date_last_login' => date('Y-m-d H:i:s', time()),
+                ]);
+            }
+
+            $sLoginRoute = (isset(CoreController::$aGlobalSettings['login-route']))
+                ? CoreController::$aGlobalSettings['login-route'] : 'app-home';
+
+            return $this->redirect()->toRoute($sLoginRoute);
         } else {
             # Show Login Form
             return new ViewModel();
@@ -422,7 +509,16 @@ class AuthController extends CoreController
     }
 
     public function signupAction() {
-        $this->layout('layout/signup');
+        $oResolver = $this->getEvent()
+            ->getApplication()
+            ->getServiceManager()
+            ->get('Laminas\View\Resolver\TemplatePathStack');
+
+        if (false === $oResolver->resolve('layout/signup_custom')) {
+            $this->layout('layout/signup');
+        } else {
+            $this->layout('layout/signup_custom');
+        }
 
         $oRequest = $this->getRequest();
 
@@ -481,13 +577,120 @@ class AuthController extends CoreController
                 //$sStreet = $oRequest->getPost('plc_account_street');
                 //$sStreetNr = $oRequest->getPost('plc_account_street_nr');
 
+                if($sEmail == '') {
+                    $this->layout()->sErrorMessage =  'Please provide a valid email address';
+                    return new ViewModel();
+                } else {
+                    $bCheck = true;
+                    # blacklist check
+                    if(isset(CoreController::$aGlobalSettings['username-blacklist'])) {
+                        $aBlacklist = json_decode(CoreController::$aGlobalSettings['username-blacklist']);
+                        foreach($aBlacklist as $sBlackText) {
+                            if(stripos(strtolower($sEmail),$sBlackText) === false) {
+
+                            } else {
+                                $bCheck = false;
+                            }
+                        }
+                        if(!$bCheck) {
+                            $this->layout()->sErrorMessage =  'Please provide a valid email address';
+                            return new ViewModel();
+                        }
+                    }
+                    # check if user already exists
+                    try {
+                        $oUser = $this->oTableGateway->getSingle($sEmail, 'email');
+                        $this->layout()->sErrorMessage =  'There is already an account with that e-mail address';
+                        return new ViewModel();
+                    } catch(\RuntimeException $e) {
+                    }
+                }
+
+                if($sLastname == '') {
+                    $this->layout()->sErrorMessage =  'Please provide a valid username';
+                    return new ViewModel();
+                } else {
+                    $bCheck = true;
+                    # blacklist check
+                    if(isset(CoreController::$aGlobalSettings['username-blacklist'])) {
+                        $aBlacklist = json_decode(CoreController::$aGlobalSettings['username-blacklist']);
+                        foreach($aBlacklist as $sBlackText) {
+                            if(stripos(strtolower($sLastname),$sBlackText) === false) {
+
+                            } else {
+                                $bCheck = false;
+                            }
+                        }
+                        if(!$bCheck) {
+                            $this->layout()->sErrorMessage =  'Please provide a valid email username';
+                            return new ViewModel();
+                        }
+                    }
+                    # check if user already exists
+                    try {
+                        $oUser = $this->oTableGateway->getSingle($sLastname, 'email');
+                        $this->layout()->sErrorMessage =  'There is already an account with that username';
+                        return new ViewModel();
+                    } catch(\RuntimeException $e) {
+                    }
+                }
+
+                if($sPass == '' || $sPassRep == '') {
+                    $this->layout()->sErrorMessage =  'Please provide a valid password';
+                    return new ViewModel();
+                }
+
+                if($sPass !== $sPassRep) {
+                    $this->layout()->sErrorMessage =  'Passwords do not match';
+                    return new ViewModel();
+                }
+
+                if(isset($_REQUEST['g-recaptcha-response'])) {
+                    $response = ClientStatic::post(
+                        'https://www.google.com/recaptcha/api/siteverify', [
+                        'secret' => CoreController::$aGlobalSettings['recaptcha-secret-login'],
+                        'response' => $_REQUEST['g-recaptcha-response']
+                    ]);
+
+                    $iStatus = $response->getStatusCode();
+                    $sRespnse = $response->getBody();
+
+                    $oJson = json_decode($sRespnse);
+
+                    if(!$oJson->success) {
+                        $this->layout()->sErrorMessage = 'Please solve Captcha';
+                        # Show Login Form
+                        return new ViewModel();
+                    }
+                }
+
+                $bAgree = false;
+                if(isset($_REQUEST['plc_account_terms'])) {
+                    if($_REQUEST['plc_account_terms'] == 'agree') {
+                        $bAgree = true;
+                    }
+                }
+                if(!$bAgree) {
+                    $this->layout()->sErrorMessage = 'You must agree to our terms and conditions';
+                    # Show Login Form
+                    return new ViewModel();
+                }
+
                 /**
                  * Create User
                  */
+                $sTheme = 'default';
+                if(isset(CoreController::$aGlobalSettings['default-theme'])) {
+                    $sTheme = CoreController::$aGlobalSettings['default-theme'];
+                }
+                $sLang = 'en_US';
+                if(isset(CoreController::$aGlobalSettings['default-lang'])) {
+                    $sLang = CoreController::$aGlobalSettings['default-lang'];
+                }
                 $oNewUser = $this->oTableGateway->generateNew();
                 $aDefSettings = [
-                    'lang' => 'de_DE',
-                    'theme' => 'vuze',
+                    'lang' => $sLang,
+                    'theme' => $sTheme,
                 ];
                 $aUserData = [
                     'username' => str_replace([' '],['.'],strtolower($sLastname)),
@@ -495,16 +698,12 @@ class AuthController extends CoreController
                     'email' => $sEmail,
                     'password' => password_hash($sPass, PASSWORD_DEFAULT),
                 ];
+                if(isset(CoreController::$oSession->oRefUser)) {
+                    $aUserData['ref_user_idfs'] = CoreController::$oSession->oRefUser->getID();
+                }
                 $aUserData = array_merge($aUserData,$aDefSettings);
                 $oNewUser->exchangeArray($aUserData);
                 $iNewUserID = $this->oTableGateway->saveSingle($oNewUser);
-
-                if(isset($_FILES['plc_account_profile'])) {
-                    if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID)) {
-                        mkdir($_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID);
-                    }
-                    move_uploaded_file($_FILES['plc_account_profile']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/data/profile/'.$iNewUserID.'/avatar.png');
-                }
 
                 $oLoginUser = $this->oTableGateway->getSingle($iNewUserID);
 
@@ -512,9 +711,6 @@ class AuthController extends CoreController
                  * Add Permissions
                  */
                 $aUserPermissions = [
-                    (object)['permission' => 'index', 'module' => 'Application\Controller\IndexController'],
-                    (object)['permission' => 'profile', 'module' => 'OnePlace\User\Controller\UserController'],
-                    (object)['permission' => 'upgrade', 'module' => 'OnePlace\Stockchart\Controller\StockchartController'],
                 ];
                 $oUserPermTbl = new TableGateway('user_permission', CoreController::$oDbAdapter);
                 $oRegisterTbl = new TableGateway('user_registration', CoreController::$oDbAdapter);
@@ -530,7 +726,7 @@ class AuthController extends CoreController
                  * Add Widgets
                  */
                 $aUserWidgets = [
-                    (object)['name' => 'echoapp_start'],
+                    (object)['name' => ''],
                 ];
                 $oUserWidgetTbl = new TableGateway('core_widget_user', CoreController::$oDbAdapter);
                 $oWidgetTbl = new TableGateway('core_widget', CoreController::$oDbAdapter);
@@ -544,13 +740,34 @@ class AuthController extends CoreController
                     }
                 }
 
-                $oRegisterTbl->delete(['user_email' => $sEmail]);
+                //$oRegisterTbl->delete(['user_email' => $sEmail]);
 
                 # Login Successful - redirect to Dashboard
                 CoreController::$oSession->oUser = $oLoginUser;
 
+                $this->flashMessenger()->addSuccessMessage('Account created, please login');
+
                 # Success Message and back to settings
-                return $this->redirect()->toRoute('home');
+                $sLoginRoute = 'app-home';
+                if(isset(CoreController::$aGlobalSettings['login-route'])) {
+                    $sLoginRoute = CoreController::$aGlobalSettings['login-route'];
+                }
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $sIpAddr = $_SERVER['REMOTE_ADDR'];
+                }
+                $oSessTbl = new TableGateway('user_session', CoreController::$oDbAdapter);
+                $oSessTbl->insert([
+                    'user_idfs' => $oLoginUser->getID(),
+                    'ipaddress' => strip_tags($sIpAddr),
+                    'browser' => json_encode(getallheaders()),
+                    'date_created' => date('Y-m-d H:i:s', time()),
+                    'date_last_login' => date('Y-m-d H:i:s', time()),
+                ]);
+                return $this->redirect()->toRoute($sLoginRoute);
             } else {
                 /**
                  * Registration Step 1

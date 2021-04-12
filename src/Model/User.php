@@ -227,6 +227,23 @@ class User extends CoreEntityModel
         if(array_key_exists('is_globaladmin',$data)) {
             $this->is_globaladmin = ! empty($data['is_globaladmin']) ? $data['is_globaladmin'] : 0;
         }
+        if(array_key_exists('telegram_chatid',$data)) {
+            $this->telegram_chatid = ! empty($data['telegram_chatid']) ? $data['telegram_chatid'] : '';
+        }
+
+        if(array_key_exists('token_balance',$data)) {
+            $this->token_balance = ! empty($data['token_balance']) ? $data['token_balance'] : 0;
+            $this->prefered_coin = ! empty($data['prefered_coin']) ? $data['prefered_coin'] : 'BCH';
+        }
+
+        if(array_key_exists('login_counter',$data)) {
+            $this->login_counter = !empty($data['login_counter']) ? $data['login_counter'] : 0;
+        }
+
+        if(array_key_exists('ref_user_idfs',$data)) {
+            $this->ref_user_idfs = ! empty($data['ref_user_idfs']) ? $data['ref_user_idfs'] : 0;
+        }
+
         if(array_key_exists('function',$data)) {
             $this->function = ! empty($data['function']) ? $data['function'] : '';
         }

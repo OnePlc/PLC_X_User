@@ -1,4 +1,5 @@
 <?php
+use Application\Controller\CoreController;
 ?>
 <form action="" method="POST">
     <h2>Forgot Password</h2>
@@ -19,6 +20,12 @@
         <input type="text" id="plc_login_user" name="plc_login_user" value="" class="form-control" />
         <label for="plc_login_user"><?=$this->translate('Username or E-Mail')?></label>
     </div>
+        <?php if(isset(CoreController::$aGlobalSettings['recaptcha-forgot-sitekey'])) { ?>
+            <div class="md-form">
+                <div class="g-recaptcha" data-sitekey="<?=CoreController::$aGlobalSettings['recaptcha-forgot-sitekey']?>"></div>
+            </div>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <?php } ?>
     <div class="md-form">
         <button type="submit" value="Login" class="btn-floating btn btn-dark">
             <?=$this->translate('Get Password Reset Link')?>
