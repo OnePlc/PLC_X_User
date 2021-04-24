@@ -2,7 +2,9 @@
     <img src="/img/logo.png" style="max-height:80px; max-width:100%;"/>
     <br/>
     <hr/>
-    <?php if($bShowForm) { ?>
+    <?php
+    if(isset($bShowForm)) {
+    if($bShowForm) { ?>
         <h2><?=$this->translate('Willkommen bei Börsen Echo')?></h2>
         <p><?=$this->translate('Ergänze dein Profil noch um deine persönlichen Daten, um die Aktivierung abzuschliessen.')?></p>
         <div class="form-row md-form">
@@ -65,5 +67,6 @@
                 </button>
             </div>
         <?php } ?>
-    <?php } ?>
+    <?php }
+    } ?>
 </form>

@@ -5,9 +5,10 @@ All notable changes to oneplace-event will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.28] - 
+## [1.0.29] - 2021-04-24
 
-### Added
+### Fixed
+- PHP errors fixed
 
 ## [1.0.27] - 2021-04-01
 
