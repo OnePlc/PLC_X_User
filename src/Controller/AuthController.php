@@ -103,6 +103,61 @@ class AuthController extends CoreController
         if ($oRequest->isPost()) {
             # Get User from Login Form
             $sUser = $oRequest->getPost('plc_login_user');
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $sIpAddr = $_SERVER['REMOTE_ADDR'];
+            }
+
+            /**
+             * We don't want attackers to make us any pain
+             */
+            $bXSSCheck = $this->xssCheck([$sUser,$sIpAddr]);
+            if($bXSSCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'signup-xss-hack',
+                    'type' => 'error',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject a script in username! Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
+
+            $bSnifferCheck = $this->snifferCheck([$sUser,$sIpAddr]);
+            if($bSnifferCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'signup-sniffer-attack',
+                    'type' => 'error',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to hack / sniff the server Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
+
+            $bSqlinjectCheck = $this->sqlinjectCheck([$sUser,$sIpAddr]);
+            if($bSqlinjectCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'signup-sql-attack',
+                    'type' => 'error',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject sql Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
 
             $oMetricTbl = new TableGateway('core_metric', CoreController::$oDbAdapter);
 
@@ -114,13 +169,6 @@ class AuthController extends CoreController
                     # Try Login by Username
                     $oUser = $this->oTableGateway->getSingle($sUser, 'username');
                 } catch (\Exception $e) {
-                    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                        $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
-                    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                        $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                    } else {
-                        $sIpAddr = $_SERVER['REMOTE_ADDR'];
-                    }
                     $oMetricTbl->insert([
                         'user_idfs' => 0,
                         'action' => 'login',
