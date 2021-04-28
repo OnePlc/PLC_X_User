@@ -114,12 +114,19 @@ class AuthController extends CoreController
                     # Try Login by Username
                     $oUser = $this->oTableGateway->getSingle($sUser, 'username');
                 } catch (\Exception $e) {
+                    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                        $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
+                    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                        $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                    } else {
+                        $sIpAddr = $_SERVER['REMOTE_ADDR'];
+                    }
                     $oMetricTbl->insert([
                         'user_idfs' => 0,
                         'action' => 'login',
                         'type' => 'error',
                         'date' => date('Y-m-d H:i:s', time()),
-                        'comment' => 'user not found ('.$sUser.')',
+                        'comment' => 'user not found ('.$sUser.' - '.$sIpAddr.' - '.json_encode($_REQUEST).')',
                     ]);
                     $this->layout()->sErrorMessage = $e->getMessage();
                     # Show Login Form
@@ -508,6 +515,67 @@ class AuthController extends CoreController
         }
     }
 
+    private function xssCheck($aValsToCheck = [])
+    {
+        foreach($aValsToCheck as $sVal) {
+            $bHasScript = stripos(strtolower($sVal),'script>');
+            if($bHasScript === false) {
+                $bHasScript = stripos(strtolower($sVal),'src=');
+                if($bHasScript === false) {
+
+                } else {
+                    # found xss attack
+                    return true;
+                }
+            } else {
+                # found xss attack
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function snifferCheck($aValsToCheck = [])
+    {
+        $aBlacklist = ['http:','127.0.0.1','__import__',
+            '.popen(','gethostbyname','localtime()','form-data',
+            'java.lang','/bin/bash','cmd.exe','org.apache.commons','nginx','?xml','version=',
+            'ping -n','WAITFOR DELAY','../','varchar(','exec(','%2F..','..%2F','multipart/'];
+        foreach($aValsToCheck as $sVal) {
+            foreach($aBlacklist as $sBlack) {
+                $bHasBlack = stripos(strtolower($sVal),strtolower($sBlack));
+                if($bHasBlack === false) {
+                    # all good
+                } else {
+                    # found blacklisted needle in string
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function sqlinjectCheck($aValsToCheck = [])
+    {
+        $aBlacklist = ['dblink_connect','user=','(SELECT','SELECT (','select *','union all','and 1',
+            'or 1','1=1','2=2',' where ',' all ',' or ',' and '];
+        foreach($aValsToCheck as $sVal) {
+            foreach($aBlacklist as $sBlack) {
+                $bHasBlack = stripos(strtolower($sVal),strtolower($sBlack));
+                if($bHasBlack === false) {
+                    # all good
+                } else {
+                    # found blacklisted needle in string
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function signupAction() {
         $oResolver = $this->getEvent()
             ->getApplication()
@@ -564,15 +632,71 @@ class AuthController extends CoreController
              * Registration Step 2
              */
             if(isset($_REQUEST['plc_account_pass'])) {
-                $sEmail = $oRequest->getPost('plc_account_email');
-                $sPass = $oRequest->getPost('plc_account_pass');
-                $sPassRep = $oRequest->getPost('plc_account_pass_rep');
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $sIpAddr = filter_var ($_SERVER['HTTP_CLIENT_IP'], FILTER_SANITIZE_STRING);
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $sIpAddr = filter_var ($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_SANITIZE_STRING);
+                } else {
+                    $sIpAddr = filter_var ($_SERVER['REMOTE_ADDR'], FILTER_SANITIZE_STRING);
+                }
+
+                $sEmail = filter_var ( $oRequest->getPost('plc_account_email'), FILTER_SANITIZE_STRING);
+                $sPass = filter_var ($oRequest->getPost('plc_account_pass'), FILTER_SANITIZE_STRING);
+                $sPassRep = filter_var ($oRequest->getPost('plc_account_pass_rep'), FILTER_SANITIZE_STRING);
                 //$iSalutationID = $oRequest->getPost('plc_account_salutation');
                 //$sPhone = $oRequest->getPost('plc_account_phone');
                 //$sCity = $oRequest->getPost('plc_account_city');
                 //$sZIP = $oRequest->getPost('plc_account_zip');
                 //$sCompany = $oRequest->getPost('plc_account_company');
-                $sLastname = $oRequest->getPost('plc_account_lastname');
+                $sLastname = filter_var ($oRequest->getPost('plc_account_lastname'), FILTER_SANITIZE_STRING);
+
+                /**
+                 * We don't want attackers to make us any pain
+                 */
+                $bXSSCheck = $this->xssCheck([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]);
+                if($bXSSCheck) {
+                    # script tag found !! maybe wants to inject script
+                    $oMetricTbl = $this->getCustomTable('core_metric');
+                    $oMetricTbl->insert([
+                        'user_idfs' => 0,
+                        'action' => 'signup-xss-hack',
+                        'type' => 'error',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'comment' => 'Someone tried to inject a script in username! Input Value: {'.$sEmail.'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                    ]);
+                    $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                    return new ViewModel();
+                }
+
+                $bSnifferCheck = $this->snifferCheck([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]);
+                if($bSnifferCheck) {
+                    # script tag found !! maybe wants to inject script
+                    $oMetricTbl = $this->getCustomTable('core_metric');
+                    $oMetricTbl->insert([
+                        'user_idfs' => 0,
+                        'action' => 'signup-sniffer-attack',
+                        'type' => 'error',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'comment' => 'Someone tried to hack / sniff the server Input Value: {'.$sEmail.'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                    ]);
+                    $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                    return new ViewModel();
+                }
+
+                $bSqlinjectCheck = $this->sqlinjectCheck([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]);
+                if($bSqlinjectCheck) {
+                    # script tag found !! maybe wants to inject script
+                    $oMetricTbl = $this->getCustomTable('core_metric');
+                    $oMetricTbl->insert([
+                        'user_idfs' => 0,
+                        'action' => 'signup-sql-attack',
+                        'type' => 'error',
+                        'date' => date('Y-m-d H:i:s', time()),
+                        'comment' => 'Someone tried to inject sql Input Value: {'.json_encode([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                    ]);
+                    $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                    return new ViewModel();
+                }
 
                 if(strlen($sLastname) > 50) {
                     $this->layout()->sErrorMessage =  'Username too long';
@@ -755,13 +879,7 @@ class AuthController extends CoreController
                 if(isset(CoreController::$aGlobalSettings['login-route'])) {
                     $sLoginRoute = CoreController::$aGlobalSettings['login-route'];
                 }
-                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                    $sIpAddr = $_SERVER['HTTP_CLIENT_IP'];
-                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                    $sIpAddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                } else {
-                    $sIpAddr = $_SERVER['REMOTE_ADDR'];
-                }
+
                 $oSessTbl = new TableGateway('user_session', CoreController::$oDbAdapter);
                 $oSessTbl->insert([
                     'user_idfs' => $oLoginUser->getID(),
