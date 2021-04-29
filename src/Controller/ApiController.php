@@ -53,6 +53,24 @@ class ApiController extends CoreController
         $this->sSingleForm = 'apikey-single';
     }
 
+    protected function checkApiKey() {
+        $bCheck = true;
+        if(!isset($_REQUEST['authkey'])) {
+            $bCheck = false;
+        } else {
+            $sKey = filter_var($_REQUEST['authkey'], FILTER_SANITIZE_STRING);
+            $oKeyTbl = $this->getCustomTable('core_api_key');
+            $oKeyFound = $oKeyTbl->select(['api_key' => $sKey]);
+            if(count($oKeyFound) > 0) {
+
+            } else {
+                $bCheck = false;
+            }
+        }
+
+        return $bCheck;
+    }
+
     /**
      * API Home - Main Index
      *
@@ -61,6 +79,10 @@ class ApiController extends CoreController
      */
     public function indexAction()
     {
+        $bCheck = $this->checkApiKey();
+        if($bCheck == false) {
+            return $this->redirect()->toRoute('login');
+        }
         $this->layout('layout/json');
 
         $aReturn = ['state' => 'success','message' => 'Welcome to onePlace User API'];
@@ -170,6 +192,10 @@ class ApiController extends CoreController
      */
     public function listAction()
     {
+        $bCheck = $this->checkApiKey();
+        if($bCheck == false) {
+            return $this->redirect()->toRoute('login');
+        }
         $this->layout('layout/json');
 
         # Set default values
@@ -297,6 +323,10 @@ class ApiController extends CoreController
      */
     public function getAction()
     {
+        $bCheck = $this->checkApiKey();
+        if($bCheck == false) {
+            return $this->redirect()->toRoute('login');
+        }
         $this->layout('layout/json');
 
         # Get Skeleton ID from route
@@ -333,6 +363,11 @@ class ApiController extends CoreController
 
     public function finishsetupAction()
     {
+        $bCheck = $this->checkApiKey();
+        if($bCheck == false) {
+            return $this->redirect()->toRoute('login');
+        }
+
         $this->layout('layout/json');
 
         $sSystemName = $this->params()->fromRoute('systemkey', '');
