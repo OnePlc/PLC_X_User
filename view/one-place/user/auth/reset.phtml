@@ -24,8 +24,8 @@
             <label for="plc_login_pass_repeat"><?=$this->translate('Repeat Password')?></label>
         </div>
     <div class="md-form">
-        <input type="hidden" name="plc_login_user" value="<?=$iUserID?>" />
-        <input type="hidden" name="plc_login_token" value="<?=$sToken?>" />
+        <input type="hidden" name="plc_login_user" value="<?=(isset($iUserID)) ? $iUserID : 0?>" />
+        <input type="hidden" name="plc_login_token" value="<?=(isset($sToken)) ? $sToken : ''?>" />
         <button type="submit" value="Save Password" class="btn-floating btn btn-dark">
             <?=$this->translate('Save Password')?>
         </button>

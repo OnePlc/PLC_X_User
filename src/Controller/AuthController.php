@@ -121,7 +121,7 @@ class AuthController extends CoreController
                 $oMetricTbl->insert([
                     'user_idfs' => 0,
                     'action' => 'login-xss-attack',
-                    'type' => 'error',
+                    'type' => 'secalert',
                     'date' => date('Y-m-d H:i:s', time()),
                     'comment' => 'Someone tried to inject a script in username! Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                 ]);
@@ -138,7 +138,7 @@ class AuthController extends CoreController
                 $oMetricTbl->insert([
                     'user_idfs' => 0,
                     'action' => 'login-sniffer-attack',
-                    'type' => 'error',
+                    'type' => 'secalert',
                     'date' => date('Y-m-d H:i:s', time()),
                     'comment' => 'Someone tried to hack / sniff the server Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                 ]);
@@ -154,7 +154,7 @@ class AuthController extends CoreController
                 $oMetricTbl->insert([
                     'user_idfs' => 0,
                     'action' => 'login-sql-attack',
-                    'type' => 'error',
+                    'type' => 'secalert',
                     'date' => date('Y-m-d H:i:s', time()),
                     'comment' => 'Someone tried to inject sql Input Value: {'.json_encode([$sUser]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                 ]);
@@ -202,6 +202,15 @@ class AuthController extends CoreController
                 # Show Login Form
                 return new ViewModel([
                     'sErrorMessage' => 'Wrong password',
+                ]);
+            }
+
+            # Check if user is banned
+            if($oUser->getSetting('user-tempban')) {
+                # Show Login Form
+                $this->layout()->sErrorMessage = 'You are temporarily banned because of '.$oUser->getSetting('user-tempban').'. Please contact '.CoreController::$aGlobalSettings['admin-email'];
+                return new ViewModel([
+                    'sErrorMessage' => 'You are temporarily banned because of '.$oUser->getSetting('user-tempban').'. Please contact '.CoreController::$aGlobalSettings['admin-email'],
                 ]);
             }
 
@@ -428,6 +437,35 @@ class AuthController extends CoreController
     {
         $this->layout('layout/login');
 
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $sIpAddr = filter_var ($_SERVER['HTTP_CLIENT_IP'], FILTER_SANITIZE_STRING);
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $sIpAddr = filter_var ($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_SANITIZE_STRING);
+        } else {
+            $sIpAddr = filter_var ($_SERVER['REMOTE_ADDR'], FILTER_SANITIZE_STRING);
+        }
+
+        if(isset(CoreController::$aGlobalSettings['recaptcha-secret-forgot'])) {
+            $response = ClientStatic::post(
+                'https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => CoreController::$aGlobalSettings['recaptcha-secret-forgot'],
+                'response' => $_REQUEST['g-recaptcha-response']
+            ]);
+
+            $iStatus = $response->getStatusCode();
+            $sRespnse = $response->getBody();
+
+            $oJson = json_decode($sRespnse);
+
+            if(!$oJson->success) {
+                $this->layout()->sErrorMessage = 'Please solve Captcha';
+                # Show Login Form
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
+        }
+
         # Get Request
         $oRequest = $this->getRequest();
 
@@ -438,6 +476,59 @@ class AuthController extends CoreController
         } else {
             # Get User / E-Mail from Form
             $sUser = $oRequest->getPost('plc_login_user');
+            /**
+             * We don't want attackers to make us any pain
+             */
+            $bXSSCheck = $this->xssCheck([$sUser,$sIpAddr]);
+            if($bXSSCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwrequest-xss-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject a script in username! Input Value: {user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage = 'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
+
+            $bSnifferCheck = $this->snifferCheck([$sUser,$sIpAddr]);
+            if($bSnifferCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwrequest-sniffer-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to hack / sniff the server Input Value: {user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
+
+            $bSqlinjectCheck = $this->sqlinjectCheck([$sUser,$sIpAddr]);
+            if($bSqlinjectCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwrequest-sql-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject sql Input Value: {user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
 
             $bIsEmailAddress = stripos($sUser, '@');
             $oUser = false;
@@ -501,9 +592,64 @@ class AuthController extends CoreController
 
         $oRequest = $this->getRequest();
 
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $sIpAddr = filter_var ($_SERVER['HTTP_CLIENT_IP'], FILTER_SANITIZE_STRING);
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $sIpAddr = filter_var ($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_SANITIZE_STRING);
+        } else {
+            $sIpAddr = filter_var ($_SERVER['REMOTE_ADDR'], FILTER_SANITIZE_STRING);
+        }
+
         if (! $oRequest->isPost()) {
             $sToken = $this->params()->fromRoute('token', 'none');
             $sUser = $this->params()->fromRoute('username', 'none');
+            /**
+             * We don't want attackers to make us any pain
+             */
+            $bXSSCheck = $this->xssCheck([$sToken,$sUser,$sIpAddr]);
+            if($bXSSCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-xss-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject a script in username! Input Value: {token='.json_encode($sToken).', user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage = 'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
+
+            $bSnifferCheck = $this->snifferCheck([$sToken,$sUser,$sIpAddr]);
+            if($bSnifferCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-sniffer-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to hack / sniff the server Input Value: {token='.json_encode($sToken).', user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
+
+            $bSqlinjectCheck = $this->sqlinjectCheck([$sToken,$sUser,$sIpAddr]);
+            if($bSqlinjectCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-sql-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject sql Input Value: {token='.json_encode($sToken).', user='.json_encode($sUser).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel();
+            }
 
             # Try to get user with token
             try {
@@ -542,6 +688,59 @@ class AuthController extends CoreController
             $sPassCheck = $oRequest->getPost('plc_login_pass_repeat');
             $sToken = $oRequest->getPost('plc_login_token');
             $iUserID = $oRequest->getPost('plc_login_user');
+            /**
+             * We don't want attackers to make us any pain
+             */
+            $bXSSCheck = $this->xssCheck([$sPass,$sPassCheck,$sToken,$iUserID]);
+            if($bXSSCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-xss-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject a script in username! Input Value: {vals='.json_encode([$sPass,$sPassCheck,$sToken,$iUserID]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage = 'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
+
+            $bSnifferCheck = $this->snifferCheck([$sPass,$sPassCheck,$sToken,$iUserID]);
+            if($bSnifferCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-sniffer-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to hack / sniff the server Input Value: {token='.json_encode([$sPass,$sPassCheck,$sToken,$iUserID]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
+
+            $bSqlinjectCheck = $this->sqlinjectCheck([$sPass,$sPassCheck,$sToken,$iUserID]);
+            if($bSqlinjectCheck) {
+                # script tag found !! maybe wants to inject script
+                $oMetricTbl = $this->getCustomTable('core_metric');
+                $oMetricTbl->insert([
+                    'user_idfs' => 0,
+                    'action' => 'pwreset-sql-attack',
+                    'type' => 'secalert',
+                    'date' => date('Y-m-d H:i:s', time()),
+                    'comment' => 'Someone tried to inject sql Input Value: {token='.json_encode([$sPass,$sPassCheck,$sToken,$iUserID]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
+                ]);
+                $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
+                return new ViewModel([
+                    'sErrorMessage' => $this->layout()->sErrorMessage,
+                ]);
+            }
 
             # Compare passwords
             if ($sPass != $sPassCheck) {
@@ -726,12 +925,14 @@ class AuthController extends CoreController
                     $oMetricTbl->insert([
                         'user_idfs' => 0,
                         'action' => 'signup-xss-attack',
-                        'type' => 'error',
+                        'type' => 'secalert',
                         'date' => date('Y-m-d H:i:s', time()),
                         'comment' => 'Someone tried to inject a script in username! Input Value: {'.$sEmail.'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                     ]);
                     $this->layout()->sErrorMessage = 'Nice try. Seems like you tried an XSS Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 $bSnifferCheck = $this->snifferCheck([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]);
@@ -741,12 +942,14 @@ class AuthController extends CoreController
                     $oMetricTbl->insert([
                         'user_idfs' => 0,
                         'action' => 'signup-sniffer-attack',
-                        'type' => 'error',
+                        'type' => 'secalert',
                         'date' => date('Y-m-d H:i:s', time()),
                         'comment' => 'Someone tried to hack / sniff the server Input Value: {'.$sEmail.'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                     ]);
                     $this->layout()->sErrorMessage =  'Nice try. Seems like you tried to attack us or find out things you should not know. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 $bSqlinjectCheck = $this->sqlinjectCheck([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]);
@@ -756,23 +959,29 @@ class AuthController extends CoreController
                     $oMetricTbl->insert([
                         'user_idfs' => 0,
                         'action' => 'signup-sql-attack',
-                        'type' => 'error',
+                        'type' => 'secalert',
                         'date' => date('Y-m-d H:i:s', time()),
                         'comment' => 'Someone tried to inject sql Input Value: {'.json_encode([$sEmail,$sPass,$sPassRep,$sLastname,$sIpAddr]).'}, IP:{'.$sIpAddr.'}, HEADER: {'.json_encode(getallheaders()).'}',
                     ]);
                     $this->layout()->sErrorMessage =  'Nice try. Seems like you tried an SQL Injection Attack. Your data is logged and Admin noticed. Try again and you will see what happens. If you think you see this message by error, contact admin@swissfaucet.io';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 if(strlen($sLastname) > 50) {
                     $this->layout()->sErrorMessage =  'Username too long';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 $bIsEmail = stripos($sEmail,'@');
                 if($sEmail == '' || $bIsEmail === false) {
                     $this->layout()->sErrorMessage =  'Please provide a valid email address';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 } else {
                     $bCheck = true;
                     # blacklist check
@@ -787,21 +996,27 @@ class AuthController extends CoreController
                         }
                         if(!$bCheck) {
                             $this->layout()->sErrorMessage =  'Please provide a valid email address';
-                            return new ViewModel();
+                            return new ViewModel([
+                                'sErrorMessage' => $this->layout()->sErrorMessage,
+                            ]);
                         }
                     }
                     # check if user already exists
                     try {
                         $oUser = $this->oTableGateway->getSingle($sEmail, 'email');
                         $this->layout()->sErrorMessage =  'There is already an account with that e-mail address';
-                        return new ViewModel();
+                        return new ViewModel([
+                            'sErrorMessage' => $this->layout()->sErrorMessage,
+                        ]);
                     } catch(\RuntimeException $e) {
                     }
                 }
 
                 if($sLastname == '') {
                     $this->layout()->sErrorMessage =  'Please provide a valid username';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 } else {
                     $bCheck = true;
                     # blacklist check
@@ -816,26 +1031,34 @@ class AuthController extends CoreController
                         }
                         if(!$bCheck) {
                             $this->layout()->sErrorMessage =  'Please provide a valid email username';
-                            return new ViewModel();
+                            return new ViewModel([
+                                'sErrorMessage' => $this->layout()->sErrorMessage,
+                            ]);
                         }
                     }
                     # check if user already exists
                     try {
                         $oUser = $this->oTableGateway->getSingle($sLastname, 'email');
                         $this->layout()->sErrorMessage =  'There is already an account with that username';
-                        return new ViewModel();
+                        return new ViewModel([
+                            'sErrorMessage' => $this->layout()->sErrorMessage,
+                        ]);
                     } catch(\RuntimeException $e) {
                     }
                 }
 
                 if($sPass == '' || $sPassRep == '') {
                     $this->layout()->sErrorMessage =  'Please provide a valid password';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 if($sPass !== $sPassRep) {
                     $this->layout()->sErrorMessage =  'Passwords do not match';
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 if(isset(CoreController::$aGlobalSettings['recaptcha-secret-login'])) {
@@ -853,7 +1076,9 @@ class AuthController extends CoreController
                     if(!$oJson->success) {
                         $this->layout()->sErrorMessage = 'Please solve Captcha';
                         # Show Login Form
-                        return new ViewModel();
+                        return new ViewModel([
+                            'sErrorMessage' => $this->layout()->sErrorMessage,
+                        ]);
                     }
                 }
 
@@ -866,7 +1091,9 @@ class AuthController extends CoreController
                 if(!$bAgree) {
                     $this->layout()->sErrorMessage = 'You must agree to our terms and conditions';
                     # Show Login Form
-                    return new ViewModel();
+                    return new ViewModel([
+                        'sErrorMessage' => $this->layout()->sErrorMessage,
+                    ]);
                 }
 
                 /**
